@@ -1,8 +1,8 @@
 package org.ertebat.ui;
-import com.example.avcalltablet.R;
-import com.example.avcalltablet.R.id;
-import com.example.avcalltablet.R.layout;
-import com.example.avcalltablet.R.xml;
+import org.ertebat.R;
+import org.ertebat.R.id;
+import org.ertebat.R.layout;
+import org.ertebat.R.xml;
 
 import android.os.Bundle;
 import android.preference.PreferenceFragment;

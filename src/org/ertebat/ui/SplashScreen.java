@@ -1,6 +1,7 @@
 package org.ertebat.ui;
-import com.example.avcalltablet.R;
-import com.example.avcalltablet.R.layout;
+
+
+import org.ertebat.R;
 
 import android.os.Bundle;
 import android.content.Intent;

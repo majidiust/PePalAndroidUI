@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.example.avcalltablet.R;
-import com.example.avcalltablet.R.id;
-import com.example.avcalltablet.R.layout;
+import org.ertebat.R;
+import org.ertebat.R.id;
+import org.ertebat.R.layout;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;

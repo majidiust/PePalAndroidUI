@@ -8,11 +8,11 @@ import org.doubango.ngn.sip.NgnAVSession;
 import org.doubango.ngn.utils.NgnStringUtils;
 import org.doubango.ngn.utils.NgnUriUtils;
 
-import com.example.avcalltablet.R;
-import com.example.avcalltablet.R.drawable;
-import com.example.avcalltablet.R.id;
-import com.example.avcalltablet.R.layout;
-import com.example.avcalltablet.R.string;
+import org.ertebat.R;
+import org.ertebat.R.drawable;
+import org.ertebat.R.id;
+import org.ertebat.R.layout;
+import org.ertebat.R.string;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;

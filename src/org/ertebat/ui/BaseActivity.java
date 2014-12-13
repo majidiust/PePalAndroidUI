@@ -98,7 +98,7 @@ public class BaseActivity extends FragmentActivity {
 				try {
 					mWebsocketService.unregisterCallback(mDataCallback);
 				} catch (RemoteException e) {
-					e.printStackTrace();
+					Log.d(TAG, e.getMessage());
 				}
 				mWebsocketService = null;
 			}
@@ -111,6 +111,7 @@ public class BaseActivity extends FragmentActivity {
 				mWebsocketService.registerCallback(mDataCallback);
 			}
 			catch (RemoteException e) {
+				Log.d(TAG, e.getMessage());
 			}
 		}
 	};

@@ -5,11 +5,11 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import com.example.avcalltablet.R;
-import com.example.avcalltablet.R.dimen;
-import com.example.avcalltablet.R.drawable;
-import com.example.avcalltablet.R.id;
-import com.example.avcalltablet.R.layout;
+import org.ertebat.R;
+import org.ertebat.R.dimen;
+import org.ertebat.R.drawable;
+import org.ertebat.R.id;
+import org.ertebat.R.layout;
 
 import android.content.Intent;
 import android.graphics.Bitmap;

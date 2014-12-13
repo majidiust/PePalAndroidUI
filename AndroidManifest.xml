@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.avcalltablet"
+    package="org.ertebat"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -64,26 +64,26 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".CallActivity"
+            android:name="org.ertebat.ui.CallActivity"
             android:label="@string/title_activity_call" >
         </activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name="org.ertebat.ui.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:screenOrientation="sensorPortrait" >
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name="org.ertebat.ui.MainActivity"
             android:label="@string/title_activity_main"
             android:screenOrientation="sensorPortrait" >
         </activity>
         <activity
-            android:name=".ChatActivity"
+            android:name="org.ertebat.ui.ChatActivity"
             android:label="@string/title_activity_chat"
             android:screenOrientation="sensorPortrait" >
         </activity>
         <activity
-            android:name=".DialogMultiChoiceActivity"
+            android:name="org.ertebat.ui.DialogMultiChoiceActivity"
             android:label="@string/title_activity_dialog_multi_choice"
             android:screenOrientation="sensorPortrait"
             android:theme="@style/CustomDialog" >

@@ -1,9 +1,7 @@
 package org.ertebat.ui;
 import java.util.Arrays;
 
-import com.example.avcalltablet.R;
-import com.example.avcalltablet.R.id;
-import com.example.avcalltablet.R.layout;
+import org.ertebat.R;
 
 import android.content.Context;
 import android.graphics.Typeface;
