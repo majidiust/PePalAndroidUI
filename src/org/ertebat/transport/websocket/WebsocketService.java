@@ -5,6 +5,7 @@ package org.ertebat.transport.websocket;
 
 import org.ertebat.transport.websocket.IWebsocketService;
 import org.ertebat.transport.websocket.IWebsocketServiceCallback;
+import org.json.JSONObject;
 
 import de.tavendo.autobahn.WebSocketConnection;
 import android.app.Service;
@@ -35,7 +36,7 @@ public class WebsocketService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		Log.d(TAG, "Service Started");
+		logCatDebug("Service Started");
 	}
 
 	@Override
@@ -64,6 +65,57 @@ public class WebsocketService extends Service {
 				@Override
 				public void onTextMessage(String payload) {
 					logCatDebug("Got echo: " + payload);
+					try{
+						JSONObject jsonObject = new JSONObject(payload);
+						debug(payload);
+						int code = jsonObject.getInt("code");
+						if(code == 100){
+							int N = mCallbacks.beginBroadcast();
+							for (int i = 0; i < N; i++) {
+								try {
+									mCallbacks.getBroadcastItem(i).authorizationRequest();
+								} 
+								catch (RemoteException e) {
+									logCatDebug(e.getMessage());
+								}
+							}
+							mCallbacks.finishBroadcast();
+						}
+						else if(code == 101){
+							int N = mCallbacks.beginBroadcast();
+							for (int i = 0; i < N; i++) {
+								try {
+									mCallbacks.getBroadcastItem(i).authorized();
+								} 
+								catch (RemoteException e) {
+									logCatDebug(e.getMessage());
+								}
+							}
+							mCallbacks.finishBroadcast();
+						}
+						else if(code == 6){
+							int N = mCallbacks.beginBroadcast();
+							for (int i = 0; i < N; i++) {
+								try {
+									
+									mCallbacks.getBroadcastItem(i).currentProfileResult(
+											jsonObject.getString("username"), 
+											jsonObject.getString("id"), 
+											jsonObject.getString("firstName"), 
+											jsonObject.getString("lastName"),  
+											jsonObject.getString("mobileNumber"), 
+											jsonObject.getString("email"));
+								} 
+								catch (RemoteException e) {
+									logCatDebug(e.getMessage());
+								}
+							}
+							mCallbacks.finishBroadcast();
+						}
+					}
+					catch(Exception ex){
+						logCatDebug(ex.getMessage());
+					}
 				}
 
 				@Override
@@ -82,7 +134,7 @@ public class WebsocketService extends Service {
 				}
 			});
 		} catch (WebSocketException e) {
-			Log.d(TAG, e.toString());
+			logCatDebug(e.toString());
 		}
 	}
 
@@ -272,7 +324,8 @@ public class WebsocketService extends Service {
 
 	protected void logCatDebug(String txt){
 		try{
-			Log.d(TAG, txt);
+		//	if(false)
+	//		Log.d(TAG, txt);
 		}
 		catch(Exception ex){
 

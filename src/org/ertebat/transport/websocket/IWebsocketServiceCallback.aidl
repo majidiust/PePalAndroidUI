@@ -6,4 +6,7 @@ oneway interface IWebsocketServiceCallback {
 	void newMessage(String from, String roomId, String date, String time, String content);
 	void connectedToHost(String uri);
 	void disConnectedFromHost();
+	void authorizationRequest();
+	void authorized();
+	void currentProfileResult(String username, String userId, String firstName, String lastName, String mobile, String email);
 }

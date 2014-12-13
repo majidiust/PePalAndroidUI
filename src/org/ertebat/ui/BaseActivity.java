@@ -48,7 +48,8 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.ertebat.schema.Profile;
+import org.ertebat.schema.ProfileSchema;
+import org.ertebat.schema.SettingSchema;
 import org.ertebat.transport.websocket.IWebsocketServiceCallback;
 import org.ertebat.transport.websocket.IWebsocketService;
 
@@ -78,7 +79,7 @@ public class BaseActivity extends FragmentActivity {
 
 		@Override
 		public void debug(String msg) throws RemoteException {
-			Log.d(TAG, msg);
+			showToast(msg);
 		}
 
 		@Override
@@ -95,12 +96,34 @@ public class BaseActivity extends FragmentActivity {
 
 		@Override
 		public void connectedToHost(String uri) throws RemoteException {
-			Log.d(TAG,uri);
+			showToast("Connected to the host web socket server : " + uri);
+			mWebsocketService.sendTextMessageToRoom("--", "--");
 		}
 
 		@Override
 		public void disConnectedFromHost() throws RemoteException {
-			Log.d(TAG, "disConnectedFromHost");
+			showToast("disconnected from the host");
+		}
+
+		@Override
+		public void authorizationRequest() throws RemoteException {
+			//Authorize to the web socket server
+			showToast("Authorization request");
+			mWebsocketService.authorizeToWs(mCurrentUserProfile.m_token);
+		}
+
+		@Override
+		public void authorized() throws RemoteException {
+			// TODO Auto-generated method stub
+			showToast("Authorizaed and try to get current profile");
+			mWebsocketService.getMyProfile();
+		}
+
+		@Override
+		public void currentProfileResult(String username, String userId,
+				String firstName, String lastName, String mobile, String email)
+						throws RemoteException {
+			showToast(username + " : " + userId);
 		}
 	};
 
@@ -134,8 +157,8 @@ public class BaseActivity extends FragmentActivity {
 	};
 
 	protected static int mLastCommand = 0;
-	protected static Profile m_currentUserProfile;
-
+	protected static ProfileSchema mCurrentUserProfile;
+	protected static SettingSchema mSettings = new SettingSchema();
 	// TODO: @Majid, load the contacts into this list and use it anywhere you need. I have used it for adding a contact to a chat
 	protected static List<ContactSummary> mContacts;
 
@@ -166,8 +189,8 @@ public class BaseActivity extends FragmentActivity {
 		contact.ContactName = "Mehdi";
 		contact.ContactPhone = "6366";
 		mContacts.add(contact);
-		
-		m_currentUserProfile = new Profile();
+
+		mCurrentUserProfile = new ProfileSchema();
 	}
 
 	@Override
@@ -196,7 +219,7 @@ public class BaseActivity extends FragmentActivity {
 		catch(Exception ex){
 			Log.d(TAG, ex.getMessage());
 		}
-		
+
 		try
 		{
 			mEngine = NgnEngine.getInstance();
@@ -262,10 +285,10 @@ public class BaseActivity extends FragmentActivity {
 									mEngine.getSoundService().startRingTone();
 
 									// CHECK
-//									Intent incomingIntent = new Intent(This, CallActivity.class);
-//									incomingIntent.putExtra(NgnEventArgs.EXTRA_EMBEDDED, args);
-//									startActivity(incomingIntent);
-//									finish();
+									//									Intent incomingIntent = new Intent(This, CallActivity.class);
+									//									incomingIntent.putExtra(NgnEventArgs.EXTRA_EMBEDDED, args);
+									//									startActivity(incomingIntent);
+									//									finish();
 								}
 								else{
 								}
@@ -359,7 +382,7 @@ public class BaseActivity extends FragmentActivity {
 			intentFilter.addAction(NgnMsrpEventArgs.ACTION_MSRP_EVENT);
 			intentFilter.addAction(NgnMessagingEventArgs.ACTION_MESSAGING_EVENT);
 			registerReceiver(mSipBroadCastRecv, intentFilter);
-			
+
 			if(mEngine.isStarted() == false)
 				mEngine.start();
 		}
@@ -376,6 +399,15 @@ public class BaseActivity extends FragmentActivity {
 
 		if (IsTablet)
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+
+		try{
+			mWebsocketIntent = new Intent(IWebsocketService.class.getName());
+			startService(mWebsocketIntent);
+			bindService(mWebsocketIntent, mWebsocketServiceConnection, 0);
+		}
+		catch(Exception ex){
+			Log.d(TAG, ex.getMessage());
+		}
 	}
 
 	@Override
@@ -389,7 +421,7 @@ public class BaseActivity extends FragmentActivity {
 		//			unregisterReceiver(mSipBroadCastRecv);
 		//			mSipBroadCastRecv = null;
 		//		}
-		
+
 		try {
 			unregisterReceiver(mSipBroadCastRecv);
 			if(mWebsocketService != null)
@@ -400,9 +432,24 @@ public class BaseActivity extends FragmentActivity {
 			}
 		}
 		catch (Exception ex) {
-			showToast(ex.getMessage());
+			showToast("destroy : " + ex.getMessage());
 		}
 		super.onDestroy();
+	}
+
+	@Override
+	protected void onStop() {
+		try {
+			if(mWebsocketService != null)
+			{
+				mWebsocketService.unregisterCallback(mWebsocketServiceCallback);
+				unbindService(mWebsocketServiceConnection);
+			}
+		}
+		catch (Exception ex) {
+			Log.d(TAG, ex.getMessage());
+		}
+		super.onStop();
 	}
 
 	protected void SetCallState(NgnInviteEventTypes callState) {

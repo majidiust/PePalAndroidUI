@@ -14,6 +14,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.ertebat.R;
+import org.ertebat.schema.SettingSchema;
 import org.json.JSONObject;
 
 import android.content.Intent;
@@ -99,9 +100,12 @@ public class SignInActivity extends BaseActivity {
 									JSONObject json = new JSONObject(line);
 									String token = json.optString("token", "");
 									if (!token.equals("")) {
-										m_currentUserProfile.m_token = token;
-										Log.d(TAG, "Sign In was successful. Token = " + m_currentUserProfile.m_token);
-										m_currentUserProfile.m_userName = mEditUsername.getText().toString();
+										//@1: save token
+										mCurrentUserProfile.m_token = token;
+										Log.d(TAG, "Sign In was successful. Token = " + mCurrentUserProfile.m_token);
+										mCurrentUserProfile.m_userName = mEditUsername.getText().toString();
+										//@2: Connect to web socket server
+										mWebsocketService.connectToHost(mSettings.mWebSocketUrl);
 										finish();
 										Intent intent = new Intent(This, MainActivity.class);
 										startActivity(intent);
@@ -118,10 +122,6 @@ public class SignInActivity extends BaseActivity {
 						}
 					}
 				}).start();
-				
-//				finish();
-//				Intent intent = new Intent(This, MainActivity.class);
-//				startActivity(intent);
 			}
 		});
 	}

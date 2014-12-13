@@ -111,12 +111,7 @@ public class ChatActivity extends BaseActivity {
 				if (!mEditMessageContent.getText().toString().equals("")) {
 					// TODO: @Majid, send the message via web socket here
 					showAlert("Hello Majid!");
-					try {
-						mWebsocketService.connectToHost("ws://192.168.1.5:1337");
-					} catch (RemoteException e) {
-						Log.d(TAG, e.getMessage());
-						showAlert(e.getMessage());
-					}
+					
 				}
 			}
 		});
