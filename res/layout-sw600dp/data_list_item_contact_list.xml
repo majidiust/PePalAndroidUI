@@ -32,11 +32,11 @@
         android:id="@+id/txtContactListItemStatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/viewContactListItemSeparator"
         android:layout_alignBottom="@+id/imgContactListItemPicture"
-        android:layout_marginTop="@dimen/chat_log_item_margin_vertical"
+        android:layout_below="@+id/viewContactListItemSeparator"
         android:layout_marginLeft="@dimen/chat_log_item_margin_horizontal"
         android:layout_marginRight="@dimen/chat_log_item_margin_horizontal"
+        android:layout_marginTop="@dimen/chat_log_item_margin_vertical"
         android:layout_toLeftOf="@+id/imgContactListItemPicture"
         android:gravity="right|center_vertical"
         android:text="مشغول کار..."
@@ -50,7 +50,7 @@
         android:layout_height="@dimen/chat_log_item_pic_size"
         android:layout_alignParentRight="true"
         android:background="#555" />
-    
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"

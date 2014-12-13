@@ -54,7 +54,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".SplashScreen"
+            android:name="org.ertebat.ui.SplashScreen"
             android:label="Ertebat"
             android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" >
             <intent-filter>
@@ -88,6 +88,14 @@
             android:screenOrientation="sensorPortrait"
             android:theme="@style/CustomDialog" >
         </activity>
+        <service
+            android:name="org.ertebat.transport.websoket.WebsocketService"
+            android:enabled="true"
+            android:process=".transportservice" >
+            <intent-filter>
+                <action android:name="org.ertebat.transport.websoket.IWebsocketServiceCallback" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

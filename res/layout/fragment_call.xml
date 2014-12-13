@@ -28,10 +28,10 @@
                 android:layout_toLeftOf="@+id/btnCallBackspace"
                 android:background="@drawable/layout_border_red"
                 android:gravity="center"
+                android:maxLength="11"
                 android:textColor="#fff"
                 android:textSize="30sp"
-                android:textStyle="bold"
-                android:maxLength="11" />
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btnCallBackspace"

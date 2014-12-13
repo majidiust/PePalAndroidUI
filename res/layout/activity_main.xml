@@ -2,11 +2,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.avcalltablet.MainActivity" >
+    tools:context="org.ertebat.ui.MainActivity" >
 
     <android.support.v4.view.ViewPager
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/pagerHome"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
 </RelativeLayout>

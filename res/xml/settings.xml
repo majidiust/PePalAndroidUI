@@ -1,55 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory 
-        android:title="@string/pref_title_configs"
-        android:key="pref_key_configs">
-        
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory
+        android:key="pref_key_configs"
+        android:title="@string/pref_title_configs" >
         <EditTextPreference
-            android:key="pref_key_private_identity"
             android:defaultValue="test"
+            android:key="pref_key_private_identity"
             android:title="@string/pref_title_private_identity" />
-        
         <EditTextPreference
             android:defaultValue="test"
             android:key="pref_key_public_identity"
             android:title="@string/pref_title_public_identiy" />
-        
         <EditTextPreference
             android:defaultValue="test"
+            android:inputType="textPassword"
             android:key="pref_key_password"
-            android:title="@string/pref_title_password"
-            android:inputType="textPassword" />
-        
+            android:title="@string/pref_title_password" />
         <EditTextPreference
             android:defaultValue="test"
             android:key="pref_key_CSCFHost"
-            android:title="@string/pref_title_CSCFHost"/>
-        
+            android:title="@string/pref_title_CSCFHost" />
         <EditTextPreference
+            android:defaultValue="6050"
             android:dialogTitle="@string/pref_title_port"
             android:inputType="number"
-            android:defaultValue="6050"
             android:key="pref_key_port"
             android:title="@string/pref_title_port" />
-        
-		<ListPreference
-		    android:defaultValue="0"
-		    android:key="pref_key_network_protocol"
-		    android:title="@string/pref_title_nework_protocol"
-		    android:entries="@array/NetworkProtocols"
-		    android:entryValues="@array/NetworkProtocolsData"/>
-		
+
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/NetworkProtocols"
+            android:entryValues="@array/NetworkProtocolsData"
+            android:key="pref_key_network_protocol"
+            android:title="@string/pref_title_nework_protocol" />
+
         <EditTextPreference
             android:defaultValue="Test"
             android:key="pref_key_network_realm"
             android:title="@string/pref_title_network_realm" />
-		
-		<ListPreference 
-		    android:defaultValue="0"
-		    android:key="pref_key_qos_video_size"
-		    android:title="@string/pref_title_qos_video_size"
-		    android:entries="@array/QOSVideoSize"
-		    android:entryValues="@array/QOSVideoSizeData"/>
-        
+
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/QOSVideoSize"
+            android:entryValues="@array/QOSVideoSizeData"
+            android:key="pref_key_qos_video_size"
+            android:title="@string/pref_title_qos_video_size" />
     </PreferenceCategory>
+
 </PreferenceScreen>

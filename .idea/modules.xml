@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4" >
+
+    <component name="ProjectModuleManager" >
+
+        <modules>
+
+            <module
+                filepath="$PROJECT_DIR$/PePalAndroidUI.iml"
+                fileurl="file://$PROJECT_DIR$/PePalAndroidUI.iml" />
+
+            <module
+                filepath="$PROJECT_DIR$/../imsdroid-read-only/imsdroid-read-only/android-ngn-stack/android-ngn-stack.iml"
+                fileurl="file://$PROJECT_DIR$/../imsdroid-read-only/imsdroid-read-only/android-ngn-stack/android-ngn-stack.iml" />
+        </modules>
+    </component>
+
+</project>
