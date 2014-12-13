@@ -442,6 +442,7 @@ public class BaseActivity extends FragmentActivity {
 		try {
 			if(mWebsocketService != null)
 			{
+				showToast("onStop");
 				mWebsocketService.unregisterCallback(mWebsocketServiceCallback);
 				unbindService(mWebsocketServiceConnection);
 			}
@@ -452,6 +453,22 @@ public class BaseActivity extends FragmentActivity {
 		super.onStop();
 	}
 
+	@Override
+	public void onPause() {
+		try {
+			if(mWebsocketService != null)
+			{
+				showToast("onPause");
+				mWebsocketService.unregisterCallback(mWebsocketServiceCallback);
+				unbindService(mWebsocketServiceConnection);
+			}
+		}
+		catch (Exception ex) {
+			Log.d(TAG, ex.getMessage());
+		}
+	    super.onPause();
+	}
+	
 	protected void SetCallState(NgnInviteEventTypes callState) {
 		// TODO Auto-generated method stub
 
