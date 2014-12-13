@@ -1,0 +1,646 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_bg"
+    tools:context=".CallActivity" >
+
+    <RelativeLayout
+        android:id="@+id/layoutCallDialPad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/layoutCallBottomBar"
+        android:layout_margin="8dp"
+        android:paddingBottom="8dp"
+        android:visibility="visible" >
+
+        <RelativeLayout
+            android:id="@+id/layoutCallNumberBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp" >
+
+            <TextView
+                android:id="@+id/txtCallNumber"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_margin="4dp"
+                android:layout_toLeftOf="@+id/btnCallBackspace"
+                android:background="@drawable/layout_border_red"
+                android:gravity="center"
+                android:textColor="#fff"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:maxLength="11" />
+
+            <Button
+                android:id="@+id/btnCallBackspace"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_margin="4dp"
+                android:background="@drawable/style_btn_remove" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/layoutCallDialPadInner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layoutCallNumberBar"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/call_buttons_margin"
+            android:background="@drawable/layout_border"
+            android:padding="4dp" >
+
+            <LinearLayout
+                android:id="@+id/layoutCallPadRow1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:orientation="horizontal" >
+
+                <Button
+                    android:id="@+id/btnCallDial1"
+                    android:layout_width="@dimen/dialpad_btn_width"
+                    android:layout_height="@dimen/dialpad_btn_height"
+                    android:layout_margin="@dimen/dialpad_btn_margin"
+                    android:layout_weight="1"
+                    android:background="@drawable/style_btn_dialpad"
+                    android:gravity="center"
+                    android:text="@string/dialpad_1"
+                    android:textColor="#0055ff"
+                    android:textSize="@dimen/dialpad_text_size"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnCallDial2"
+                    android:layout_width="@dimen/dialpad_btn_width"
+                    android:layout_height="@dimen/dialpad_btn_height"
+                    android:layout_margin="@dimen/dialpad_btn_margin"
+                    android:layout_weight="1"
+                    android:background="@drawable/style_btn_dialpad"
+                    android:gravity="center"
+                    android:text="@string/dialpad_2"
+                    android:textColor="#0055ff"
+                    android:textSize="@dimen/dialpad_text_size"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnCallDial3"
+                    android:layout_width="@dimen/dialpad_btn_width"
+                    android:layout_height="@dimen/dialpad_btn_height"
+                    android:layout_margin="@dimen/dialpad_btn_margin"
+                    android:layout_weight="1"
+                    android:background="@drawable/style_btn_dialpad"
+                    android:gravity="center"
+                    android:text="@string/dialpad_3"
+                    android:textColor="#0055ff"
+                    android:textSize="@dimen/dialpad_text_size"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutCallPadRow2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layoutCallPadRow1"
+                android:layout_centerHorizontal="true"
+                android:orientation="horizontal" >
+
+                <Button
+                    android:id="@+id/btnCallDial4"
+                    android:layout_width="@dimen/dialpad_btn_width"
+                    android:layout_height="@dimen/dialpad_btn_height"
+                    android:layout_margin="@dimen/dialpad_btn_margin"
+                    android:layout_weight="1"
+                    android:background="@drawable/style_btn_dialpad"
+                    android:gravity="center"
+                    android:text="@string/dialpad_4"
+                    android:textColor="#0055ff"
+                    android:textSize="@dimen/dialpad_text_size"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnCallDial5"
+                    android:layout_width="@dimen/dialpad_btn_width"
+                    android:layout_height="@dimen/dialpad_btn_height"
+                    android:layout_margin="@dimen/dialpad_btn_margin"
+                    android:layout_weight="1"
+                    android:background="@drawable/style_btn_dialpad"
+                    android:gravity="center"
+                    android:text="@string/dialpad_5"
+                    android:textColor="#0055ff"
+                    android:textSize="@dimen/dialpad_text_size"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnCallDial6"
+                    android:layout_width="@dimen/dialpad_btn_width"
+                    android:layout_height="@dimen/dialpad_btn_height"
+                    android:layout_margin="@dimen/dialpad_btn_margin"
+                    android:layout_weight="1"
+                    android:background="@drawable/style_btn_dialpad"
+                    android:gravity="center"
+                    android:text="@string/dialpad_6"
+                    android:textColor="#0055ff"
+                    android:textSize="@dimen/dialpad_text_size"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutCallPadRow3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layoutCallPadRow2"
+                android:layout_centerHorizontal="true"
+                android:orientation="horizontal" >
+
+                <Button
+                    android:id="@+id/btnCallDial7"
+                    android:layout_width="@dimen/dialpad_btn_width"
+                    android:layout_height="@dimen/dialpad_btn_height"
+                    android:layout_margin="@dimen/dialpad_btn_margin"
+                    android:layout_weight="1"
+                    android:background="@drawable/style_btn_dialpad"
+                    android:gravity="center"
+                    android:text="@string/dialpad_7"
+                    android:textColor="#0055ff"
+                    android:textSize="@dimen/dialpad_text_size"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnCallDial8"
+                    android:layout_width="@dimen/dialpad_btn_width"
+                    android:layout_height="@dimen/dialpad_btn_height"
+                    android:layout_margin="@dimen/dialpad_btn_margin"
+                    android:layout_weight="1"
+                    android:background="@drawable/style_btn_dialpad"
+                    android:gravity="center"
+                    android:text="@string/dialpad_8"
+                    android:textColor="#0055ff"
+                    android:textSize="@dimen/dialpad_text_size"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnCallDial9"
+                    android:layout_width="@dimen/dialpad_btn_width"
+                    android:layout_height="@dimen/dialpad_btn_height"
+                    android:layout_margin="@dimen/dialpad_btn_margin"
+                    android:layout_weight="1"
+                    android:background="@drawable/style_btn_dialpad"
+                    android:gravity="center"
+                    android:text="@string/dialpad_9"
+                    android:textColor="#0055ff"
+                    android:textSize="@dimen/dialpad_text_size"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutCallPadRow4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layoutCallPadRow3"
+                android:layout_centerHorizontal="true"
+                android:orientation="horizontal" >
+
+                <Button
+                    android:id="@+id/btnCallDialStar"
+                    android:layout_width="@dimen/dialpad_btn_width"
+                    android:layout_height="@dimen/dialpad_btn_height"
+                    android:layout_margin="@dimen/dialpad_btn_margin"
+                    android:layout_weight="1"
+                    android:background="@drawable/style_btn_dialpad"
+                    android:gravity="center"
+                    android:text="@string/dialpad_star"
+                    android:textColor="#0055ff"
+                    android:textSize="@dimen/dialpad_text_size"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnCallDial0"
+                    android:layout_width="@dimen/dialpad_btn_width"
+                    android:layout_height="@dimen/dialpad_btn_height"
+                    android:layout_margin="@dimen/dialpad_btn_margin"
+                    android:layout_weight="1"
+                    android:background="@drawable/style_btn_dialpad"
+                    android:gravity="center"
+                    android:text="@string/dialpad_0"
+                    android:textColor="#0055ff"
+                    android:textSize="@dimen/dialpad_text_size"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnCallDialSharp"
+                    android:layout_width="@dimen/dialpad_btn_width"
+                    android:layout_height="@dimen/dialpad_btn_height"
+                    android:layout_margin="@dimen/dialpad_btn_margin"
+                    android:layout_weight="1"
+                    android:background="@drawable/style_btn_dialpad"
+                    android:gravity="center"
+                    android:text="@string/dialpad_sharp"
+                    android:textColor="#0055ff"
+                    android:textSize="@dimen/dialpad_text_size"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutCallDialButtons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layoutCallDialPadInner"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/call_buttons_margin"
+            android:orientation="horizontal"
+            android:visibility="visible" >
+
+            <Button
+                android:id="@+id/btnCallVoiceCall"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/style_btn_call_audio" />
+
+            <Button
+                android:id="@+id/btnCallVideoCall"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/style_btn_call_video" />
+
+            <Button
+                android:id="@+id/btnCallCancel"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/style_btn_call_cancel" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layoutCallInfo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/layoutCallBottomBar"
+        android:layout_margin="8dp"
+        android:background="@drawable/layout_border"
+        android:padding="8dp" >
+
+        <RelativeLayout
+            android:id="@+id/layoutCallIncoming"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="invisible" >
+
+            <TextView
+                android:id="@+id/txtCallIncomingTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="@string/lbl_call_incoming"
+                android:textColor="#000"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txtCallIncomingNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txtCallIncomingTitle"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="8dp"
+                android:text="6363"
+                android:textColor="#000"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/imgCallIncomingContact"
+                android:layout_width="128dp"
+                android:layout_height="128dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/ic_contact" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="32dp"
+                android:orientation="horizontal" >
+
+                <Button
+                    android:id="@+id/btnCallIncomingAccept"
+                    android:layout_width="128dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/style_btn_green"
+                    android:text="@string/btn_accept"
+                    android:textColor="#fff"
+                    android:textSize="25sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnCallIncomingReject"
+                    android:layout_width="128dp"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="16dp"
+                    android:background="@drawable/style_btn_red"
+                    android:text="@string/btn_reject"
+                    android:textColor="#fff"
+                    android:textSize="25sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/layoutVideoCallEstablished"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="invisible" >
+
+            <LinearLayout
+                android:id="@+id/layoutVideoCallDestination"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/txtVideoCallEstablishedTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lbl_call_established"
+                    android:textColor="#000"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/txtVideoCallDestination"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:text="63636"
+                    android:textColor="#000"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutVideoCallTimer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layoutVideoCallDestination"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lbl_call_duration"
+                    android:textColor="#000"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/txtVideoCallTimer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:text="00:00:00:00"
+                    android:textColor="#000"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutVideoCallPreviews"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layoutVideoCallTimer"
+                android:layout_marginTop="4dp"
+                android:orientation="vertical" >
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="256dp"
+                    android:layout_margin="4dp"
+                    android:background="@drawable/layout_video"
+                    android:minHeight="90dp"
+                    android:minWidth="90dp"
+                    android:padding="4dp" >
+
+                    <FrameLayout
+                        android:id="@+id/view_call_incall_video_FrameLayout_remote_video"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_gravity="center" >
+                    </FrameLayout>
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="128dp"
+                    android:layout_height="128dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="4dp"
+                    android:background="@drawable/layout_video"
+                    android:minHeight="90dp"
+                    android:minWidth="90dp"
+                    android:padding="4dp" >
+
+                    <FrameLayout
+                        android:id="@+id/view_call_incall_video_FrameLayout_local_video"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_gravity="center" >
+                    </FrameLayout>
+                </FrameLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutVideoCallButtons"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="4dp"
+                android:orientation="horizontal" >
+
+                <Button
+                    android:id="@+id/btnVideoCallNoVideo"
+                    android:layout_width="96dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/style_btn_black"
+                    android:text="@string/btn_call_novideo"
+                    android:textColor="#fff"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnVideoCallEnd"
+                    android:layout_width="96dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="4dp"
+                    android:background="@drawable/style_btn_red"
+                    android:text="@string/btn_call_endcall"
+                    android:textColor="#fff"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnVideoCallSwapCamera"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="4dp"
+                    android:background="@drawable/style_btn_black"
+                    android:text="@string/btn_call_swap_camera"
+                    android:textColor="#fff"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/layoutAudioCallEstablished"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="invisible" >
+
+            <TextView
+                android:id="@+id/txtAudioCallEstablishedTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="4dp"
+                android:text="@string/lbl_call_established"
+                android:textColor="#000"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txtAudioCallDestination"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txtAudioCallEstablishedTitle"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="4dp"
+                android:text="63634"
+                android:textColor="#000"
+                android:textSize="25sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txtAudioCallDestination"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lbl_call_duration"
+                    android:textColor="#000"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/txtAudioCallTimer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:text="00:00:00:00"
+                    android:textColor="#000"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/imgAudioCallEstablishedContact"
+                android:layout_width="192dp"
+                android:layout_height="192dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/ic_contact" />
+
+            <Button
+                android:id="@+id/btnAudioCallEnd"
+                android:layout_width="128dp"
+                android:layout_height="64dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/style_btn_red"
+                android:text="@string/btn_call_endcall"
+                android:textColor="#fff"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/layoutCallDialingInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:visibility="invisible" >
+
+            <TextView
+                android:id="@+id/txtCallDialingTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="@string/lbl_call_dialing"
+                android:textColor="#000"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/txtCallDialDestination"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txtCallDialingTitle"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="8dp"
+                android:text="6363"
+                android:textColor="#000"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/imgCallDialing"
+                android:layout_width="128dp"
+                android:layout_height="128dp"
+                android:layout_below="@+id/txtCallDialDestination"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="32dp"
+                android:contentDescription="@null" />
+
+            <Button
+                android:id="@+id/btnDialCancel"
+                android:layout_width="128dp"
+                android:layout_height="64dp"
+                android:layout_below="@+id/imgCallDialing"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/style_btn_red"
+                android:text="@string/btn_cancel"
+                android:textColor="#fff"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layoutCallBottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/bar_bottom_height"
+        android:layout_alignParentBottom="true"
+        android:background="#333"
+        android:padding="@dimen/bar_bottom_padding" >
+
+        <Button
+            android:id="@+id/btnCallBottomSip"
+            android:layout_width="@dimen/bar_bottom_item_size"
+            android:layout_height="@dimen/bar_bottom_item_size"
+            android:background="@drawable/style_btn_bar_sip_connect" />
+
+        <Button
+            android:id="@+id/btnCallBottomSettings"
+            android:layout_width="@dimen/bar_bottom_item_size"
+            android:layout_height="@dimen/bar_bottom_item_size"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/style_btn_bar_settings" />
+    </RelativeLayout>
+
+</RelativeLayout>

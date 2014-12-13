@@ -1,0 +1,70 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#88ffffff"
+    android:orientation="vertical"
+    android:padding="@dimen/chat_log_item_padding" >
+
+    <TextView
+        android:id="@+id/txtChatLogListItemDateTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1393/03/24\n17:38"
+        android:textColor="#333"
+        android:textSize="@dimen/chat_log_item_date_size"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txtChatLogListItemTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/chat_log_item_margin_horizontal"
+        android:layout_marginRight="@dimen/chat_log_item_margin_horizontal"
+        android:layout_toLeftOf="@+id/imgChatLogListItemPicture"
+        android:layout_toRightOf="@+id/txtChatLogListItemDateTime"
+        android:gravity="right"
+        android:text="حسام ساجدی"
+        android:textColor="#000"
+        android:textSize="@dimen/chat_log_item_title_size"
+        android:textStyle="bold" />
+
+    <View
+        android:id="@+id/viewChatLogListItemSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/txtChatLogListItemDateTime"
+        android:layout_marginRight="@dimen/chat_log_item_margin_horizontal"
+        android:layout_toLeftOf="@+id/imgChatLogListItemPicture"
+        android:background="#000" />
+
+    <TextView
+        android:id="@+id/txtChatLogListItemContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/viewChatLogListItemSeparator"
+        android:layout_marginTop="@dimen/chat_log_item_margin_vertical"
+        android:layout_marginLeft="@dimen/chat_log_item_margin_horizontal"
+        android:layout_marginRight="@dimen/chat_log_item_margin_horizontal"
+        android:layout_toLeftOf="@+id/imgChatLogListItemPicture"
+        android:layout_toRightOf="@+id/txtChatLogListItemDateTime"
+        android:gravity="right"
+        android:text="سلام دوست من!\n چطوری؟"
+        android:textColor="#222"
+        android:textSize="@dimen/chat_log_item_content_size"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/imgChatLogListItemPicture"
+        android:layout_width="@dimen/chat_log_item_pic_size"
+        android:layout_height="@dimen/chat_log_item_pic_size"
+        android:layout_alignParentRight="true"
+        android:background="#555" />
+    
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/imgChatLogListItemPicture"
+        android:layout_marginTop="@dimen/chat_log_item_margin_vertical"
+        android:background="#000" />
+
+</RelativeLayout>

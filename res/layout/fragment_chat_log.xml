@@ -1,0 +1,29 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_bg"
+    tools:context=".ChatLogActivity" >
+
+    <ListView
+        android:id="@+id/listViewChatLogChats"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/layoutChatLogBottomBar" />
+
+    <RelativeLayout
+        android:id="@+id/layoutChatLogBottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/bar_bottom_height"
+        android:layout_alignParentBottom="true"
+        android:background="#333"
+        android:padding="@dimen/bar_bottom_padding" >
+
+        <Button
+            android:id="@+id/btnChatLogBottomNew"
+            android:layout_width="@dimen/bar_bottom_item_size"
+            android:layout_height="@dimen/bar_bottom_item_size"
+            android:background="@drawable/style_btn_bar_new_chat" />
+    </RelativeLayout>
+
+</RelativeLayout>

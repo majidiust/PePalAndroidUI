@@ -1,0 +1,35 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:orientation="vertical"
+    android:padding="@dimen/chat_log_item_padding" >
+
+    <TextView
+        android:id="@+id/txtChatMessageListItemContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_dialog_right_blue"
+        android:maxWidth="@dimen/chat_message_item_content_width"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:gravity="right"
+        android:lineSpacingMultiplier="1.3"
+        android:text="Hi man! How are you? I hope you're doing OK!"
+        android:textColor="#000"
+        android:textSize="@dimen/chat_message_item_main_text_size" />
+    
+    <TextView
+        android:id="@+id/txtChatMessageListItemDateTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:background="@drawable/bg_bordered_grey"
+        android:layout_toLeftOf="@+id/txtChatMessageListItemContent"
+        android:layout_marginRight="@dimen/chat_message_item_margin_horizontal"
+        android:layout_centerVertical="true"
+        android:text="20:44"
+        android:textColor="#000"
+        android:textSize="@dimen/chat_message_item_time_text_size" />
+
+</RelativeLayout>

@@ -1,0 +1,80 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_bg"
+    tools:context="com.example.avcalltablet.ChatActivity" >
+
+    <ListView
+        android:id="@+id/listViewChatMessages"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/layoutChatBottomExtensionBar"
+        android:divider="@android:color/transparent"
+        android:focusable="false"
+        android:listSelector="@android:color/transparent"
+        android:scrollbars="none"
+        android:transcriptMode="alwaysScroll" />
+
+    <RelativeLayout
+        android:id="@+id/layoutChatBottomExtensionBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/bar_bottom_height"
+        android:layout_above="@+id/layoutChatBottomBar"
+        android:background="#333"
+        android:padding="@dimen/bar_bottom_padding" >
+
+        <Button
+            android:id="@+id/btnChatBottomAddContact"
+            android:layout_width="@dimen/bar_bottom_item_size"
+            android:layout_height="@dimen/bar_bottom_item_size"
+            android:background="@drawable/style_btn_bar_new_contact" />
+
+        <Button
+            android:id="@+id/btnChatBottomAddPic"
+            android:layout_width="@dimen/bar_bottom_item_size"
+            android:layout_height="@dimen/bar_bottom_item_size"
+            android:layout_marginLeft="@dimen/bar_bottom_item_margin"
+            android:layout_toRightOf="@+id/btnChatBottomAddContact"
+            android:background="@drawable/style_btn_bar_add_pic" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layoutChatBottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/bar_bottom_height"
+        android:layout_alignParentBottom="true"
+        android:background="#333"
+        android:padding="@dimen/bar_bottom_padding" >
+
+        <Button
+            android:id="@+id/btnChatBottomMore"
+            android:layout_width="@dimen/bar_bottom_item_size"
+            android:layout_height="@dimen/bar_bottom_item_size"
+            android:background="@drawable/style_btn_bar_more" />
+
+        <EditText
+            android:id="@+id/editChatBottomMessage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/bar_bottom_item_margin"
+            android:layout_toRightOf="@+id/btnChatBottomSend"
+            android:background="@drawable/edit_default"
+            android:inputType="textMultiLine" />
+
+        <Button
+            android:id="@+id/btnChatBottomSend"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/bar_bottom_item_margin"
+            android:layout_toRightOf="@+id/btnChatBottomMore"
+            android:background="@drawable/style_btn_yellow"
+            android:gravity="center"
+            android:text="@string/btn_send"
+            android:textColor="#000"
+            android:textSize="@dimen/generic_label_text_size"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,66 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_bg"
+    tools:context="top.social.pepal.ContactListActivity" >
+
+    <ListView
+        android:id="@+id/listViewContactList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/layoutContactListBottomBars" />
+
+    <LinearLayout
+        android:id="@+id/layoutContactListBottomBars"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:id="@+id/layoutContactListBottomBarExtension"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/bar_bottom_height"
+            android:background="#333"
+            android:padding="@dimen/bar_bottom_padding"
+            android:visibility="gone" >
+
+            <EditText
+                android:id="@+id/editNewContact"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/btnContactListAdd"
+                android:background="@drawable/edit_default"
+                android:hint="@string/lbl_phone"
+                android:inputType="phone" />
+
+            <Button
+                android:id="@+id/btnContactListAdd"
+                android:layout_width="@dimen/btn_add_contact_size"
+                android:layout_height="match_parent"
+                android:layout_marginRight="8dp"
+                android:layout_alignParentLeft="true"
+                android:background="@drawable/style_btn_green"
+                android:text="@string/btn_add_contact"
+                android:textSize="@dimen/btn_add_contact_text_size"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/layoutContactListBottomBar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/bar_bottom_height"
+            android:background="#333"
+            android:padding="@dimen/bar_bottom_padding" >
+
+            <Button
+                android:id="@+id/btnBarBottomNewContact"
+                android:layout_width="@dimen/bar_bottom_item_size"
+                android:layout_height="@dimen/bar_bottom_item_size"
+                android:background="@drawable/style_btn_bar_new_contact" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>

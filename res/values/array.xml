@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">    
+
+	<string-array name="QOSVideoSize">
+   		<item>SQCIF</item>
+    	<item>QCIF</item>
+    	<item>QVGA</item>
+    	<item>CIF</item>
+    	<item>HVGA</item>
+    	<item>VGA</item>
+    	<item>4CIF</item>
+    </string-array>
+    
+	<string-array name="QOSVideoSizeData">
+   		<item>tmedia_pref_video_size_sqcif</item>
+    	<item>tmedia_pref_video_size_qcif</item>
+    	<item>tmedia_pref_video_size_qvga</item>
+    	<item>tmedia_pref_video_size_cif</item>
+    	<item>tmedia_pref_video_size_hvga</item>
+    	<item>tmedia_pref_video_size_vga</item>
+    	<item>tmedia_pref_video_size_4cif</item>
+    </string-array>
+    
+	<string-array name="NetworkProtocols">
+   		<item>TCP</item>
+    	<item>UDP</item>
+    	<item>TLS</item>
+    </string-array>
+    	
+    <string-array name="NetworkProtocolsData">
+   		<item>TCP</item>
+    	<item>UDP</item>
+    	<item>TLS</item>
+    </string-array>
+    
+</resources>
