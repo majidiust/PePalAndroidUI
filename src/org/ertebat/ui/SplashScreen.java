@@ -30,7 +30,7 @@ public final class SplashScreen extends BaseActivity {
 	            } catch (Exception e) {
 	            } finally {
 
-	                startActivity(new Intent(SplashScreen.this, MainActivity.class));
+	                startActivity(new Intent(SplashScreen.this, SignInActivity.class));
 	                finish();
 	            }
 	        };

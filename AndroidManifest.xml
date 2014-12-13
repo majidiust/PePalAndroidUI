@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.ertebat"
     android:versionCode="1"
@@ -54,7 +54,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="org.ertebat.ui.SplashScreen"
+            android:name=".ui.SplashScreen"
             android:label="Ertebat"
             android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" >
             <intent-filter>
@@ -64,39 +64,56 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="org.ertebat.ui.CallActivity"
-            android:label="@string/title_activity_call" >
-        </activity>
+            android:name=".ui.CallActivity"
+            android:label="@string/title_activity_call" />
         <activity
-            android:name="org.ertebat.ui.SettingsActivity"
+            android:name=".ui.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:screenOrientation="sensorPortrait" >
-        </activity>
+            android:screenOrientation="sensorPortrait" />
         <activity
-            android:name="org.ertebat.ui.MainActivity"
+            android:name=".ui.MainActivity"
             android:label="@string/title_activity_main"
-            android:screenOrientation="sensorPortrait" >
-        </activity>
+            android:screenOrientation="sensorPortrait" />
         <activity
-            android:name="org.ertebat.ui.ChatActivity"
+            android:name=".ui.ChatActivity"
             android:label="@string/title_activity_chat"
-            android:screenOrientation="sensorPortrait" >
-        </activity>
+            android:screenOrientation="sensorPortrait" />
         <activity
-            android:name="org.ertebat.ui.DialogMultiChoiceActivity"
+            android:name=".ui.DialogMultiChoiceActivity"
             android:label="@string/title_activity_dialog_multi_choice"
             android:screenOrientation="sensorPortrait"
-            android:theme="@style/CustomDialog" >
-        </activity>
+            android:theme="@style/CustomDialog" />
+
         <service
-            android:name="org.ertebat.transport.websocket.WebsocketService"
+            android:name=".transport.websocket.WebsocketService"
             android:enabled="true"
-            android:process=":websocket"
-            android:exported="true">
+            android:exported="true"
+            android:process=":websocket" >
             <intent-filter>
                 <action android:name="org.ertebat.transport.websocket.IWebsocketService" />
             </intent-filter>
         </service>
+
+        <activity
+            android:name=".ui.UserProfileActivity"
+            android:label="@string/title_activity_user_profile"
+            android:screenOrientation="sensorPortrait" >
+        </activity>
+        <activity
+            android:name=".ui.ContactProfileActivity"
+            android:label="@string/title_activity_contact_profile"
+            android:screenOrientation="sensorPortrait" >
+        </activity>
+        <activity
+            android:name=".ui.SignInActivity"
+            android:label="@string/title_activity_sign_in"
+            android:screenOrientation="sensorPortrait" >
+        </activity>
+        <activity
+            android:name=".ui.SignUpActivity"
+            android:label="@string/title_activity_sign_up"
+            android:screenOrientation="sensorPortrait" >
+        </activity>
     </application>
 
 </manifest>

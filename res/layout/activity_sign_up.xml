@@ -1,0 +1,87 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_bg"
+    tools:context="org.ertebat.ui.SignUpActivity" >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical" >
+
+        <EditText
+            android:id="@+id/editSignUpPhoneNumber"
+            android:layout_width="@dimen/sign_in_edit_width"
+            android:layout_height="@dimen/sign_in_edit_height"
+            android:background="@drawable/edit_default"
+            android:gravity="center"
+            android:hint="@string/lbl_phone_number"
+            android:inputType="number"
+            android:maxLength="16"
+            android:singleLine="true"
+            android:textColor="#000"
+            android:textSize="@dimen/generic_edit_text_size"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editSignUpPassword"
+            android:layout_width="@dimen/sign_in_edit_width"
+            android:layout_height="@dimen/sign_in_edit_height"
+            android:layout_marginTop="@dimen/generic_item_margin"
+            android:background="@drawable/edit_default"
+            android:gravity="center"
+            android:hint="@string/lbl_password"
+            android:inputType="textPassword"
+            android:maxLength="16"
+            android:singleLine="true"
+            android:textColor="#000"
+            android:textSize="@dimen/generic_edit_text_size"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editSignUpPasswordConfirm"
+            android:layout_width="@dimen/sign_in_edit_width"
+            android:layout_height="@dimen/sign_in_edit_height"
+            android:layout_marginTop="@dimen/generic_item_margin"
+            android:background="@drawable/edit_default"
+            android:gravity="center"
+            android:hint="@string/lbl_password_confirm"
+            android:inputType="textPassword"
+            android:maxLength="16"
+            android:singleLine="true"
+            android:textColor="#000"
+            android:textSize="@dimen/generic_edit_text_size"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editSignUpEmail"
+            android:layout_width="@dimen/sign_in_edit_width"
+            android:layout_height="@dimen/sign_in_edit_height"
+            android:layout_marginTop="@dimen/generic_item_margin"
+            android:background="@drawable/edit_default"
+            android:gravity="center"
+            android:hint="@string/lbl_email"
+            android:inputType="textEmailAddress"
+            android:maxLength="16"
+            android:singleLine="true"
+            android:textColor="#000"
+            android:textSize="@dimen/generic_edit_text_size"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnSignUpEnter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/sign_in_vertical_margin"
+            android:background="@drawable/style_btn_yellow"
+            android:padding="@dimen/generic_btn_padding"
+            android:text="@string/btn_submit"
+            android:textColor="#000"
+            android:textSize="@dimen/generic_btn_text_size"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</RelativeLayout>

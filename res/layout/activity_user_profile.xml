@@ -1,0 +1,44 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_bg"
+    tools:context="org.ertebat.ui.UserProfileActivity" >
+
+    <ImageView
+        android:id="@+id/imgUserProfileThumbnail"
+        android:layout_width="@dimen/user_profile_thumbnail_size"
+        android:layout_height="@dimen/user_profile_thumbnail_size"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/user_profile_thumbnail_margin"
+        android:background="@drawable/ic_contact" />
+
+    <EditText
+        android:id="@+id/editUserProfileFirstName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imgUserProfileThumbnail"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/user_profile_item_margin_vertical"
+        android:background="@drawable/edit_default"
+        android:ems="9"
+        android:hint="@string/lbl_firstname"
+        android:maxLength="15"
+        android:textSize="@dimen/generic_edit_text_size"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/editUserProfileSurname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editUserProfileFirstName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/user_profile_item_margin_vertical"
+        android:background="@drawable/edit_default"
+        android:ems="9"
+        android:hint="@string/lbl_surname"
+        android:maxLength="15"
+        android:textSize="@dimen/generic_edit_text_size"
+        android:textStyle="bold" />
+
+</RelativeLayout>

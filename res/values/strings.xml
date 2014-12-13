@@ -5,12 +5,15 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="lbl_search">جستجو</string>
-    <string name="lbl_username">Username</string>
-    <string name="lbl_password">Password</string>
+    <string name="lbl_username">نام کاربری</string>
+    <string name="lbl_password">کلمه عبور</string>
+    <string name="lbl_password_confirm">تکرار رمز عبور</string>
+    <string name="lbl_email">آدرس ایمیل</string>
     <string name="lbl_phone">شماره تماس</string>
     <string name="lbl_name">Name</string>
-    <string name="lbl_firstname">First Name</string>
-    <string name="lbl_surname">Surname</string>
+    <string name="lbl_firstname">نام</string>
+    <string name="lbl_surname">نام خانوادگی</string>
+    <string name="lbl_phone_number">شماره تلفن</string>
     <string name="lbl_nat_id">National ID</string>
     <string name="lbl_birth_place">Birth Place</string>
     <string name="lbl_academic_degree">Academic Degree</string>
@@ -219,7 +222,9 @@
     <string name="lbl_message_datetime">Received:</string>
     <string name="lbl_message_content">Content:</string>
     <string name="lbl_precription_doctor">Doctor:</string>
-    <string name="btn_signin">Sign In</string>
+    <string name="lbl_signin_not_member">عضو نیستید؟ ایجاد حساب جدید</string>
+    <string name="lbl_signin_forgot_password">رمز عبورم را فراموش کردم</string>
+    <string name="btn_signin">ورود</string>
     <string name="btn_signout">Sign Out</string>
     <string name="btn_ok">OK</string>
     <string name="btn_cancel">Cancel</string>
@@ -240,6 +245,7 @@
     <string name="btn_stop">Stop</string>
     <string name="btn_apply">Apply</string>
     <string name="btn_accept">Accept</string>
+    <string name="btn_submit">ثبت</string>
     <string name="btn_add_contact">تأیید</string>
     <string name="btn_reject">Reject</string>
     <string name="btn_refresh">Refresh</string>
@@ -451,5 +457,8 @@
     <string name="pref_title_nework_protocol">Network Protocol</string>
     <string name="title_activity_chat">ChatActivity</string>
     <string name="title_activity_dialog_multi_choice">DialogMultiChoiceActivity</string>
+    <string name="title_activity_user_profile">UserProfileActivity</string>
+    <string name="title_activity_contact_profile">ContactProfileActivity</string>
+    <string name="title_activity_sign_up">SignUpActivity</string>
 
 </resources>

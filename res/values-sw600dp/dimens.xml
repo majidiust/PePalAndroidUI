@@ -9,17 +9,18 @@
     <dimen name="bar_bottom_padding">8dp</dimen>
     <dimen name="bar_bottom_item_size">80dp</dimen>
     <dimen name="bar_bottom_item_margin">16dp</dimen>
-    <dimen name="generic_item_margin">8dp</dimen>
+    <dimen name="generic_item_margin">16dp</dimen>
     <dimen name="generic_layout_padding">8dp</dimen>
     <dimen name="generic_list_item_padding">2dp</dimen>
-    <dimen name="generic_btn_text_size">23sp</dimen>
-    <dimen name="generic_edit_text_size">23sp</dimen>
-    <dimen name="generic_label_text_size">20sp</dimen>
+    <dimen name="generic_btn_text_size">45sp</dimen>
+    <dimen name="generic_edit_text_size">45sp</dimen>
+    <dimen name="generic_label_text_size">35sp</dimen>
     <dimen name="generic_spinner_text_size">20sp</dimen>
     <dimen name="generic_label_detail_text_size">15sp</dimen>
     <dimen name="generic_edit_label_margin">8dp</dimen>
     <dimen name="generic_btn_width">96dp</dimen>
     <dimen name="generic_btn_height">40dp</dimen>
+    <dimen name="generic_btn_padding">32dp</dimen>
     <dimen name="generic_alert_padding">8dp</dimen>
     <dimen name="generic_alert_margin_vertical">8dp</dimen>
     <dimen name="generic_alert_message_width">288dp</dimen>
@@ -43,6 +44,7 @@
     <dimen name="chat_message_item_time_text_size">17sp</dimen>
     <dimen name="chat_message_item_picture_width">480dp</dimen>
     <dimen name="chat_message_item_picture_width_reduced">416dp</dimen>
+    <dimen name="contact_profile_button_size">96dp</dimen>
     <dimen name="btn_add_contact_size">160dp</dimen>
     <dimen name="btn_add_contact_text_size">30sp</dimen>
     <dimen name="measurement_btn_width">192dp</dimen>
@@ -87,7 +89,13 @@
     <dimen name="about_value_width">304sp</dimen>
     <dimen name="about_value_margin">16sp</dimen>
     <dimen name="tab_title_text_size">25sp</dimen>
+    <dimen name="sign_in_edit_width">512dp</dimen>
+    <dimen name="sign_in_edit_height">128dp</dimen>
+    <dimen name="sign_in_vertical_margin">32dp</dimen>
     <dimen name="splash_width">312dp</dimen>
     <dimen name="splash_height">512dp</dimen>
+    <dimen name="user_profile_item_margin_vertical">32dp</dimen>
+    <dimen name="user_profile_thumbnail_margin">64dp</dimen>
+    <dimen name="user_profile_thumbnail_size">320dp</dimen>
 
 </resources>
