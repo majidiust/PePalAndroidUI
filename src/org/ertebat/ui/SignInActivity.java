@@ -73,7 +73,7 @@ public class SignInActivity extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				if (mEditUsername.getText().toString().equals("") || mEditPassword.getText().toString().equals("")) {
-					showAlert("لطفاً نام کاربری و رمز عبور را وارد کنید");
+					showAlert("لطفا کلمه عبور و تکرار آن را وارد نماییدو مجددا تلاش نمایید");
 					return;
 				}
 
@@ -92,7 +92,7 @@ public class SignInActivity extends BaseActivity {
 							post.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
 
 							HttpResponse response = client.execute(post);
-							if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+							if (response.getStatusLine().getStatusCode() == HttpStatus.SC_ACCEPTED) {
 								BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 								String line = "";
 								while ((line = rd.readLine()) != null) {
@@ -110,7 +110,7 @@ public class SignInActivity extends BaseActivity {
 									}								
 								}
 							} else {
-								showAlert("نام کاربری یا رمز عبور صحیح نیست");
+								showAlert("ظ†ط§ظ… ع©ط§ط±ط¨ط±غŒ غŒط§ ط±ظ…ط² ط¹ط¨ظˆط± طµط­غŒط­ ظ†غŒط³طھ");
 							}
 
 						} catch (Exception ex) {
