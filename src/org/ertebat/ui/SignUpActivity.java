@@ -55,13 +55,13 @@ public class SignUpActivity extends BaseActivity {
 						mEditPassword.getText().toString().equals("") ||
 						mEditPasswordConfirm.getText().toString().equals("") ||
 						mEditEmail.getText().toString().equals("")) {
-					showAlert("لطفاً اطلاعات را بطور کامل وارد کنید");
+					showAlert("ظ„ط·ظپط§ظ‹ ط§ط·ظ„ط§ط¹ط§طھ ط±ط§ ط¨ط·ظˆط± ع©ط§ظ…ظ„ ظˆط§ط±ط¯ ع©ظ†غŒط¯");
 					return;
 				}
 
 				// Check if the two password entries do not match
 				if (!mEditPassword.getText().toString().equals(mEditPasswordConfirm.getText().toString())) {
-					showAlert("دو رمز عبور متفاوت وارد شده است");
+					showAlert("ط¯ظˆ ط±ظ…ط² ط¹ط¨ظˆط± ظ…طھظپط§ظˆطھ ظˆط§ط±ط¯ ط´ط¯ظ‡ ط§ط³طھ");
 					return;
 				}
 
@@ -70,7 +70,7 @@ public class SignUpActivity extends BaseActivity {
 					@Override
 					public void run() {
 						HttpClient client = new DefaultHttpClient();
-						HttpPost post = new HttpPost("http://13x17.org/api/signup");
+						HttpPost post = new HttpPost(RestAPIAddress.getSignUp());
 
 						try {
 							List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
@@ -86,7 +86,7 @@ public class SignUpActivity extends BaseActivity {
 								while ((line = rd.readLine()) != null) {
 									JSONObject json = new JSONObject(line);
 									if (json.getString("message").contains("successfully")) {
-										showAlert("ثبت نام با موفقیت انجام شد.");
+										showAlert("ثبت نام شما با موفقیت انجام شد.");
 									} else {
 										Log.d("Http", line);
 									}								

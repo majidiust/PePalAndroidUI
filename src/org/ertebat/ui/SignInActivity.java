@@ -82,8 +82,9 @@ public class SignInActivity extends BaseActivity {
 					@Override
 					public void run() {
 						HttpClient client = new DefaultHttpClient();
-						HttpPost post = new HttpPost("http://13x17.org/api/signin");
-
+						Log.d(TAG, RestAPIAddress.getSignIn());
+						HttpPost post = new HttpPost(RestAPIAddress.getSignIn());
+							
 						try {
 							List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 							nameValuePairs.add(new BasicNameValuePair("username", mEditUsername.getText().toString()));
@@ -98,11 +99,9 @@ public class SignInActivity extends BaseActivity {
 									JSONObject json = new JSONObject(line);
 									String token = json.optString("token", "");
 									if (!token.equals("")) {
-//										mConnectionToken = token;
-//										Log.d(TAG, "Sign In was successful. Token = " + mConnectionToken);
-//										
-//										mUsername = mEditUsername.getText().toString();
-										
+										m_currentUserProfile.m_token = token;
+										Log.d(TAG, "Sign In was successful. Token = " + m_currentUserProfile.m_token);
+										m_currentUserProfile.m_userName = mEditUsername.getText().toString();
 										finish();
 										Intent intent = new Intent(This, MainActivity.class);
 										startActivity(intent);
@@ -118,11 +117,11 @@ public class SignInActivity extends BaseActivity {
 							Log.d(TAG, ex.getMessage());
 						}
 					}
-				});//.start();
+				}).start();
 				
-				finish();
-				Intent intent = new Intent(This, MainActivity.class);
-				startActivity(intent);
+//				finish();
+//				Intent intent = new Intent(This, MainActivity.class);
+//				startActivity(intent);
 			}
 		});
 	}

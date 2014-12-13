@@ -55,6 +55,7 @@ public class BaseActivity extends FragmentActivity {
 	protected Handler mHandler;
 	protected FragmentDialogResultListener mFragmentDialogListener;
 	protected String TAG = "BaseActivity";
+	protected String RestServer = "http://localhost:4000/";
 
 	//Websocket service
 	protected Intent mWebsocketIntent;
@@ -119,6 +120,7 @@ public class BaseActivity extends FragmentActivity {
 	};
 
 	protected static int mLastCommand = 0;
+	protected static Profile m_currentUserProfile;
 
 	// TODO: @Majid, load the contacts into this list and use it anywhere you need. I have used it for adding a contact to a chat
 	protected static List<ContactSummary> mContacts;
@@ -150,6 +152,8 @@ public class BaseActivity extends FragmentActivity {
 		contact.ContactName = "Mehdi";
 		contact.ContactPhone = "6366";
 		mContacts.add(contact);
+		
+		m_currentUserProfile = new Profile();
 	}
 
 	@Override
