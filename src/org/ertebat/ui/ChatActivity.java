@@ -16,6 +16,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -109,7 +110,13 @@ public class ChatActivity extends BaseActivity {
 			public void onClick(View v) {
 				if (!mEditMessageContent.getText().toString().equals("")) {
 					// TODO: @Majid, send the message via web socket here
-					showAlert("Hello!");
+					showAlert("Hello Majid!");
+					try {
+						mWebsocketService.connectToHost("ws://192.168.1.5:1337");
+					} catch (RemoteException e) {
+						Log.d(TAG, e.getMessage());
+						showAlert(e.getMessage());
+					}
 				}
 			}
 		});
