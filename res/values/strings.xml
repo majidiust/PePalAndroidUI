@@ -224,6 +224,7 @@
     <string name="lbl_precription_doctor">Doctor:</string>
     <string name="lbl_signin_not_member">عضو نیستید؟ ایجاد حساب جدید</string>
     <string name="lbl_signin_forgot_password">رمز عبورم را فراموش کردم</string>
+    <string name="lbl_password_recovery_resend">رمز را دریافت نکردید؟</string>
     <string name="btn_signin">ورود</string>
     <string name="btn_signout">Sign Out</string>
     <string name="btn_ok">OK</string>
@@ -329,6 +330,8 @@
     <string name="btn_net_address_dhcp">DHCP</string>
     <string name="btn_net_address_static">Static</string>
     <string name="btn_password_apply">Static</string>
+    <string name="btn_password_recovery_send">ارسال رمز عبور</string>
+    <string name="btn_resend">ارسال مجدد</string>
     <string name="btn_visits_viewdetails">View Details</string>
     <string name="btn_visits_viewprescriptions">View Prescriptions</string>
     <string name="btn_visit_basic">Basic Information</string>
@@ -460,5 +463,6 @@
     <string name="title_activity_user_profile">UserProfileActivity</string>
     <string name="title_activity_contact_profile">ContactProfileActivity</string>
     <string name="title_activity_sign_up">SignUpActivity</string>
+    <string name="title_activity_password_recovery">PasswordRecoveryActivity</string>
 
 </resources>

@@ -56,8 +56,8 @@ public class SignInActivity extends BaseActivity {
 
 			@Override
 			public void onClick(View v) {
-//				Intent intent = new Intent(This, PasswordRecoveryActivity.class);
-//				startActivity(intent);
+				Intent intent = new Intent(This, PasswordRecoveryActivity.class);
+				startActivity(intent);
 			}
 		});
 
@@ -73,7 +73,7 @@ public class SignInActivity extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				if (mEditUsername.getText().toString().equals("") || mEditPassword.getText().toString().equals("")) {
-					showAlert("لطفا کلمه عبور و تکرار آن را وارد نماییدو مجددا تلاش نمایید");
+					showAlert("لطفاً نام کاربری و رمز عبور خود را وارد نمائید");
 					return;
 				}
 
@@ -110,7 +110,7 @@ public class SignInActivity extends BaseActivity {
 									}								
 								}
 							} else {
-								showAlert("ظ†ط§ظ… ع©ط§ط±ط¨ط±غŒ غŒط§ ط±ظ…ط² ط¹ط¨ظˆط± طµط­غŒط­ ظ†غŒط³طھ");
+								showAlert("ورود موفقیت آمیز نبود. لطفاً مجدداً تلاش نمائید");
 							}
 
 						} catch (Exception ex) {

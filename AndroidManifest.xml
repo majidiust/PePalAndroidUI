@@ -114,6 +114,10 @@
             android:label="@string/title_activity_sign_up"
             android:screenOrientation="sensorPortrait" >
         </activity>
+        <activity
+            android:name=".ui.PasswordRecoveryActivity"
+            android:label="@string/title_activity_password_recovery" >
+        </activity>
     </application>
 
 </manifest>

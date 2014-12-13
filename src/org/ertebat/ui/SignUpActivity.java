@@ -55,13 +55,13 @@ public class SignUpActivity extends BaseActivity {
 						mEditPassword.getText().toString().equals("") ||
 						mEditPasswordConfirm.getText().toString().equals("") ||
 						mEditEmail.getText().toString().equals("")) {
-					showAlert("ظ„ط·ظپط§ظ‹ ط§ط·ظ„ط§ط¹ط§طھ ط±ط§ ط¨ط·ظˆط± ع©ط§ظ…ظ„ ظˆط§ط±ط¯ ع©ظ†غŒط¯");
+					showAlert("لطفاً اطلاعات خود را به طور کامل وارد کنید");
 					return;
 				}
 
 				// Check if the two password entries do not match
 				if (!mEditPassword.getText().toString().equals(mEditPasswordConfirm.getText().toString())) {
-					showAlert("ط¯ظˆ ط±ظ…ط² ط¹ط¨ظˆط± ظ…طھظپط§ظˆطھ ظˆط§ط±ط¯ ط´ط¯ظ‡ ط§ط³طھ");
+					showAlert("رمز عبور دوم مطابقت ندارد");
 					return;
 				}
 
