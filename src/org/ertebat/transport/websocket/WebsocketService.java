@@ -1,7 +1,10 @@
 /**
  * 
  */
-package org.ertebat.transport.websoket;
+package org.ertebat.transport.websocket;
+
+import org.ertebat.transport.websocket.IWebsocketService;
+import org.ertebat.transport.websocket.IWebsocketServiceCallback;
 
 import de.tavendo.autobahn.WebSocketConnection;
 import android.app.Service;

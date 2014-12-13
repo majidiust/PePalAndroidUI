@@ -89,11 +89,12 @@
             android:theme="@style/CustomDialog" >
         </activity>
         <service
-            android:name="org.ertebat.transport.websoket.WebsocketService"
+            android:name="org.ertebat.transport.websocket.WebsocketService"
             android:enabled="true"
+            android:exported="true"
             android:process=".transportservice" >
             <intent-filter>
-                <action android:name="org.ertebat.transport.websoket.IWebsocketServiceCallback" />
+                <action android:name="org.ertebat.transport.websocket.IWebsocketServiceCallback" />
             </intent-filter>
         </service>
     </application>

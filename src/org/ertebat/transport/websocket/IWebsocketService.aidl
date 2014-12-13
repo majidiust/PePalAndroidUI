@@ -1,6 +1,6 @@
-package org.ertebat.transport.websoket;
+package org.ertebat.transport.websocket;
 
-import org.ertebat.transport.websoket.IWebsocketServiceCallback;
+import org.ertebat.transport.websocket.IWebsocketServiceCallback;
 
 interface IWebsocketService {
     void registerCallback(IWebsocketServiceCallback cb);

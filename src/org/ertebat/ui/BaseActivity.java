@@ -35,8 +35,8 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.ertebat.transport.websoket.IWebsocketServiceCallback;
-import org.ertebat.transport.websoket.IWebsocketService;
+import org.ertebat.transport.websocket.IWebsocketServiceCallback;
+import org.ertebat.transport.websocket.IWebsocketService;
 
 public class BaseActivity extends FragmentActivity {
 	public static final int DIALOG_MULTI_CHOICE = 1;

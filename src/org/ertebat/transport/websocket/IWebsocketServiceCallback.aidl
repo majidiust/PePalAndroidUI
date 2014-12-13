@@ -1,4 +1,4 @@
-package org.ertebat.transport.websoket;
+package org.ertebat.transport.websocket;
 
 oneway interface IWebsocketServiceCallback {
 	void debug(String msg);
