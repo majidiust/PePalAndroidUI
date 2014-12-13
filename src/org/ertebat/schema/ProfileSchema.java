@@ -1,6 +1,6 @@
-package org.ertebat.ui;
+package org.ertebat.schema;
 
-public class Profile {
+public class ProfileSchema {
 	public String m_userName;
 	public String m_token;
 	public String m_uuid;

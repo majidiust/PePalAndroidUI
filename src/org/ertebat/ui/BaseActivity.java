@@ -48,6 +48,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.ertebat.schema.Profile;
 import org.ertebat.transport.websocket.IWebsocketServiceCallback;
 import org.ertebat.transport.websocket.IWebsocketService;
 
