@@ -80,6 +80,7 @@ public class BaseActivity extends FragmentActivity {
 		@Override
 		public void debug(String msg) throws RemoteException {
 			showToast(msg);
+			Log.d("SAG", msg);
 		}
 
 		@Override
@@ -399,15 +400,6 @@ public class BaseActivity extends FragmentActivity {
 
 		if (IsTablet)
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-
-		try{
-			mWebsocketIntent = new Intent(IWebsocketService.class.getName());
-			startService(mWebsocketIntent);
-			bindService(mWebsocketIntent, mWebsocketServiceConnection, 0);
-		}
-		catch(Exception ex){
-			Log.d(TAG, ex.getMessage());
-		}
 	}
 
 	@Override
@@ -435,38 +427,6 @@ public class BaseActivity extends FragmentActivity {
 			showToast("destroy : " + ex.getMessage());
 		}
 		super.onDestroy();
-	}
-
-	@Override
-	protected void onStop() {
-		try {
-			if(mWebsocketService != null)
-			{
-				showToast("onStop");
-				mWebsocketService.unregisterCallback(mWebsocketServiceCallback);
-				unbindService(mWebsocketServiceConnection);
-			}
-		}
-		catch (Exception ex) {
-			Log.d(TAG, ex.getMessage());
-		}
-		super.onStop();
-	}
-
-	@Override
-	public void onPause() {
-		try {
-			if(mWebsocketService != null)
-			{
-				showToast("onPause");
-				mWebsocketService.unregisterCallback(mWebsocketServiceCallback);
-				unbindService(mWebsocketServiceConnection);
-			}
-		}
-		catch (Exception ex) {
-			Log.d(TAG, ex.getMessage());
-		}
-	    super.onPause();
 	}
 	
 	protected void SetCallState(NgnInviteEventTypes callState) {

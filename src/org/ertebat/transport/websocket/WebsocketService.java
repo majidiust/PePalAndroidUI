@@ -94,17 +94,44 @@ public class WebsocketService extends Service {
 							mCallbacks.finishBroadcast();
 						}
 						else if(code == 6){
+							debug(jsonObject.getString("profile"));
+							JSONObject tmpObject = new JSONObject(jsonObject.getString("profile"));
+							String firstName = "--";
+							String lastName = "--";
+							String mobile = "--";
+							String email = "--";
+							try{
+								firstName = tmpObject.getString("firstName");
+							}
+							catch(Exception ex){
+								debug(ex.getMessage());
+							}
+							try{
+								lastName = tmpObject.getString("lastName");
+							}
+							catch(Exception ex){
+								debug(ex.getMessage());
+							}
+							try{
+								mobile = tmpObject.getString("mobileNumber");
+							}
+							catch(Exception ex){
+								debug(ex.getMessage());
+							}
+							try{
+								email = tmpObject.getString("email");
+							}
+							catch(Exception ex){
+								debug(ex.getMessage());
+							}
 							int N = mCallbacks.beginBroadcast();
 							for (int i = 0; i < N; i++) {
 								try {
 									
 									mCallbacks.getBroadcastItem(i).currentProfileResult(
-											jsonObject.getString("username"), 
-											jsonObject.getString("id"), 
-											jsonObject.getString("firstName"), 
-											jsonObject.getString("lastName"),  
-											jsonObject.getString("mobileNumber"), 
-											jsonObject.getString("email"));
+											tmpObject.getString("username"), 
+											tmpObject.getString("id"), 
+											firstName, lastName, mobile, email);
 								} 
 								catch (RemoteException e) {
 									logCatDebug(e.getMessage());
@@ -143,11 +170,16 @@ public class WebsocketService extends Service {
 		@Override
 		public void registerCallback(IWebsocketServiceCallback cb)
 				throws RemoteException {
-			try{
+			try
+			{
 				if (cb != null)
-					mCallbacks.unregister(cb);
+				{
+					mCallbacks.register(cb);
+				}
+
 			}
-			catch(Exception ex){
+			catch(Exception ex)
+			{
 				logCatDebug(ex.getMessage());
 			}
 
@@ -156,17 +188,8 @@ public class WebsocketService extends Service {
 		@Override
 		public void unregisterCallback(IWebsocketServiceCallback cb)
 				throws RemoteException {
-			try
-			{
-				if (cb != null)
-				{
-					mCallbacks.register(cb);
-				}
-			}
-			catch(Exception ex)
-			{
-				logCatDebug(ex.getMessage());
-			}
+			if (cb != null)
+				mCallbacks.unregister(cb);
 		}
 
 		@Override
