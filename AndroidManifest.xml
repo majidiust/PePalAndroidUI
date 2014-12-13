@@ -91,10 +91,10 @@
         <service
             android:name="org.ertebat.transport.websocket.WebsocketService"
             android:enabled="true"
-            android:exported="true"
-            android:process=".transportservice" >
+            android:process=":websocket"
+            android:exported="true">
             <intent-filter>
-                <action android:name="org.ertebat.transport.websocket.IWebsocketServiceCallback" />
+                <action android:name="org.ertebat.transport.websocket.IWebsocketService" />
             </intent-filter>
         </service>
     </application>

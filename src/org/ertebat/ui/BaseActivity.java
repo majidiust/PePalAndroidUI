@@ -59,7 +59,7 @@ public class BaseActivity extends FragmentActivity {
 	//Websocket service
 	protected Intent mWebsocketIntent;
 	protected IWebsocketService mWebsocketService;
-	protected IWebsocketServiceCallback mDataCallback = new IWebsocketServiceCallback.Stub(){
+	protected IWebsocketServiceCallback mWebsocketServiceCallback = new IWebsocketServiceCallback.Stub(){
 
 		@Override
 		public void debug(String msg) throws RemoteException {
@@ -88,7 +88,7 @@ public class BaseActivity extends FragmentActivity {
 			Log.d(TAG, "disConnectedFromHost");
 		}
 	};
-	
+
 	protected ServiceConnection mWebsocketServiceConnection = new ServiceConnection() {
 
 		@Override
@@ -96,7 +96,8 @@ public class BaseActivity extends FragmentActivity {
 			if(mWebsocketService != null)
 			{
 				try {
-					mWebsocketService.unregisterCallback(mDataCallback);
+					mWebsocketService.unregisterCallback(mWebsocketServiceCallback);
+					Log.d(TAG, "disConnected from the web socket service");
 				} catch (RemoteException e) {
 					Log.d(TAG, e.getMessage());
 				}
@@ -108,14 +109,15 @@ public class BaseActivity extends FragmentActivity {
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			mWebsocketService = IWebsocketService.Stub.asInterface((IBinder)service);
 			try {
-				mWebsocketService.registerCallback(mDataCallback);
+				mWebsocketService.registerCallback(mWebsocketServiceCallback);
+				Log.d(TAG, "Connected to the web socket service");
 			}
 			catch (RemoteException e) {
 				Log.d(TAG, e.getMessage());
 			}
 		}
 	};
-	
+
 	protected static int mLastCommand = 0;
 
 	// TODO: @Majid, load the contacts into this list and use it anywhere you need. I have used it for adding a contact to a chat
@@ -125,25 +127,25 @@ public class BaseActivity extends FragmentActivity {
 	public static Typeface FontKoodak;
 	public static Typeface FontNazanin;
 	public static boolean IsTablet;
-	
+
 	static {
 		mContacts = new ArrayList<ContactSummary>();
-		
+
 		ContactSummary contact = new ContactSummary();
 		contact.ContactName = "Majid";
 		contact.ContactPhone = "6363";
 		mContacts.add(contact);
-		
+
 		contact = new ContactSummary();
 		contact.ContactName = "Morteza";
 		contact.ContactPhone = "6364";
 		mContacts.add(contact);
-		
+
 		contact = new ContactSummary();
 		contact.ContactName = "Sadegh";
 		contact.ContactPhone = "6365";
 		mContacts.add(contact);
-		
+
 		contact = new ContactSummary();
 		contact.ContactName = "Mehdi";
 		contact.ContactPhone = "6366";
@@ -167,10 +169,14 @@ public class BaseActivity extends FragmentActivity {
 			FontKoodak = Typeface.createFromAsset(getAssets(), "bkoodkbd.ttf");
 		if (FontNazanin == null)
 			FontNazanin = Typeface.createFromAsset(getAssets(), "bnazaninbd_0.ttf");
-		
-		mWebsocketIntent = new Intent(IWebsocketService.class.getName());
-		startService(mWebsocketIntent);
-		bindService(mWebsocketIntent, mWebsocketServiceConnection, 0);
+		try{
+			mWebsocketIntent = new Intent(IWebsocketService.class.getName());
+			startService(mWebsocketIntent);
+			bindService(mWebsocketIntent, mWebsocketServiceConnection, 0);
+		}
+		catch(Exception ex){
+			Log.d(TAG, ex.getMessage());
+		}
 	}
 
 	@Override
@@ -192,8 +198,15 @@ public class BaseActivity extends FragmentActivity {
 		//			unregisterReceiver(mSipBroadCastRecv);
 		//			mSipBroadCastRecv = null;
 		//		}
+		
 		try {
 			unregisterReceiver(mSipBroadCastRecv);
+			if(mWebsocketService != null)
+			{
+				mWebsocketService.unregisterCallback(mWebsocketServiceCallback);
+				unbindService(mWebsocketServiceConnection);
+				Log.d(TAG, "Unbind from data services");
+			}
 		}
 		catch (Exception ex) {
 			showToast(ex.getMessage());
@@ -282,7 +295,7 @@ public class BaseActivity extends FragmentActivity {
 		intent.putExtras(b);
 		startActivityForResult(intent, DIALOG_MULTI_CHOICE);
 	}
-	
+
 	protected void showFragmentMultiChoiceDialog(String[] choices, String callback, String dialogTitle) {
 		Intent intent = new Intent(this , DialogMultiChoiceActivity.class);
 		Bundle b = new Bundle();
