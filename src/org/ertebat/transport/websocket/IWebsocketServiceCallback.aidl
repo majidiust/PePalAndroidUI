@@ -9,4 +9,5 @@ oneway interface IWebsocketServiceCallback {
 	void authorizationRequest();
 	void authorized();
 	void currentProfileResult(String username, String userId, String firstName, String lastName, String mobile, String email);
+	void friendAdded(String userName, String id, String status);
 }

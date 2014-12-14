@@ -3,8 +3,12 @@
  */
 package org.ertebat.transport.websocket;
 
+import java.util.Vector;
+
+import org.ertebat.schema.FriendSchema;
 import org.ertebat.transport.websocket.IWebsocketService;
 import org.ertebat.transport.websocket.IWebsocketServiceCallback;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import de.tavendo.autobahn.WebSocketConnection;
@@ -127,11 +131,62 @@ public class WebsocketService extends Service {
 							int N = mCallbacks.beginBroadcast();
 							for (int i = 0; i < N; i++) {
 								try {
-									
+
 									mCallbacks.getBroadcastItem(i).currentProfileResult(
 											tmpObject.getString("username"), 
 											tmpObject.getString("id"), 
 											firstName, lastName, mobile, email);
+								} 
+								catch (RemoteException e) {
+									logCatDebug(e.getMessage());
+								}
+							}
+							mCallbacks.finishBroadcast();
+						}
+						else if(code == 9){
+							try{
+								JSONArray friends = jsonObject.getJSONArray("friends");
+								//debug(jsonObject.getString("friends"));
+								Vector<FriendSchema> listOfFriends = new Vector<FriendSchema>();
+								for(int i = 0 ; i < friends.length() ; i++){
+									JSONObject obj = friends.getJSONObject(i);
+									String id ,userName, status;
+									id = obj.getString("friendId");
+									userName = obj.getString("friendUsername");
+									status = obj.getString("status");
+									listOfFriends.add(new FriendSchema(id, userName, status));
+								}
+								
+								for(int j = 0 ; j < listOfFriends.size() ; j++){
+									FriendSchema fs = (FriendSchema) listOfFriends.get(j);
+									int N = mCallbacks.beginBroadcast();
+									for (int i = 0; i < N; i++) {
+										try {
+
+											mCallbacks.getBroadcastItem(i).friendAdded(fs.m_friendUserName, fs.m_friendId, fs.m_state);
+										} 
+										catch (RemoteException e) {
+											logCatDebug(e.getMessage());
+										}
+									}
+									mCallbacks.finishBroadcast();
+								}
+							}
+							catch(Exception ex){
+								debug(ex.getMessage());
+							}
+						}
+						else if(code == 8){
+							JSONObject tmpObject = new JSONObject(jsonObject.getString("friend"));
+							String id ,userName, status;
+							id = tmpObject.getString("friendId");
+							userName = tmpObject.getString("friendUsername");
+							status = tmpObject.getString("status");
+							int N = mCallbacks.beginBroadcast();
+							for (int i = 0; i < N; i++) {
+								try {
+
+									mCallbacks.getBroadcastItem(i).friendAdded(userName, id, status);
 								} 
 								catch (RemoteException e) {
 									logCatDebug(e.getMessage());
@@ -271,7 +326,7 @@ public class WebsocketService extends Service {
 		@Override
 		public void addFriendToList(String username) throws RemoteException {
 			try{
-			    String cmd = "{\"requestCode\" : \"6\", \"message\": \"AddUserToFriend\", \"username\" : \"" + username + "\"}";
+				String cmd = "{\"requestCode\" : \"6\", \"message\": \"AddUserToFriend\", \"username\" : \"" + username + "\"}";
 				mConnection.sendTextMessage(cmd);
 			}
 			catch(Exception ex){
@@ -282,7 +337,7 @@ public class WebsocketService extends Service {
 		@Override
 		public void createGroupRoom(String roomName) throws RemoteException {
 			try{
-			    String cmd = "{\"requestCode\" : \"9\", \"message\": \"CreateGroupRoom\", \"roomName\" : \"" + roomName + "\"}";
+				String cmd = "{\"requestCode\" : \"9\", \"message\": \"CreateGroupRoom\", \"roomName\" : \"" + roomName + "\"}";
 				mConnection.sendTextMessage(cmd);
 			}
 			catch(Exception ex){
@@ -294,7 +349,7 @@ public class WebsocketService extends Service {
 		public void AddMemberToGroup(String roomId, String memberId)
 				throws RemoteException {
 			try{
-			    String cmd = "{\"requestCode\" : \"10\", \"message\": \"AddMemberToGroup\", \"roomId\" : \"" + roomId + ",\"memberId\" : \"" + memberId + "\"}";
+				String cmd = "{\"requestCode\" : \"10\", \"message\": \"AddMemberToGroup\", \"roomId\" : \"" + roomId + ",\"memberId\" : \"" + memberId + "\"}";
 				mConnection.sendTextMessage(cmd);
 			}
 			catch(Exception ex){
@@ -305,7 +360,7 @@ public class WebsocketService extends Service {
 		@Override
 		public void GetGroupMembers(String roomId) throws RemoteException {
 			try{
-			    String cmd = "{\"requestCode\" : \"11\", \"message\": \"GetGroupMembers\", \"roomId\" : \"" + roomId + "\"}";
+				String cmd = "{\"requestCode\" : \"11\", \"message\": \"GetGroupMembers\", \"roomId\" : \"" + roomId + "\"}";
 				mConnection.sendTextMessage(cmd);
 			}
 			catch(Exception ex){
@@ -317,7 +372,7 @@ public class WebsocketService extends Service {
 		public void sendTextMessageToRoom(String message, String to)
 				throws RemoteException {
 			try{
-		        String cmd = "{\"requestCode\" : \"1\", \"message\":\"SendTextMessage\", \"messageContent\":\"" + message + "\", \"publishType\":\"Now\", \"roomId\":\"" + to + "\"}";
+				String cmd = "{\"requestCode\" : \"1\", \"message\":\"SendTextMessage\", \"messageContent\":\"" + message + "\", \"publishType\":\"Now\", \"roomId\":\"" + to + "\"}";
 				mConnection.sendTextMessage(cmd);
 			}
 			catch(Exception ex){
@@ -347,8 +402,8 @@ public class WebsocketService extends Service {
 
 	protected void logCatDebug(String txt){
 		try{
-		//	if(false)
-	//		Log.d(TAG, txt);
+			//	if(false)
+			//		Log.d(TAG, txt);
 		}
 		catch(Exception ex){
 

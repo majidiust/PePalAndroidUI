@@ -48,7 +48,9 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.ertebat.schema.FriendSchema;
 import org.ertebat.schema.ProfileSchema;
+import org.ertebat.schema.SessionStore;
 import org.ertebat.schema.SettingSchema;
 import org.ertebat.transport.websocket.IWebsocketServiceCallback;
 import org.ertebat.transport.websocket.IWebsocketService;
@@ -118,6 +120,7 @@ public class BaseActivity extends FragmentActivity {
 			// TODO Auto-generated method stub
 			showToast("Authorizaed and try to get current profile");
 			mWebsocketService.getMyProfile();
+			mWebsocketService.getFriendList();
 		}
 
 		@Override
@@ -125,6 +128,12 @@ public class BaseActivity extends FragmentActivity {
 				String firstName, String lastName, String mobile, String email)
 						throws RemoteException {
 			showToast(username + " : " + userId);
+		}
+
+		@Override
+		public void friendAdded(String userName, String id, String status)
+				throws RemoteException {
+			mSessionStore.addFriend(new FriendSchema(id, userName, status));
 		}
 	};
 
@@ -160,6 +169,7 @@ public class BaseActivity extends FragmentActivity {
 	protected static int mLastCommand = 0;
 	protected static ProfileSchema mCurrentUserProfile;
 	protected static SettingSchema mSettings = new SettingSchema();
+	protected static SessionStore mSessionStore = new SessionStore();
 	// TODO: @Majid, load the contacts into this list and use it anywhere you need. I have used it for adding a contact to a chat
 	protected static List<ContactSummary> mContacts;
 
