@@ -49,13 +49,16 @@ import android.util.Log;
 import android.widget.Toast;
 
 import org.ertebat.schema.FriendSchema;
+import org.ertebat.schema.MessageSchema;
 import org.ertebat.schema.ProfileSchema;
+import org.ertebat.schema.RoomSchema;
 import org.ertebat.schema.SessionStore;
 import org.ertebat.schema.SettingSchema;
+import org.ertebat.transport.ITransport;
 import org.ertebat.transport.websocket.IWebsocketServiceCallback;
 import org.ertebat.transport.websocket.IWebsocketService;
 
-public class BaseActivity extends FragmentActivity {
+public class BaseActivity extends FragmentActivity implements ITransport {
 	public static final int DIALOG_MULTI_CHOICE = 1;
 	public static final int DIALOG_TAKE_PICTURE = 2;
 	public static final int DIALOG_PICTURE_GALLERY = 3;
@@ -73,7 +76,8 @@ public class BaseActivity extends FragmentActivity {
 	protected FragmentDialogResultListener mFragmentDialogListener;
 	protected String TAG = "BaseActivity";
 	protected String RestServer = "http://localhost:4000/";	
-
+	protected ITransport mTransportCallback;
+	
 	//Websocket service
 	protected Intent mWebsocketIntent;
 	protected IWebsocketService mWebsocketService;
@@ -95,17 +99,20 @@ public class BaseActivity extends FragmentActivity {
 		public void newMessage(String from, String roomId, String date,
 				String time, String content) throws RemoteException {
 			Log.d(TAG, from + " : " + roomId + " : " + date + " : " + time + " : " + content);
+			mTransportCallback.onNewMessage(new MessageSchema(from, roomId, date, time, content));
 		}
 
 		@Override
 		public void connectedToHost(String uri) throws RemoteException {
 			showToast("Connected to the host web socket server : " + uri);
 			mWebsocketService.sendTextMessageToRoom("--", "--");
+			mTransportCallback.onConnectedToServer();
 		}
 
 		@Override
 		public void disConnectedFromHost() throws RemoteException {
 			showToast("disconnected from the host");
+			mTransportCallback.onDisconnctedFromServer();
 		}
 
 		@Override
@@ -128,12 +135,15 @@ public class BaseActivity extends FragmentActivity {
 				String firstName, String lastName, String mobile, String email)
 						throws RemoteException {
 			showToast(username + " : " + userId);
+			mTransportCallback.onCurrentProfileResult(username, userId, firstName, lastName, mobile, email);
 		}
 
 		@Override
 		public void friendAdded(String userName, String id, String status)
 				throws RemoteException {
-			mSessionStore.addFriend(new FriendSchema(id, userName, status));
+			FriendSchema fs = new FriendSchema(id, userName, status);
+			mSessionStore.addFriend(fs);
+			mTransportCallback.onNewFriend(fs);
 		}
 	};
 
@@ -210,7 +220,8 @@ public class BaseActivity extends FragmentActivity {
 
 		mHandler = new Handler();
 		This = this;
-
+		mTransportCallback = this;
+		
 		int screenLayout = getResources().getConfiguration().screenLayout;
 		screenLayout &= Configuration.SCREENLAYOUT_SIZE_MASK;
 		IsTablet = screenLayout == Configuration.SCREENLAYOUT_SIZE_XLARGE;
@@ -571,5 +582,42 @@ public class BaseActivity extends FragmentActivity {
 		}
 
 		return names;
+	}
+
+	@Override
+	public void onConnectedToServer() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDisconnctedFromServer() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onNewFriend(FriendSchema fs) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onNewRoom(RoomSchema rs) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onNewMessage(MessageSchema ms) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCurrentProfileResult(String username, String userId,
+			String firstName, String lastName, String mobile, String email) {
+		// TODO Auto-generated method stub
+		
 	}
 }
