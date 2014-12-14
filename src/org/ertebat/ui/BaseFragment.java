@@ -5,6 +5,10 @@ import org.doubango.ngn.services.INgnHistoryService;
 import org.doubango.ngn.services.INgnSipService;
 import org.doubango.ngn.sip.NgnAVSession;
 import org.doubango.ngn.utils.NgnConfigurationEntry;
+import org.ertebat.schema.FriendSchema;
+import org.ertebat.schema.MessageSchema;
+import org.ertebat.schema.RoomSchema;
+import org.ertebat.transport.ITransport;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -26,7 +30,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class BaseFragment extends Fragment {
+public class BaseFragment extends Fragment implements ITransport {
 
 	protected static String LOG_TAG = "";
 	protected BroadcastReceiver mSipBroadCastRecv;
@@ -54,6 +58,8 @@ public class BaseFragment extends Fragment {
 
 		if (mSharedPref == null)
 			mSharedPref = PreferenceManager.getDefaultSharedPreferences(This);
+		
+		((BaseActivity)getActivity()).setFragmentTransportCallback(this);
 
 		return null;
 	}
@@ -176,5 +182,42 @@ public class BaseFragment extends Fragment {
 		if (mDialog != null) {
 			mDialog.dismiss();
 		}
+	}
+
+	@Override
+	public void onConnectedToServer() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDisconnctedFromServer() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onNewFriend(FriendSchema fs) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onNewRoom(RoomSchema rs) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onNewMessage(MessageSchema ms) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCurrentProfileResult(String username, String userId,
+			String firstName, String lastName, String mobile, String email) {
+		// TODO Auto-generated method stub
+		
 	}
 }

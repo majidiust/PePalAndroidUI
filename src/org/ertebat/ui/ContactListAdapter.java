@@ -1,10 +1,7 @@
 package org.ertebat.ui;
 import java.util.List;
-import java.util.Map;
 
 import org.ertebat.R;
-import org.ertebat.R.id;
-import org.ertebat.R.layout;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -15,14 +12,14 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class ContactListAdapter extends ArrayAdapter<Map<String, String>> {
+public class ContactListAdapter extends ArrayAdapter<ContactSummary> {
 	private final String TAG = "ContactListAdapter";
 
 	private Context mContext;
-	private List<Map<String, String>> mDataSet;
+	private List<ContactSummary> mDataSet;
 	private Typeface mFont;
 
-	public ContactListAdapter(Context context, List<Map<String, String>> objects) {
+	public ContactListAdapter(Context context, List<ContactSummary> objects) {
 		super(context, R.id.txtContactListItemTitle, objects);
 
 		mContext = context;
@@ -36,8 +33,8 @@ public class ContactListAdapter extends ArrayAdapter<Map<String, String>> {
 		LayoutInflater inflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View itemView = inflater.inflate(R.layout.data_list_item_contact_list, null, true);
 		
-		String title = mDataSet.get(position).get("title");
-		String status = mDataSet.get(position).get("status");
+		String title = mDataSet.get(position).ContactPhone;
+		String status = mDataSet.get(position).ContactName;
 //		String picAddress = mDataSet.get(position).get("picAddress");
 		
 		Log.d(TAG, title + ": " + status);

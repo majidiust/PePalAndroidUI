@@ -77,6 +77,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 	protected String TAG = "BaseActivity";
 	protected String RestServer = "http://localhost:4000/";	
 	protected ITransport mTransportCallback;
+	protected ITransport mTransportFragmentCallback = null;
 	
 	//Websocket service
 	protected Intent mWebsocketIntent;
@@ -574,6 +575,10 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 		mFragmentDialogListener = listener;
 	}
 
+	public void setFragmentTransportCallback(ITransport callback) {
+		mTransportFragmentCallback = callback;
+	}
+
 	public static String[] getContactNames() {
 		String[] names = new String[mContacts.size()];
 
@@ -586,38 +591,38 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 
 	@Override
 	public void onConnectedToServer() {
-		// TODO Auto-generated method stub
-		
+		if (mTransportFragmentCallback != null)
+			mTransportCallback.onConnectedToServer();
 	}
 
 	@Override
 	public void onDisconnctedFromServer() {
-		// TODO Auto-generated method stub
-		
+		if (mTransportFragmentCallback != null)
+			mTransportCallback.onDisconnctedFromServer();
 	}
 
 	@Override
 	public void onNewFriend(FriendSchema fs) {
-		// TODO Auto-generated method stub
-		
+		if (mTransportFragmentCallback != null)
+			mTransportCallback.onNewFriend(fs);
 	}
 
 	@Override
 	public void onNewRoom(RoomSchema rs) {
-		// TODO Auto-generated method stub
-		
+		if (mTransportFragmentCallback != null)
+			mTransportCallback.onNewRoom(rs);
 	}
 
 	@Override
 	public void onNewMessage(MessageSchema ms) {
-		// TODO Auto-generated method stub
-		
+		if (mTransportFragmentCallback != null)
+			mTransportCallback.onNewMessage(ms);
 	}
 
 	@Override
 	public void onCurrentProfileResult(String username, String userId,
 			String firstName, String lastName, String mobile, String email) {
-		// TODO Auto-generated method stub
-		
+		if (mTransportFragmentCallback != null)
+			mTransportCallback.onCurrentProfileResult(username, userId, firstName, lastName, mobile, email);
 	}
 }

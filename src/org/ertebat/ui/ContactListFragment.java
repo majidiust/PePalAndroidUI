@@ -1,14 +1,10 @@
 package org.ertebat.ui;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.ertebat.R;
-import org.ertebat.R.id;
-import org.ertebat.R.layout;
+import org.ertebat.schema.FriendSchema;
 
-import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +25,7 @@ public class ContactListFragment extends BaseFragment {
 	private RelativeLayout mLayoutBottomBarExtension;
 
 	private ListView mListViewContacts;
-	private List<Map<String, String>> mDataSet;
+	private List<ContactSummary> mDataSet;
 	private ContactListAdapter mAdapter;
 
 	@Override
@@ -75,7 +71,7 @@ public class ContactListFragment extends BaseFragment {
 
 		mListViewContacts = (ListView)rootView.findViewById(R.id.listViewContactList);
 
-		mDataSet = new ArrayList<Map<String,String>>();
+		mDataSet = new ArrayList<ContactSummary>();
 		mAdapter = new ContactListAdapter(This, mDataSet);
 		mListViewContacts.setAdapter(mAdapter);
 		mListViewContacts.setOnItemClickListener(new OnItemClickListener() {
@@ -86,65 +82,15 @@ public class ContactListFragment extends BaseFragment {
 			}
 		});
 
-//		loadSampleData();
-
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				loadData();
-			}
-		}).start();
-
 		return rootView;
-	}	
+	}
 
-	private void loadData() {
-		// TODO: @Majid, get list of friends
-
-		//		HttpClient client = new DefaultHttpClient();
-		//		HttpGet get = new HttpGet("http://13x17.org/api/userList");
-		//
-		//		try {
-		//			get.addHeader("token", mConnectionToken);
-		//			HttpResponse response = client.execute(get);
-		//
-		//			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-		//				BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-		//				String jsonString = "";
-		//				String line = "";
-		//				while ((line = rd.readLine()) != null) {
-		//					jsonString += line;							
-		//				}
-		//
-		//				Log.d(TAG, jsonString);
-		//
-		//				mDataSet.clear();
-		//
-		//				JSONArray array = new JSONArray(jsonString);
-		//				for (int i = 0; i < array.length(); i++) {
-		//					JSONObject json = array.getJSONObject(i);
-		//
-		//					Map<String, String> map = new HashMap<String, String>();
-		//					map.put("id", json.getString("id"));
-		//					map.put("title", json.optString("username", ""));
-		//					map.put("status", "");
-		//					map.put("picAddress", "");
-		//					mDataSet.add(map);
-		//				}
-		//
-		//				mHandler.post(new Runnable() {
-		//
-		//					@Override
-		//					public void run() {
-		//						mAdapter.notifyDataSetChanged();
-		//					}
-		//				});				
-		//			} else {
-		//				Log.d(TAG, "Failed: " + response.getStatusLine().getReasonPhrase());
-		//			}
-		//		} catch (Exception ex) {
-		//			Log.d(TAG, ex.getMessage());
-		//		}
+	@Override
+	public void onNewFriend(FriendSchema fs) {
+		ContactSummary contact = new ContactSummary();
+		contact.ContactPhone = fs.m_friendUserName;
+		contact.ContactName = "";
+		mDataSet.add(contact);
+		mAdapter.notifyDataSetChanged();
 	}
 }
