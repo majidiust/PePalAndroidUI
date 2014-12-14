@@ -64,9 +64,12 @@ public class ContactListFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				// TODO: @Majid, this is for UI test. You should instead add the person to contact list
-				Intent intent = new Intent(This, ChatActivity.class);
-				startActivity(intent);
+				if(mEditNewContact.getText().toString() == ""){
+					showAlert("لطفا شماره تلفن کاربر مورد نظر را وارد نمایید.");
+				}
+				else{
+					
+				}
 			}
 		});
 
