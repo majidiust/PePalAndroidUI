@@ -201,12 +201,13 @@ public class WebsocketService extends Service {
 								String from = tmpObject.getString("from");
 								String content = tmpObject.getString("content");
 								String date = tmpObject.getString("date");
+								String messageId = tmpObject.getString("id");
 								debug(payload);
 								int N = mCallbacks.beginBroadcast();
 								for (int i = 0; i < N; i++) {
 									try {
 
-										mCallbacks.getBroadcastItem(i).newMessage(from, roomId, date, date, content);
+										mCallbacks.getBroadcastItem(i).newMessage(messageId, from, roomId, date, date, content);
 									} 
 									catch (RemoteException e) {
 										logCatDebug(e.getMessage());

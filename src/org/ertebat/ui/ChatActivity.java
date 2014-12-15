@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Vector;
 
 import org.ertebat.R;
 import org.ertebat.R.dimen;
@@ -11,6 +12,7 @@ import org.ertebat.R.drawable;
 import org.ertebat.R.id;
 import org.ertebat.R.layout;
 import org.ertebat.schema.MessageSchema;
+import org.ertebat.schema.RoomSchema;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -67,8 +69,8 @@ public class ChatActivity extends BaseActivity {
 		mListViewMessages.setAdapter(mAdapter);
 
 		// TODO: @Majid, this is for UI test. remember to remove it later
-	//	loadSampleData();
-
+		//	loadSampleData();
+		loadHistory();
 		////////////////////////////////////////Bottom Bar Setup	////////////////////////////////////
 
 		setupBottomBar();
@@ -193,6 +195,28 @@ public class ChatActivity extends BaseActivity {
 		mAdapter.notifyDataSetChanged();
 	}
 
+	protected void loadHistory(){
+		try{
+			RoomSchema room = mSessionStore.getRoomById(mRoomId);
+			if(room != null){
+				Vector<MessageSchema> messages = room.getAllMessages();
+				for(int i = 0 ; i < messages.size() ; i++ ){
+					ChatMessage message = new ChatMessage();
+					message.IsSenderSelf = false;
+					if(messages.get(i).mFrom.compareTo(mCurrentUserProfile.m_userName) == 0){
+						message.IsSenderSelf = true;
+					}
+					message.MessageText = messages.get(i).mBody;
+					message.ReceptionTime = messages.get(i).mDate;
+					message.Type = ChatMessageType.Text;
+					addMessage(message);
+				}
+			}
+		}
+		catch(Exception ex){
+			showToast(ex.getMessage());
+		}
+	}
 	protected void checkMessages() {
 		// TODO: @Majid, check for messages here
 	}
@@ -243,27 +267,25 @@ public class ChatActivity extends BaseActivity {
 			break;
 		}		
 	}
-	
+
 	@Override
 	public void onNewMessage(final MessageSchema ms) {
-		//super.onNewMessage(ms);
-		showToast("Try to show Message");
-		mHandler.post(new Runnable() {
-			
-			@Override
-			public void run() {
-				ChatMessage message = new ChatMessage();
-				message.IsSenderSelf = false;
-				showToast(mCurrentUserProfile.m_userName + " : " + ms.mFrom);
-				if(ms.mFrom.compareTo(mCurrentUserProfile.m_userName) == 0){
-					message.IsSenderSelf = true;
+		if(ms.mTo.compareTo(mRoomId) == 0){
+			mHandler.post(new Runnable() {
+				@Override
+				public void run() {
+					ChatMessage message = new ChatMessage();
+					message.IsSenderSelf = false;
+					showToast(mCurrentUserProfile.m_userName + " : " + ms.mFrom);
+					if(ms.mFrom.compareTo(mCurrentUserProfile.m_userName) == 0){
+						message.IsSenderSelf = true;
+					}
+					message.MessageText = ms.mBody;
+					message.ReceptionTime = ms.mDate;
+					message.Type = ChatMessageType.Text;
+					addMessage(message);
 				}
-				message.MessageText = ms.mBody;
-				message.ReceptionTime = ms.mDate;
-				message.Type = ChatMessageType.Text;
-				addMessage(message);
-			}
-		});
-		
+			});
+		}
 	}
 }

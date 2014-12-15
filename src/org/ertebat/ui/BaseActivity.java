@@ -109,10 +109,10 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 		}
 
 		@Override
-		public void newMessage(String from, String roomId, String date,
+		public void newMessage(String messageId, String from, String roomId, String date,
 				String time, String content) throws RemoteException {
 			if(mTransportCallback != null)
-				mTransportCallback.onNewMessage(new MessageSchema(from, roomId, date, time, content));
+				mTransportCallback.onNewMessage(new MessageSchema(messageId, from, roomId, date, time, content));
 		}
 
 		@Override
@@ -772,7 +772,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 
 	@Override
 	public void onNewMessage(MessageSchema ms) {
-		
+		mSessionStore.addMessageToRoom(ms);
 		if (mTransportFragmentCallback != null)
 			mTransportFragmentCallback.onNewMessage(ms);
 	}
