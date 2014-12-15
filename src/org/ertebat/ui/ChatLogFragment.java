@@ -74,7 +74,7 @@ public class ChatLogFragment extends BaseFragment implements FragmentDialogResul
 
 		mBtnSettings = (Button)rootView.findViewById(R.id.btnChatLogBottomSettings);
 		mBtnSettings.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(This, UserProfileActivity.class);
@@ -109,6 +109,16 @@ public class ChatLogFragment extends BaseFragment implements FragmentDialogResul
 
 	private void onChatContactSelected(int selectedIndex) {
 		// TODO: @Majid, start a chat with the selected contact here
+	}
+
+	public void increaseMessageNotifications(int index) {
+		mChats.get(index).NewMessageCount++;
+		mAdapter.notifyDataSetChanged();
+	}
+
+	public void increaseMessageNotifications(int index, int count) {
+		mChats.get(index).NewMessageCount += count;
+		mAdapter.notifyDataSetChanged();
 	}
 
 	@Override

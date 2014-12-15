@@ -53,10 +53,12 @@ public class ChatLogAdapter extends ArrayAdapter<ChatSummary> {
 		text.setTypeface(mFont);
 		text.setText(summary);
 
+		text = (TextView)itemView.findViewById(R.id.txtChatLogListItemCount);
+		text.setTypeface(mFont);
 		if (count > 0) {
-			text = (TextView)itemView.findViewById(R.id.txtChatLogListItemCount);
-			text.setTypeface(mFont);
 			text.setText(String.valueOf(count));
+		} else {
+			text.setVisibility(View.GONE);
 		}
 
 		//	TODO: Put a proper picture on the ImageView
