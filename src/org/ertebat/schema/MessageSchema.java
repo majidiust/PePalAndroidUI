@@ -1,16 +1,19 @@
 package org.ertebat.schema;
 
 public class MessageSchema {
-    public String m_from;
-    public String m_to;
-    public String m_date;
-    public String m_time;
-    public String m_body;
+    public String mFrom;
+    public String mTo;
+    public String mDate;
+    public String mTime;
+    public String mBody;
+    public String mId;
+    public boolean mIsRead;
     public MessageSchema(String from, String to, String date, String time, String body){
-    	m_from = from;
-    	m_to = to;
-    	m_date = date;
-    	m_time = time;
-    	m_body = body;
+    	mFrom = from;
+    	mTo = to;
+    	mDate = date;
+    	mTime = time;
+    	mBody = body;
+    	mIsRead = false;
     }
 }

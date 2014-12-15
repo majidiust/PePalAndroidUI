@@ -6,6 +6,7 @@ package org.ertebat.transport.websocket;
 import java.util.Vector;
 
 import org.ertebat.schema.FriendSchema;
+import org.ertebat.schema.RoomSchema;
 import org.ertebat.transport.websocket.IWebsocketService;
 import org.ertebat.transport.websocket.IWebsocketServiceCallback;
 import org.json.JSONArray;
@@ -71,7 +72,7 @@ public class WebsocketService extends Service {
 					logCatDebug("Got echo: " + payload);
 					try{
 						JSONObject jsonObject = new JSONObject(payload);
-						debug(payload);
+						//debug(payload);
 						int code = jsonObject.getInt("code");
 						if(code == 100){
 							int N = mCallbacks.beginBroadcast();
@@ -98,7 +99,6 @@ public class WebsocketService extends Service {
 							mCallbacks.finishBroadcast();
 						}
 						else if(code == 6){
-							debug(jsonObject.getString("profile"));
 							JSONObject tmpObject = new JSONObject(jsonObject.getString("profile"));
 							String firstName = "--";
 							String lastName = "--";
@@ -108,25 +108,25 @@ public class WebsocketService extends Service {
 								firstName = tmpObject.getString("firstName");
 							}
 							catch(Exception ex){
-								debug(ex.getMessage());
+								logCatDebug(ex.getMessage());
 							}
 							try{
 								lastName = tmpObject.getString("lastName");
 							}
 							catch(Exception ex){
-								debug(ex.getMessage());
+								logCatDebug(ex.getMessage());
 							}
 							try{
 								mobile = tmpObject.getString("mobileNumber");
 							}
 							catch(Exception ex){
-								debug(ex.getMessage());
+								logCatDebug(ex.getMessage());
 							}
 							try{
 								email = tmpObject.getString("email");
 							}
 							catch(Exception ex){
-								debug(ex.getMessage());
+								logCatDebug(ex.getMessage());
 							}
 							int N = mCallbacks.beginBroadcast();
 							for (int i = 0; i < N; i++) {
@@ -193,6 +193,61 @@ public class WebsocketService extends Service {
 								}
 							}
 							mCallbacks.finishBroadcast();
+						}
+						else if(code == 103){
+							try{
+								JSONObject tmpObject = new JSONObject(jsonObject.getString("value"));
+								String roomId = tmpObject.getString("roomId");
+								String from = tmpObject.getString("from");
+								String content = tmpObject.getString("content");
+								String date = tmpObject.getString("date");
+								debug(payload);
+								int N = mCallbacks.beginBroadcast();
+								for (int i = 0; i < N; i++) {
+									try {
+
+										mCallbacks.getBroadcastItem(i).newMessage(from, roomId, date, date, content);
+									} 
+									catch (RemoteException e) {
+										logCatDebug(e.getMessage());
+									}
+								}
+								mCallbacks.finishBroadcast();
+							}
+							catch(Exception ex){
+								logCatDebug(ex.getMessage());
+							}
+						}
+						else if(code == 5){
+//							try{
+//								JSONArray rooms = jsonObject.getJSONArray("rooms");
+//								//debug(jsonObject.getString("friends"));
+//								Vector<RoomSchema> listOfRooms = new Vector<RoomSchema>();
+//								for(int i = 0 ; i < rooms.length() ; i++){
+//									JSONObject obj = rooms.getJSONObject(i);
+//									String id ,userName, status;
+//									id = obj.getString("_id");
+//									listOfRooms.add(new RoomSchema(id, "room", "", "", "I"));
+//								}
+//								
+//								for(int j = 0 ; j < listOfRooms.size() ; j++){
+//									RoomSchema fs = (RoomSchema) listOfRooms.get(j);
+//									int N = mCallbacks.beginBroadcast();
+//									for (int i = 0; i < N; i++) {
+//										try {
+//
+//											mCallbacks.getBroadcastItem(i).friendAdded(fs.m_friendUserName, fs.m_friendId, fs.m_state);
+//										} 
+//										catch (RemoteException e) {
+//											logCatDebug(e.getMessage());
+//										}
+//									}
+//									mCallbacks.finishBroadcast();
+//								}
+//							}
+//							catch(Exception ex){
+//								debug(ex.getMessage());
+//							}
 						}
 					}
 					catch(Exception ex){

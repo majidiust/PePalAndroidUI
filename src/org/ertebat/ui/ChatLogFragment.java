@@ -28,6 +28,7 @@ public class ChatLogFragment extends BaseFragment implements FragmentDialogResul
 	private List<ChatSummary> mChats;
 	private ChatLogAdapter mAdapter;
 	private Button mBtnNewChat;
+	private Button mBtnSettings;
 	private BaseActivity mBase;
 
 	@Override
@@ -71,6 +72,16 @@ public class ChatLogFragment extends BaseFragment implements FragmentDialogResul
 			}
 		});
 
+		mBtnSettings = (Button)rootView.findViewById(R.id.btnChatLogBottomSettings);
+		mBtnSettings.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(This, UserProfileActivity.class);
+				startActivity(intent);
+			}
+		});
+
 		loadSampleData();
 
 		return rootView;
@@ -99,7 +110,6 @@ public class ChatLogFragment extends BaseFragment implements FragmentDialogResul
 	private void onChatContactSelected(int selectedIndex) {
 		// TODO: @Majid, start a chat with the selected contact here
 	}
-
 
 	@Override
 	public void onMultichoiceDialogResult(String dialogTitle, String callback,

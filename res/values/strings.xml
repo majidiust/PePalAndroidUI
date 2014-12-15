@@ -246,7 +246,7 @@
     <string name="btn_stop">Stop</string>
     <string name="btn_apply">Apply</string>
     <string name="btn_accept">Accept</string>
-    <string name="btn_submit">ثبت</string>
+    <string name="btn_submit">ثبت اطلاعات</string>
     <string name="btn_add_contact">تأیید</string>
     <string name="btn_reject">Reject</string>
     <string name="btn_refresh">Refresh</string>

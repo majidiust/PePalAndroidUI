@@ -1,11 +1,21 @@
 package org.ertebat.ui;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.ertebat.R;
 import org.ertebat.schema.FriendSchema;
+import org.json.JSONObject;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +29,7 @@ import android.widget.RelativeLayout;
 
 public class ContactListFragment extends BaseFragment {
 
+	protected static final String TAG = "ContactListFragment";
 	private Button mBtnNewContact;
 	private Button mBtnAddContact;
 	private EditText mEditNewContact;
@@ -64,7 +75,12 @@ public class ContactListFragment extends BaseFragment {
 					showAlert("لطفا شماره تلفن کاربر مورد نظر را وارد نمایید.");
 				}
 				else{
-					
+					try{
+						addFriend(mEditNewContact.getText().toString());
+					}
+					catch(Exception ex){
+						Log.d(TAG, ex.getMessage());
+					}
 				}
 			}
 		});
@@ -78,19 +94,118 @@ public class ContactListFragment extends BaseFragment {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-				// TODO: @Majid, create a room and then start the ChatActivity				
+				Intent intent = new Intent(This, ContactProfileActivity.class);
+				Bundle b = new Bundle();
+				b.putString("userId", mDataSet.get(position).ContactId);
+				b.putString("phone", mDataSet.get(position).ContactPhone);
+				b.putString("name", mDataSet.get(position).ContactName);
+				intent.putExtras(b);
+				startActivity(intent);
 			}
 		});
 
 		return rootView;
 	}
+	
+	protected  void addFriend(final String userName){
+		try{
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					HttpClient client = new DefaultHttpClient();
+					HttpGet getProfileRest = new HttpGet(RestAPIAddress.getAddFriend() + "/" + userName);	
+					getProfileRest.addHeader("token", BaseActivity.mCurrentUserProfile.m_token);
+					try {
+						HttpResponse response = client.execute(getProfileRest);
+						if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+							BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+							String line = "";
+							String jsonString = "";
+							while ((line = rd.readLine()) != null) {
+								jsonString += line;						
+							}
+							JSONObject json = new JSONObject(jsonString);
+							JSONObject fri = new JSONObject(json.getString("friend"));
+							String friendId = "--";
+							String friendUsername = "--";
+							String state = "--";
+							String code = "--";
+							try{
+								friendId = fri.getString("friendId");
+							}
+							catch(Exception ex){
+								Log.d(TAG, ex.getMessage());
+							}
+							try{
+								state = fri.getString("state");
+							}
+							catch(Exception ex){
+								Log.d(TAG, ex.getMessage());
+							}
+							try{
+								friendUsername = fri.getString("friendUsername");
+							}
+							catch(Exception ex){
+								Log.d(TAG, ex.getMessage());
+							}
+							try{
+								code = json.getString("code");
+							}
+							catch(Exception ex){
+								Log.d(TAG, ex.getMessage());
+							}
+							
+							ShowToast(code);
+							
+							if(code.compareTo("-19") == 0){
+								showAlert("کاربری بااین نام وجود ندارد");
+							}
+							else{
+								onNewFriend(new FriendSchema(friendId, friendUsername, state));
+								mBaseActivity.getFriendList();
+								mHandler.post(new Runnable() {
+									@Override
+									public void run() {
+										mLayoutBottomBarExtension.setVisibility(View.GONE);
+									}
+								});
+							}
+						} 
+					} catch (Exception ex) {
+						Log.d(TAG, ex.getMessage());
+					}
+				}
+			}).start();
+		}
+		catch(Exception ex){
+			Log.d(TAG, ex.getMessage());
+		}
+	}
 
 	@Override
-	public void onNewFriend(FriendSchema fs) {
-		ContactSummary contact = new ContactSummary();
-		contact.ContactPhone = fs.m_friendUserName;
-		contact.ContactName = "";
-		mDataSet.add(contact);
-		mAdapter.notifyDataSetChanged();
+	public void onNewFriend(final FriendSchema fs) {
+		mHandler.post(new Runnable() {
+
+			@Override
+			public void run() {
+				if(!isExistContact(fs.m_friendUserName)){
+					ContactSummary contact = new ContactSummary();
+					contact.ContactPhone = fs.m_friendUserName;
+					contact.ContactName = fs.m_friendUserName;
+					contact.ContactId = fs.m_friendId;
+					mDataSet.add(contact);
+					mAdapter.notifyDataSetChanged();
+				}
+			}
+		});
+	}
+
+	public boolean isExistContact(String username){
+		for(ContactSummary cs : mDataSet){
+			if(cs.ContactPhone.compareTo(username) == 0){
+				return true;
+			}
+		}
+		return false;
 	}
 }

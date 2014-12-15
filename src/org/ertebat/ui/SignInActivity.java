@@ -32,7 +32,7 @@ public class SignInActivity extends BaseActivity {
 	private EditText mEditUsername;
 	private EditText mEditPassword;
 	private Button mBtnSignIn;
-
+	private static int mCount = 0 ;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -96,23 +96,26 @@ public class SignInActivity extends BaseActivity {
 							if (response.getStatusLine().getStatusCode() == HttpStatus.SC_ACCEPTED) {
 								BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 								String line = "";
+								String jsonString = "";
 								while ((line = rd.readLine()) != null) {
-									JSONObject json = new JSONObject(line);
-									String token = json.optString("token", "");
-									if (!token.equals("")) {
-										//@1: save token
-										mCurrentUserProfile.m_token = token;
-										Log.d(TAG, "Sign In was successful. Token = " + mCurrentUserProfile.m_token);
-										mCurrentUserProfile.m_userName = mEditUsername.getText().toString();
-										//@2: Connect to web socket server
-										mWebsocketService.connectToHost(mSettings.mWebSocketUrl);
-										finish();
-										Intent intent = new Intent(This, MainActivity.class);
-										startActivity(intent);
-									} else {
-										Log.d("Http", line);
-									}								
+									jsonString += line;						
 								}
+								
+								showToast("REST : " + (mCount++));
+								
+								JSONObject json = new JSONObject(jsonString);
+								String token = json.optString("token", "");
+								if (!token.equals("")) {
+									//@1: save token
+									mCurrentUserProfile.m_token = token;
+									Log.d(TAG, "Sign In was successful. Token = " + mCurrentUserProfile.m_token);
+									mCurrentUserProfile.m_userName = mEditUsername.getText().toString();
+									//@2: Connect to web socket server
+									mWebsocketService.disConnectFromHost();
+									mWebsocketService.connectToHost(mSettings.mWebSocketUrl);
+								} else {
+									Log.d("Http", line);
+								}		
 							} else {
 								showAlert("ورود موفقیت آمیز نبود. لطفاً مجدداً تلاش نمائید");
 							}
@@ -122,6 +125,20 @@ public class SignInActivity extends BaseActivity {
 						}
 					}
 				}).start();
+			}
+		});
+	}
+	
+	@Override
+	public void onConnectedToServer() {
+		super.onConnectedToServer();
+		showToast("hello : " + (mCount++));
+		mHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				finish();
+				Intent intent = new Intent(This, MainActivity.class);
+				startActivity(intent);
 			}
 		});
 	}

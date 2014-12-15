@@ -10,20 +10,30 @@
         android:layout_width="@dimen/user_profile_thumbnail_size"
         android:layout_height="@dimen/user_profile_thumbnail_size"
         android:layout_centerHorizontal="true"
-        android:layout_margin="@dimen/user_profile_thumbnail_margin"
+        android:layout_marginTop="@dimen/user_profile_item_margin_vertical"
         android:background="@drawable/ic_contact" />
 
-    <EditText
-        android:id="@+id/editUserProfileFirstName"
+    <TextView
+        android:id="@+id/txtUserProfilePhoneNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/imgUserProfileThumbnail"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/user_profile_item_margin_vertical"
+        android:text="09125300765"
+        android:textColor="#fff"
+        android:textSize="@dimen/generic_label_text_size" />
+
+    <EditText
+        android:id="@+id/editUserProfileFirstName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtUserProfilePhoneNumber"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/user_profile_item_margin_vertical"
         android:background="@drawable/edit_default"
         android:ems="9"
         android:hint="@string/lbl_firstname"
-        android:maxLength="15"
         android:textSize="@dimen/generic_edit_text_size"
         android:textStyle="bold" />
 
@@ -37,8 +47,35 @@
         android:background="@drawable/edit_default"
         android:ems="9"
         android:hint="@string/lbl_surname"
-        android:maxLength="15"
         android:textSize="@dimen/generic_edit_text_size"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/editUserProfileEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editUserProfileSurname"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/user_profile_item_margin_vertical"
+        android:background="@drawable/edit_default"
+        android:ems="9"
+        android:hint="@string/lbl_email"
+        android:inputType="textEmailAddress"
+        android:textSize="@dimen/generic_edit_text_size"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btnUserProfileSubmit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editUserProfileEmail"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/sign_in_vertical_margin"
+        android:background="@drawable/style_btn_yellow"
+        android:padding="@dimen/generic_btn_padding"
+        android:text="@string/btn_submit"
+        android:textColor="#000"
+        android:textSize="@dimen/generic_label_text_size"
         android:textStyle="bold" />
 
 </RelativeLayout>

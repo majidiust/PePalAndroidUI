@@ -10,6 +10,7 @@ import org.ertebat.R.dimen;
 import org.ertebat.R.drawable;
 import org.ertebat.R.id;
 import org.ertebat.R.layout;
+import org.ertebat.schema.MessageSchema;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -37,6 +38,8 @@ public class ChatActivity extends BaseActivity {
 	private Button mBtnBarAddContact;
 	private EditText mEditMessageContent;
 	private RelativeLayout mLayoutBarExtension;
+	private String mRoomId = "";
+	private String mOtherParty = "";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +49,14 @@ public class ChatActivity extends BaseActivity {
 		getActionBar().hide();
 		TAG = "ChatActivity";
 
+		try{
+			Bundle b = getIntent().getExtras();
+			mRoomId = b.getString("roomId");
+			mOtherParty = b.getString("otherParty");
+		}
+		catch(Exception ex){
+			Log.d(TAG, ex.getMessage());
+		}
 		////////////////////////////////////////ListView Setup	////////////////////////////////////////
 
 		mListViewMessages = (ListView)findViewById(R.id.listViewChatMessages);
@@ -56,7 +67,7 @@ public class ChatActivity extends BaseActivity {
 		mListViewMessages.setAdapter(mAdapter);
 
 		// TODO: @Majid, this is for UI test. remember to remove it later
-		loadSampleData();
+	//	loadSampleData();
 
 		////////////////////////////////////////Bottom Bar Setup	////////////////////////////////////
 
@@ -95,7 +106,7 @@ public class ChatActivity extends BaseActivity {
 
 	private void onAdditionalContactSelected(int selectedIndex) {
 		String selectedContactId = mContacts.get(selectedIndex).ContactPhone;
-		
+
 		// TODO: @Majid, do whatever you want to the ID
 	}
 
@@ -109,9 +120,11 @@ public class ChatActivity extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				if (!mEditMessageContent.getText().toString().equals("")) {
-					// TODO: @Majid, send the message via web socket here
-					showAlert("Hello Majid!");
-					
+					try {
+						mWebsocketService.sendTextMessageToRoom(mEditMessageContent.getText().toString(), mRoomId);
+					} catch (Exception e) {
+						logCatDebug(e.getMessage());
+					}
 				}
 			}
 		});
@@ -143,7 +156,7 @@ public class ChatActivity extends BaseActivity {
 
 		mBtnBarAddContact = (Button)findViewById(R.id.btnChatBottomAddContact); 
 		mBtnBarAddContact.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {				
 				showMultiChoiceDialog(getContactNames(), "onAdditionalContactSelected", "دعوت از دوستان");
@@ -229,5 +242,28 @@ public class ChatActivity extends BaseActivity {
 			super.onActivityResult(requestCode, resultCode, data);
 			break;
 		}		
+	}
+	
+	@Override
+	public void onNewMessage(final MessageSchema ms) {
+		//super.onNewMessage(ms);
+		showToast("Try to show Message");
+		mHandler.post(new Runnable() {
+			
+			@Override
+			public void run() {
+				ChatMessage message = new ChatMessage();
+				message.IsSenderSelf = false;
+				showToast(mCurrentUserProfile.m_userName + " : " + ms.mFrom);
+				if(ms.mFrom.compareTo(mCurrentUserProfile.m_userName) == 0){
+					message.IsSenderSelf = true;
+				}
+				message.MessageText = ms.mBody;
+				message.ReceptionTime = ms.mDate;
+				message.Type = ChatMessageType.Text;
+				addMessage(message);
+			}
+		});
+		
 	}
 }

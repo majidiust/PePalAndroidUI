@@ -24,6 +24,13 @@
             android:layout_width="@dimen/bar_bottom_item_size"
             android:layout_height="@dimen/bar_bottom_item_size"
             android:background="@drawable/style_btn_bar_new_chat" />
+        
+        <Button
+            android:id="@+id/btnChatLogBottomSettings"
+            android:layout_width="@dimen/bar_bottom_item_size"
+            android:layout_height="@dimen/bar_bottom_item_size"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/style_btn_bar_settings" />
     </RelativeLayout>
 
 </RelativeLayout>

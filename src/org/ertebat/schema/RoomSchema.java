@@ -1,14 +1,51 @@
 package org.ertebat.schema;
 
+import java.util.Vector;
+
 public class RoomSchema {
-	    public String m_name;
-	    public String m_desc;
-	    public String m_logo;
-	    public String m_type;
-	    public RoomSchema(String name, String desc, String logo, String type){
-	    	m_name = name;
-	    	m_type = type;
-	    	m_logo = logo;
-	    	m_desc = desc;
+	    public String mName;
+	    public String mDesc;
+	    public String mLogo;
+	    public String mType;
+	    public String mId;
+	    public Vector<MessageSchema> mMessages = new Vector<MessageSchema>();
+	    public RoomSchema(String id, String name, String desc, String logo, String type){
+	    	mName = name;
+	    	mType = type;
+	    	mLogo = logo;
+	    	mDesc = desc;
+	    	mId = id;
+	    }
+	    public void addMessage(MessageSchema ms){
+//	    	boolean find = false;
+//	    	for(int i = 0 ; i < mMessages.size() ; i++){
+//	    		if(mMessages.get(i).mId.compareTo(ms.mId) == 0){
+//	    			find = true;
+//	    			break;
+//	    		}
+//	    	}
+//	    	if(!find)
+	    		mMessages.add(ms);
+	    }
+	    public Vector<MessageSchema> getUnReadMessagesAndReadThem(){
+	    	Vector<MessageSchema> result = new Vector<MessageSchema>();
+	    	for(int i = 0 ; i < mMessages.size(); i++){
+	    		if(mMessages.get(i).mIsRead == false)
+	    		{
+	    			mMessages.get(i).mIsRead = true;
+	    			result.add(mMessages.get(i));
+	    		}
+	    	}
+	    	return result;
+	    }
+	    public Vector<MessageSchema> getUnReadMessages(){
+	    	Vector<MessageSchema> result = new Vector<MessageSchema>();
+	    	for(int i = 0 ; i < mMessages.size(); i++){
+	    		if(mMessages.get(i).mIsRead == false)
+	    		{
+	    			result.add(mMessages.get(i));
+	    		}
+	    	}
+	    	return result;
 	    }
 }

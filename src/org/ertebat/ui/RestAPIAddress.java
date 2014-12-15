@@ -3,7 +3,7 @@ package org.ertebat.ui;
 import java.security.InvalidParameterException;
 
 public class RestAPIAddress {
-	public static String baseAddress = "http://192.168.43.209:4000/";
+	public static String baseAddress = "http://192.168.10.129:4000/";
 	public static String getSignIn(){
 		return baseAddress + "api/signin";
 	}
@@ -30,5 +30,20 @@ public class RestAPIAddress {
 	}
 	public static String getMyProfile(){
 		return baseAddress + "api/getCurrentProfile";
+	}
+	public static String getUserProfile(){
+		return baseAddress + "api/getUserProfile";
+	}
+	public static String getSaveProfile(){
+		return baseAddress + "api/saveProfile";
+	}
+	public static String getUploadProfilePicture(){
+		return baseAddress + "api/uploadProfilePic";
+	}
+	public static String getAddFriend(){
+		return baseAddress + "api/addFriendToTheList";
+	}
+	public static String getCreateIndividualRoom(){
+		return baseAddress + "chat/createIndividualRoom";
 	}
 }

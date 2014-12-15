@@ -25,4 +25,17 @@ public class SessionStore {
 			mFriendList.add(fs);
 		}
 	}
+	public void addRoom(RoomSchema rs){
+		boolean find = false;
+		for(int i = 0 ; i < mRooms.size(); i++){
+			RoomSchema tmpRS = (RoomSchema)mRooms.get(i);
+			if(tmpRS.mId.compareTo(rs.mId) == 0){
+				find = true;
+				break;
+			}
+			if(!find){
+				mRooms.add(rs);
+			}
+		}
+	}
 }

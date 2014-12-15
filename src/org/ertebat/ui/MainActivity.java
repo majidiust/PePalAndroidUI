@@ -13,7 +13,6 @@ import org.doubango.ngn.sip.NgnMsrpSession;
 import org.doubango.ngn.utils.NgnDateTimeUtils;
 import org.doubango.ngn.utils.NgnStringUtils;
 import org.doubango.ngn.utils.NgnUriUtils;
-
 import org.ertebat.R;
 import org.ertebat.R.id;
 import org.ertebat.R.layout;
@@ -28,6 +27,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -47,6 +47,7 @@ public class MainActivity extends BaseActivity {
 	private ActionBar mActionBar;
 	private String[] tabNames = { "ê› êÊ Â«", "œÊ” «‰", " „«”" };
 
+	private static int mCount = 0 ;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -112,15 +113,34 @@ public class MainActivity extends BaseActivity {
 		for (String tabName : tabNames) {
 			LayoutInflater inflator = LayoutInflater.from(this);
 			View view = inflator.inflate(R.layout.tab_title, null);
-			
-			TextView text = (TextView)view.findViewById(R.id.txtTabTitle);
-            text.setText(tabName);
-            text.setTypeface(FontKoodak);
 
-            mActionBar.addTab(mActionBar.newTab()
-                    .setCustomView(view)
-                    .setTabListener(mTabListener));
+			TextView text = (TextView)view.findViewById(R.id.txtTabTitle);
+			text.setText(tabName);
+			text.setTypeface(FontKoodak);
+
+			mActionBar.addTab(mActionBar.newTab()
+					.setCustomView(view)
+					.setTabListener(mTabListener));
 		}
+		if(mCount == 0){
+			mCount++;
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						Thread.sleep(1000);
+						mWebsocketService.getMyProfile();
+						mWebsocketService.getFriendList();
+						mWebsocketService.getIndividualRooms();
+						mWebsocketService.getGroupRooms();
+						showToast("getFriendList : " + mCount);
+					} catch (Exception e) {
+						Log.d(TAG, e.getMessage());
+					}
+				}
+			}).start();
+		}
+
 	}
 
 	public static class HomePagerAdapter extends FragmentPagerAdapter {
@@ -149,5 +169,13 @@ public class MainActivity extends BaseActivity {
 				return null;
 			}
 		}
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		if (IsTablet)
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
 	}
 }

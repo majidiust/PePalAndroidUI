@@ -6,9 +6,22 @@ package org.ertebat.ui;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.doubango.ngn.NgnEngine;
 import org.doubango.ngn.events.NgnEventArgs;
 import org.doubango.ngn.events.NgnInviteEventArgs;
@@ -41,6 +54,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -57,6 +71,7 @@ import org.ertebat.schema.SettingSchema;
 import org.ertebat.transport.ITransport;
 import org.ertebat.transport.websocket.IWebsocketServiceCallback;
 import org.ertebat.transport.websocket.IWebsocketService;
+import org.json.JSONObject;
 
 public class BaseActivity extends FragmentActivity implements ITransport {
 	public static final int DIALOG_MULTI_CHOICE = 1;
@@ -64,6 +79,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 	public static final int DIALOG_PICTURE_GALLERY = 3;
 	public static final int DIALOG_FRAGMENT_MULTI_CHOICE = 4;
 
+	protected Vector<ITransport> mTransportListeners = new Vector<ITransport>();
 	protected BroadcastReceiver mSipBroadCastRecv;
 	protected NgnEngine mEngine;
 	protected INgnConfigurationService mConfigurationService;
@@ -74,20 +90,16 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 	protected Context This = null;
 	protected Handler mHandler;
 	protected FragmentDialogResultListener mFragmentDialogListener;
-	protected String TAG = "BaseActivity";
-	protected String RestServer = "http://localhost:4000/";	
+	protected static String TAG = "BaseActivity";
 	protected ITransport mTransportCallback;
 	protected ITransport mTransportFragmentCallback = null;
-	
-	//Websocket service
 	protected Intent mWebsocketIntent;
 	protected IWebsocketService mWebsocketService;
 	protected IWebsocketServiceCallback mWebsocketServiceCallback = new IWebsocketServiceCallback.Stub(){
 
 		@Override
 		public void debug(String msg) throws RemoteException {
-			showToast(msg);
-			Log.d("SAG", msg);
+			//showToast(msg);
 		}
 
 		@Override
@@ -99,52 +111,64 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 		@Override
 		public void newMessage(String from, String roomId, String date,
 				String time, String content) throws RemoteException {
-			Log.d(TAG, from + " : " + roomId + " : " + date + " : " + time + " : " + content);
-			mTransportCallback.onNewMessage(new MessageSchema(from, roomId, date, time, content));
+			if(mTransportCallback != null)
+				mTransportCallback.onNewMessage(new MessageSchema(from, roomId, date, time, content));
 		}
 
 		@Override
 		public void connectedToHost(String uri) throws RemoteException {
-			showToast("Connected to the host web socket server : " + uri);
 			mWebsocketService.sendTextMessageToRoom("--", "--");
-			mTransportCallback.onConnectedToServer();
+			if(mTransportCallback != null)
+				mTransportCallback.onConnectedToServer();
 		}
 
 		@Override
 		public void disConnectedFromHost() throws RemoteException {
-			showToast("disconnected from the host");
-			mTransportCallback.onDisconnctedFromServer();
+			if(mTransportCallback != null)
+				mTransportCallback.onDisconnctedFromServer();
 		}
 
 		@Override
 		public void authorizationRequest() throws RemoteException {
-			//Authorize to the web socket server
-			showToast("Authorization request");
 			mWebsocketService.authorizeToWs(mCurrentUserProfile.m_token);
+			if(mTransportCallback != null)
+				mTransportCallback.onAuthorizationRequest();
 		}
 
 		@Override
 		public void authorized() throws RemoteException {
-			// TODO Auto-generated method stub
-			showToast("Authorizaed and try to get current profile");
-			mWebsocketService.getMyProfile();
-			mWebsocketService.getFriendList();
+			if(mTransportCallback != null)
+				mTransportCallback.onAuthorized();
 		}
 
 		@Override
 		public void currentProfileResult(String username, String userId,
 				String firstName, String lastName, String mobile, String email)
 						throws RemoteException {
-			showToast(username + " : " + userId);
-			mTransportCallback.onCurrentProfileResult(username, userId, firstName, lastName, mobile, email);
+			if(mTransportCallback != null)
+				mTransportCallback.onCurrentProfileResult(username, userId, firstName, lastName, mobile, email);
 		}
 
 		@Override
 		public void friendAdded(String userName, String id, String status)
 				throws RemoteException {
-			FriendSchema fs = new FriendSchema(id, userName, status);
-			mSessionStore.addFriend(fs);
-			mTransportCallback.onNewFriend(fs);
+			try{
+				FriendSchema fs = new FriendSchema(id, userName, status);
+				if(mSessionStore != null)
+					mSessionStore.addFriend(fs);
+				if(mTransportCallback != null)
+					mTransportCallback.onNewFriend(fs);
+			}
+			catch(Exception ex){
+				showToast(ex.getMessage());
+			}
+		}
+
+		@Override
+		public void roomAdded(String roomName, String roomId, String roomDesc,
+				String roomLogo, String roomType) throws RemoteException {
+			// TODO Auto-generated method stub
+			
 		}
 	};
 
@@ -222,7 +246,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 		mHandler = new Handler();
 		This = this;
 		mTransportCallback = this;
-		
+
 		int screenLayout = getResources().getConfiguration().screenLayout;
 		screenLayout &= Configuration.SCREENLAYOUT_SIZE_MASK;
 		IsTablet = screenLayout == Configuration.SCREENLAYOUT_SIZE_XLARGE;
@@ -417,14 +441,6 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 	}
 
 	@Override
-	protected void onResume() {
-		super.onResume();
-
-		if (IsTablet)
-			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-	}
-
-	@Override
 	protected void onDestroy() {
 		//		if(mEngine.isStarted()){
 		//			if(mSipService.isRegistered())
@@ -450,7 +466,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 		}
 		super.onDestroy();
 	}
-	
+
 	protected void SetCallState(NgnInviteEventTypes callState) {
 		// TODO Auto-generated method stub
 
@@ -460,6 +476,128 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 
 	}
 
+	
+	protected void getUserProfile(final String uid){
+		try{
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					HttpClient client = new DefaultHttpClient();
+					Log.d(TAG, RestAPIAddress.getSignIn());
+					HttpGet getProfileRest = new HttpGet(RestAPIAddress.getUserProfile() + "/" + uid);	
+					getProfileRest.addHeader("token", mCurrentUserProfile.m_token);
+					try {
+						HttpResponse response = client.execute(getProfileRest);
+						if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+							BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+							String line = "";
+							String jsonString = "";
+							while ((line = rd.readLine()) != null) {
+								jsonString += line;						
+							}
+
+							JSONObject json = new JSONObject(jsonString);
+							String firstName = "--";
+							String lastName = "--";
+							String email = "--";
+							String id = "--";
+							String picUrl = "--";
+							String userName = "--";
+							try{
+								firstName = json.getString("firstName");
+							}
+							catch(Exception ex){
+								logCatDebug(ex.getMessage());
+							}
+							try{
+								lastName = json.getString("lastName");
+							}
+							catch(Exception ex){
+								logCatDebug(ex.getMessage());
+							}
+							try{
+								email = json.getString("email");
+							}
+							catch(Exception ex){
+								logCatDebug(ex.getMessage());
+							}
+							try{
+								id = json.getString("id");
+							}
+							catch(Exception ex){
+								logCatDebug(ex.getMessage());
+							}
+							try{
+								picUrl = json.getString("picUrl");
+							}
+							catch(Exception ex){
+								logCatDebug(ex.getMessage());
+							}
+							try{
+								userName = json.getString("userName");
+							}
+							catch(Exception ex){
+								logCatDebug(ex.getMessage());
+							}
+
+							if(mTransportCallback != null)
+								mTransportCallback.onUserProfile(firstName, lastName, id, userName, picUrl, email);
+						} else {
+							showAlert("سیستم قادر به دریافت اطلاعات کاربر نمی باشد.");
+						}
+
+
+
+					} catch (Exception ex) {
+						Log.d(TAG, ex.getMessage());
+					}
+				}
+			}).start();
+		}
+		catch(Exception ex){
+			logCatDebug(ex.getMessage());
+		}
+	}
+	
+	protected void saveProfile(final String uid, final String firstName, final String lastName, final String email){
+		try{
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					HttpClient client = new DefaultHttpClient();
+					Log.d(TAG, RestAPIAddress.getSignIn());
+					HttpPost post = new HttpPost(RestAPIAddress.getSaveProfile());
+
+					try {
+						List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
+						nameValuePairs.add(new BasicNameValuePair("firstName", firstName));
+						nameValuePairs.add(new BasicNameValuePair("lastName", lastName));
+						nameValuePairs.add(new BasicNameValuePair("email", email));
+						post.setHeader("token", mCurrentUserProfile.m_token);
+						post.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+						HttpResponse response = client.execute(post);
+						if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+							mCurrentUserProfile.m_firstName = firstName;
+							mCurrentUserProfile.m_lastName = lastName;
+							mCurrentUserProfile.m_email = email;
+							showAlert("پروفایل شما با موفقیت بروز شد.");
+						} else {
+							showAlert("ورود موفقیت آمیز نبود. لطفاً مجدداً تلاش نمائید");
+						}
+					} catch (Exception ex) {
+						Log.d(TAG, ex.getMessage());
+					}
+				}
+			}).start();
+		}
+		catch(Exception ex){
+			logCatDebug(ex.getMessage());
+		}
+	}
+	public static void logCatDebug(String msg){
+		Log.d(TAG, msg);
+	}
 	/**
 	 * displays a given message at the bottom of the page
 	 * @param message
@@ -579,6 +717,14 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 		mTransportFragmentCallback = callback;
 	}
 
+	public void getFriendList(){
+		try {
+			mWebsocketService.getFriendList();
+		} catch (Exception e) {
+			Log.d(TAG, e.getMessage());
+		}
+	}
+	
 	public static String[] getContactNames() {
 		String[] names = new String[mContacts.size()];
 
@@ -592,37 +738,79 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 	@Override
 	public void onConnectedToServer() {
 		if (mTransportFragmentCallback != null)
-			mTransportCallback.onConnectedToServer();
+			mTransportFragmentCallback.onConnectedToServer();
 	}
 
 	@Override
 	public void onDisconnctedFromServer() {
 		if (mTransportFragmentCallback != null)
-			mTransportCallback.onDisconnctedFromServer();
+			mTransportFragmentCallback.onDisconnctedFromServer();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(5000);
+					mWebsocketService.connectToHost(mSettings.mWebSocketUrl);
+				} catch (Exception e) {
+					Log.d(TAG, e.getMessage());
+				}
+			}
+		}).start();
 	}
 
 	@Override
 	public void onNewFriend(FriendSchema fs) {
 		if (mTransportFragmentCallback != null)
-			mTransportCallback.onNewFriend(fs);
+			mTransportFragmentCallback.onNewFriend(fs);
 	}
 
 	@Override
 	public void onNewRoom(RoomSchema rs) {
 		if (mTransportFragmentCallback != null)
-			mTransportCallback.onNewRoom(rs);
+			mTransportFragmentCallback.onNewRoom(rs);
 	}
 
 	@Override
 	public void onNewMessage(MessageSchema ms) {
+		
 		if (mTransportFragmentCallback != null)
-			mTransportCallback.onNewMessage(ms);
+			mTransportFragmentCallback.onNewMessage(ms);
 	}
 
 	@Override
 	public void onCurrentProfileResult(String username, String userId,
 			String firstName, String lastName, String mobile, String email) {
+		mCurrentUserProfile.m_uuid = userId;
+		mCurrentUserProfile.m_email = email;
+		mCurrentUserProfile.m_firstName = firstName;
+		mCurrentUserProfile.m_lastName = lastName;
 		if (mTransportFragmentCallback != null)
-			mTransportCallback.onCurrentProfileResult(username, userId, firstName, lastName, mobile, email);
+			mTransportFragmentCallback.onCurrentProfileResult(username, userId, firstName, lastName, mobile, email);
+	}
+
+	@Override
+	public void onAuthorizationRequest() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onAuthorized() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onUserProfile(String firstName, String lastName, String uid,
+			String userName, String picUrl, String email) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void roomAdded(String roomName, String roomId, String roomDesc,
+			String roomLogo, String roomType) {
+		// TODO Auto-generated method stub
+		
 	}
 }

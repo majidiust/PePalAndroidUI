@@ -77,7 +77,8 @@
         <activity
             android:name=".ui.ChatActivity"
             android:label="@string/title_activity_chat"
-            android:screenOrientation="sensorPortrait" />
+            android:screenOrientation="sensorPortrait"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.DialogMultiChoiceActivity"
             android:label="@string/title_activity_dialog_multi_choice"

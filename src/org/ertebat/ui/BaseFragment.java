@@ -8,6 +8,7 @@ import org.doubango.ngn.utils.NgnConfigurationEntry;
 import org.ertebat.schema.FriendSchema;
 import org.ertebat.schema.MessageSchema;
 import org.ertebat.schema.RoomSchema;
+import org.ertebat.schema.SessionStore;
 import org.ertebat.transport.ITransport;
 
 import android.app.Activity;
@@ -48,6 +49,7 @@ public class BaseFragment extends Fragment implements ITransport {
 	protected Handler mHandler;
 	protected ProgressDialog mDialog;
 	protected Context This = null;
+	protected BaseActivity mBaseActivity = null;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,10 +61,16 @@ public class BaseFragment extends Fragment implements ITransport {
 		if (mSharedPref == null)
 			mSharedPref = PreferenceManager.getDefaultSharedPreferences(This);
 		
+		mBaseActivity = (BaseActivity)getActivity();
 		((BaseActivity)getActivity()).setFragmentTransportCallback(this);
-
+		
+//		for(int i = 0 ; i < BaseActivity.mSessionStore.mFriendList.size() ; i++){
+//			onNewFriend(BaseActivity.mSessionStore.mFriendList.get(i));
+//		}
+		
 		return null;
 	}
+
 
 	protected void SignInNGN() {
 		// Set credentials
@@ -217,6 +225,33 @@ public class BaseFragment extends Fragment implements ITransport {
 	@Override
 	public void onCurrentProfileResult(String username, String userId,
 			String firstName, String lastName, String mobile, String email) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAuthorizationRequest() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAuthorized() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUserProfile(String firstName, String lastName, String uid,
+			String userName, String picUrl, String email) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void roomAdded(String roomName, String roomId, String roomDesc,
+			String roomLogo, String roomType) {
 		// TODO Auto-generated method stub
 		
 	}

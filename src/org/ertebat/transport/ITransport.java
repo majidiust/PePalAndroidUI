@@ -17,6 +17,9 @@ public interface ITransport {
 	public void onNewFriend(FriendSchema fs);
 	public void onNewRoom(RoomSchema rs);
 	public void onNewMessage(MessageSchema ms);
-	public void onCurrentProfileResult(String username, String userId,
-			String firstName, String lastName, String mobile, String email);
+	public void onCurrentProfileResult(String username, String userId, String firstName, String lastName, String mobile, String email);
+	public void onAuthorizationRequest();
+	public void onAuthorized();
+	public void onUserProfile(String firstName, String lastName, String uid, String userName, String picUrl, String email);
+	public void roomAdded(String roomName, String roomId, String roomDesc, String roomLogo, String roomType);
 }
