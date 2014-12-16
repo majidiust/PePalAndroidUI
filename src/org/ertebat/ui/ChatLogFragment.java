@@ -9,6 +9,7 @@ import java.util.Map;
 import org.ertebat.R;
 import org.ertebat.R.id;
 import org.ertebat.R.layout;
+import org.ertebat.schema.MessageSchema;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -24,6 +25,7 @@ import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class ChatLogFragment extends BaseFragment implements FragmentDialogResultListener {
+	private static final String TAG = "ChatLogFragment";
 	private ListView mListViewChats;
 	private List<ChatSummary> mChats;
 	private ChatLogAdapter mAdapter;
@@ -56,6 +58,7 @@ public class ChatLogFragment extends BaseFragment implements FragmentDialogResul
 			public void onItemClick(AdapterView<?> arg0, View arg1, final int position, long id) {
 
 				if (position != ListView.INVALID_POSITION) {
+					setZeroMessageNotification(position);
 					Intent intent = new Intent(This, ChatActivity.class);
 					Bundle b = new Bundle();
 					b.putString("roomId",  mChats.get(position).id);
@@ -85,7 +88,7 @@ public class ChatLogFragment extends BaseFragment implements FragmentDialogResul
 			}
 		});
 
-		//loadSampleData();
+		loadRooms();
 
 		return rootView;
 	}
@@ -121,6 +124,11 @@ public class ChatLogFragment extends BaseFragment implements FragmentDialogResul
 		mAdapter.notifyDataSetChanged();
 	}
 
+	public void setZeroMessageNotification(int index) {
+		mChats.get(index).NewMessageCount = 0;
+		mAdapter.notifyDataSetChanged();
+	}
+
 	@Override
 	public void onMultichoiceDialogResult(String dialogTitle, String callback,
 			int selectedIndex) {
@@ -135,6 +143,73 @@ public class ChatLogFragment extends BaseFragment implements FragmentDialogResul
 		}
 	}
 
+	@Override
+	public void onNewMessage(MessageSchema ms) {
+		try{
+			if(BaseActivity.mSessionStore.mCurrentRoomId == null || BaseActivity.mSessionStore.mCurrentRoomId.compareTo(ms.mTo) != 0){
+				final int location = findRoomLocationInList(ms.mTo) ;
+				if(location >= 0){
+					mHandler.post(new Runnable() {
+
+						@Override
+						public void run() {
+							increaseMessageNotifications(location);
+						}
+					});
+
+				}
+			}
+		}
+		catch(Exception ex){
+			Log.d(TAG, ex.getMessage());
+		}
+	}
+
+	private int findRoomLocationInList(String roomId){
+		int result = -1;
+		for(int i = 0 ; i < mChats.size() ; i++){
+			if(mChats.get(i).id.compareTo(roomId) == 0)
+				return i;
+		}
+		return result;
+	}
+
+	private void loadRooms(){
+		mChats.clear();
+		for(int ii = 0 ; ii < BaseActivity.mSessionStore.mRooms.size() ; ii++){
+			final String roomId = BaseActivity.mSessionStore.mRooms.get(ii).mId;
+			final String roomType = BaseActivity.mSessionStore.mRooms.get(ii).mType;
+			final String members = BaseActivity.mSessionStore.mRooms.get(ii).serializeMembers();
+			ChatSummary chat = new ChatSummary();
+			chat.Date = "1393/03/29";
+			chat.Time = "16:34";
+			chat.Summary ="";
+			chat.Title = roomId;
+			chat.id = roomId;
+			try{
+				if(roomType.compareTo("I") == 0){
+					chat.Summary += "شرکت کنندگان در جلسه : ";
+					String[] sMember = members.split(",");
+					for(int i = 0 ; i < sMember.length ; i++){
+						if(sMember[i].compareTo(BaseActivity.mCurrentUserProfile.m_uuid) != 0){
+							chat.Title = BaseActivity.mSessionStore.getUsernameById(sMember[i]);
+							chat.Summary += chat.Title;
+						}
+						else{
+							chat.Summary += BaseActivity.mCurrentUserProfile.m_userName;
+						}
+						if(i != sMember.length -1){
+							chat.Summary += " -- ";
+						}
+					}
+				}
+			}
+			catch(Exception ex){
+			}
+			mChats.add(chat);
+			mAdapter.notifyDataSetChanged();
+		}
+	}
 	@Override
 	public void onRoomAdded( final String roomName,  final String roomId, String roomDesc,
 			String roomLogo, final String roomType, final String members) {

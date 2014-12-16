@@ -15,6 +15,7 @@ public class SessionStore {
 	private static final String TAG = "SessionStore";
 	public Vector<FriendSchema> mFriendList = new Vector<FriendSchema>();
 	public Vector<RoomSchema> mRooms = new Vector<RoomSchema>();
+	public String mCurrentRoomId = null;
 	public void addFriend(FriendSchema fs){
 		boolean find = false;
 		for(int i = 0 ; i < mFriendList.size() ; i++){

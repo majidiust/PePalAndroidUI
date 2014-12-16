@@ -41,8 +41,11 @@ import org.doubango.ngn.utils.NgnDateTimeUtils;
 import org.doubango.ngn.utils.NgnStringUtils;
 import org.doubango.ngn.utils.NgnUriUtils;
 
+import android.R;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -101,8 +104,8 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 
 		@Override
 		public void debug(String msg) throws RemoteException {
-			String m = msg;
-			showToast(msg);
+			//String m = msg;
+		//	showToast(msg);
 		}
 
 		@Override
@@ -212,6 +215,8 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 			}
 		}
 	};
+	
+	protected NotificationManager mgr;
 
 	protected static int mLastCommand = 0;
 	protected static ProfileSchema mCurrentUserProfile;
@@ -450,6 +455,8 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 			Log.d("BASE", ex.getMessage());
 			showToast(ex.getMessage());
 		}
+
+		mgr=(NotificationManager)this.getSystemService(Context.NOTIFICATION_SERVICE);
 	}
 
 	@Override
@@ -607,6 +614,42 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 			logCatDebug(ex.getMessage());
 		}
 	}
+
+	protected void sendTextMessageToServer(final String roomId, final String publishType, final String publishDate, final String content){
+		try{
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					HttpClient client = new DefaultHttpClient();
+					Log.d(TAG, RestAPIAddress.getSignIn());
+					HttpPost post = new HttpPost(RestAPIAddress.getSendMessage());
+
+					try {
+						List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(4);
+						nameValuePairs.add(new BasicNameValuePair("publishType", publishType));
+						nameValuePairs.add(new BasicNameValuePair("roomId", roomId));
+						nameValuePairs.add(new BasicNameValuePair("publishDate", publishDate));
+						nameValuePairs.add(new BasicNameValuePair("messageContent", content));
+						post.setHeader("token", mCurrentUserProfile.m_token);
+						post.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+						HttpResponse response = client.execute(post);
+						if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+							showAlert("پیام شما با موفقیت ارسال شد.");
+						} else {
+							showAlert("ورود موفقیت آمیز نبود. لطفاً مجدداً تلاش نمائید");
+						}
+					} catch (Exception ex) {
+						Log.d(TAG, ex.getMessage());
+					}
+				}
+			}).start();
+		}
+		catch(Exception ex){
+			logCatDebug(ex.getMessage());
+		}
+	}
+
 	public static void logCatDebug(String msg){
 		Log.d(TAG, msg);
 	}
@@ -616,7 +659,6 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 	 */
 	protected void showToast(final String message) {
 		mHandler.post(new Runnable() {
-
 			@Override
 			public void run() {
 				Toast.makeText(This, message, Toast.LENGTH_SHORT)
@@ -796,6 +838,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 			Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 			Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
 			r.play();
+			 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -55,6 +55,7 @@ public class ChatActivity extends BaseActivity {
 			Bundle b = getIntent().getExtras();
 			mRoomId = b.getString("roomId");
 			mOtherParty = b.getString("otherParty");
+			mSessionStore.mCurrentRoomId = mRoomId;
 		}
 		catch(Exception ex){
 			Log.d(TAG, ex.getMessage());
@@ -122,11 +123,7 @@ public class ChatActivity extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				if (!mEditMessageContent.getText().toString().equals("")) {
-					try {
-						mWebsocketService.sendTextMessageToRoom(mEditMessageContent.getText().toString(), mRoomId);
-					} catch (Exception e) {
-						logCatDebug(e.getMessage());
-					}
+					sendTextMessageToServer(mRoomId, "Now", "..", mEditMessageContent.getText().toString());
 				}
 			}
 		});
@@ -242,12 +239,17 @@ public class ChatActivity extends BaseActivity {
 		mDataSet.add(message);
 		mAdapter.notifyDataSetChanged();
 	}
+	
+	@Override
+	protected void onDestroy() {
+		mSessionStore.mCurrentRoomId = null;
+		super.onDestroy();
+	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (data == null)
 			return;
-
 		int width;
 		switch (requestCode) {
 		case DIALOG_PICTURE_GALLERY:
@@ -270,13 +272,14 @@ public class ChatActivity extends BaseActivity {
 
 	@Override
 	public void onNewMessage(final MessageSchema ms) {
+		showToast(mCurrentUserProfile.m_userName + " : " + ms.mFrom);
 		if(ms.mTo.compareTo(mRoomId) == 0){
 			mHandler.post(new Runnable() {
 				@Override
 				public void run() {
 					ChatMessage message = new ChatMessage();
 					message.IsSenderSelf = false;
-					showToast(mCurrentUserProfile.m_userName + " : " + ms.mFrom);
+					
 					if(ms.mFrom.compareTo(mCurrentUserProfile.m_userName) == 0){
 						message.IsSenderSelf = true;
 					}

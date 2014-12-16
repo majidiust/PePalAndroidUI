@@ -46,4 +46,8 @@ public class RestAPIAddress {
 	public static String getCreateIndividualRoom(){
 		return baseAddress + "chat/createIndividualRoom";
 	}
+	
+	public static String getSendMessage(){
+		return baseAddress + "chat/sendTextMessageTo";
+	}
 }

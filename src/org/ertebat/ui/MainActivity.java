@@ -178,4 +178,15 @@ public class MainActivity extends BaseActivity {
 		if (IsTablet)
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
 	}
+
+	@Override
+	protected void onDestroy() {
+//		try {
+//			mWebsocketService.disConnectFromHost();
+//			stopService(mWebsocketIntent);
+//		} catch (RemoteException ex) {
+//			logCatDebug(ex.getMessage());
+//		}
+		super.onDestroy();
+	}
 }

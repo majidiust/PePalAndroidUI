@@ -181,6 +181,13 @@ public class BaseFragment extends Fragment implements ITransport {
 			}
 		});		
 	}
+	
+	  @Override
+	  public void onDestroyView() {
+	    super.onDestroyView();
+		((BaseActivity)getActivity()).unRegisterFromTransportListeners(this);
+
+	  }
 
 	protected void CloseDialog() {
 		if (mDialog != null) {

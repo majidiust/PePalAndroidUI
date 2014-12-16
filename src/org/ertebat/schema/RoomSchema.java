@@ -69,4 +69,14 @@ public class RoomSchema {
 		}
 		return result;
 	}
+	public String serializeMembers(){
+		String serial = "";
+		for(int i = 0 ; i < mMembers.size() ; i++){
+			serial += mMembers.get(i);
+			if(i!=mMembers.size() - 1){
+				serial += ",";
+			}
+		}
+		return serial;
+	}
 }
