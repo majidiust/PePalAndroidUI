@@ -23,7 +23,8 @@
             android:id="@+id/btnChatLogBottomNew"
             android:layout_width="@dimen/bar_bottom_item_size"
             android:layout_height="@dimen/bar_bottom_item_size"
-            android:background="@drawable/style_btn_bar_new_chat" />
+            android:background="@drawable/style_btn_bar_new_chat"
+            android:visibility="gone" />
         
         <Button
             android:id="@+id/btnChatLogBottomSettings"

@@ -9,6 +9,7 @@ public class RoomSchema {
 	public String mType;
 	public String mId;
 	public Vector<MessageSchema> mMessages = new Vector<MessageSchema>();
+	public Vector<String> mMembers = new Vector<String>();
 	public RoomSchema(String id, String name, String desc, String logo, String type){
 		mName = name;
 		mType = type;
@@ -26,6 +27,18 @@ public class RoomSchema {
 		}
 		if(!find)
 			mMessages.add(ms);
+	}
+	
+	public void addMember(String uid){
+		boolean find = false;
+		for(int i = 0 ; i < mMembers.size() ; i++){
+			if(mMembers.get(i).compareTo(uid) == 0){
+				find = true;
+				break;
+			}
+		}
+		if(!find)
+			mMembers.add(uid);
 	}
 	public Vector<MessageSchema> getUnReadMessagesAndReadThem(){
 		Vector<MessageSchema> result = new Vector<MessageSchema>();

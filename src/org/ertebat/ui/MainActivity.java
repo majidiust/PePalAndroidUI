@@ -132,7 +132,7 @@ public class MainActivity extends BaseActivity {
 						mWebsocketService.getMyProfile();
 						mWebsocketService.getFriendList();
 						mWebsocketService.getIndividualRooms();
-						mWebsocketService.getGroupRooms();
+						//mWebsocketService.getGroupRooms();
 						showToast("getFriendList : " + mCount);
 					} catch (Exception e) {
 						Log.d(TAG, e.getMessage());

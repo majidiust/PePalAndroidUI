@@ -5,4 +5,5 @@ public class ChatSummary {
 	public String Date;
 	public String Time;
 	public int NewMessageCount;
+	public String id;
 }

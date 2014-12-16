@@ -21,5 +21,6 @@ public interface ITransport {
 	public void onAuthorizationRequest();
 	public void onAuthorized();
 	public void onUserProfile(String firstName, String lastName, String uid, String userName, String picUrl, String email);
-	public void roomAdded(String roomName, String roomId, String roomDesc, String roomLogo, String roomType);
+	public void onRoomAdded(String roomName, String roomId, String roomDesc, String roomLogo, String roomType, String members);
+	public void onMembersAddedToRoom(String roomId, String memberId);
 }

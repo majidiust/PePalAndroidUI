@@ -62,11 +62,7 @@ public class BaseFragment extends Fragment implements ITransport {
 			mSharedPref = PreferenceManager.getDefaultSharedPreferences(This);
 		
 		mBaseActivity = (BaseActivity)getActivity();
-		((BaseActivity)getActivity()).setFragmentTransportCallback(this);
-		
-//		for(int i = 0 ; i < BaseActivity.mSessionStore.mFriendList.size() ; i++){
-//			onNewFriend(BaseActivity.mSessionStore.mFriendList.get(i));
-//		}
+		((BaseActivity)getActivity()).registerToTransportListeners(this);
 		
 		return null;
 	}
@@ -248,11 +244,14 @@ public class BaseFragment extends Fragment implements ITransport {
 		
 	}
 
+	@Override
+	public void onRoomAdded(String roomName, String roomId, String roomDesc,
+			String roomLogo, String roomType, String members) {
+		// TODO Auto-generated method stub
+	}
 
 	@Override
-	public void roomAdded(String roomName, String roomId, String roomDesc,
-			String roomLogo, String roomType) {
+	public void onMembersAddedToRoom(String roomId, String memberId) {
 		// TODO Auto-generated method stub
-		
 	}
 }

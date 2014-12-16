@@ -53,6 +53,9 @@ import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Debug;
 import android.os.Handler;
@@ -79,7 +82,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 	public static final int DIALOG_PICTURE_GALLERY = 3;
 	public static final int DIALOG_FRAGMENT_MULTI_CHOICE = 4;
 
-	protected Vector<ITransport> mTransportListeners = new Vector<ITransport>();
+	protected List mTransportListeners = new ArrayList<ITransport>();
 	protected BroadcastReceiver mSipBroadCastRecv;
 	protected NgnEngine mEngine;
 	protected INgnConfigurationService mConfigurationService;
@@ -92,14 +95,14 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 	protected FragmentDialogResultListener mFragmentDialogListener;
 	protected static String TAG = "BaseActivity";
 	protected ITransport mTransportCallback;
-	protected ITransport mTransportFragmentCallback = null;
 	protected Intent mWebsocketIntent;
 	protected IWebsocketService mWebsocketService;
 	protected IWebsocketServiceCallback mWebsocketServiceCallback = new IWebsocketServiceCallback.Stub(){
 
 		@Override
 		public void debug(String msg) throws RemoteException {
-			//showToast(msg);
+			String m = msg;
+			showToast(msg);
 		}
 
 		@Override
@@ -166,9 +169,18 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 
 		@Override
 		public void roomAdded(String roomName, String roomId, String roomDesc,
-				String roomLogo, String roomType) throws RemoteException {
-			// TODO Auto-generated method stub
-			
+				String roomLogo, String roomType, String members) throws RemoteException {
+			showToast("Get indi room : " + roomId);
+			if(mTransportCallback != null)
+				mTransportCallback.onRoomAdded(roomName, roomId, roomDesc, roomLogo, roomType, members);
+
+		}
+
+		@Override
+		public void membersAddedToRoom(String roomId, String memberId)
+				throws RemoteException {
+			if(mTransportCallback != null)
+				mTransportCallback.onMembersAddedToRoom(roomId, memberId);
 		}
 	};
 
@@ -476,7 +488,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 
 	}
 
-	
+
 	protected void getUserProfile(final String uid){
 		try{
 			new Thread(new Runnable() {
@@ -558,7 +570,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 			logCatDebug(ex.getMessage());
 		}
 	}
-	
+
 	protected void saveProfile(final String uid, final String firstName, final String lastName, final String email){
 		try{
 			new Thread(new Runnable() {
@@ -713,10 +725,6 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 		mFragmentDialogListener = listener;
 	}
 
-	public void setFragmentTransportCallback(ITransport callback) {
-		mTransportFragmentCallback = callback;
-	}
-
 	public void getFriendList(){
 		try {
 			mWebsocketService.getFriendList();
@@ -724,7 +732,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 			Log.d(TAG, e.getMessage());
 		}
 	}
-	
+
 	public static String[] getContactNames() {
 		String[] names = new String[mContacts.size()];
 
@@ -735,16 +743,26 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 		return names;
 	}
 
+	public void registerToTransportListeners(ITransport transport){
+		mTransportListeners.add(transport);
+	}
+
+	public void unRegisterFromTransportListeners(ITransport transport){
+		mTransportListeners.remove(transport);
+	}
+
 	@Override
 	public void onConnectedToServer() {
-		if (mTransportFragmentCallback != null)
-			mTransportFragmentCallback.onConnectedToServer();
+		for(int i = 0 ; i < mTransportListeners.size() ; i++){
+			((ITransport) mTransportListeners.get(i)).onConnectedToServer();
+		}
 	}
 
 	@Override
 	public void onDisconnctedFromServer() {
-		if (mTransportFragmentCallback != null)
-			mTransportFragmentCallback.onDisconnctedFromServer();
+		for(int i = 0 ; i < mTransportListeners.size() ; i++){
+			((ITransport) mTransportListeners.get(i)).onDisconnctedFromServer();
+		}
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -760,21 +778,31 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 
 	@Override
 	public void onNewFriend(FriendSchema fs) {
-		if (mTransportFragmentCallback != null)
-			mTransportFragmentCallback.onNewFriend(fs);
+		for(int i = 0 ; i < mTransportListeners.size() ; i++){
+			((ITransport) mTransportListeners.get(i)).onNewFriend(fs);
+		}
 	}
 
 	@Override
 	public void onNewRoom(RoomSchema rs) {
-		if (mTransportFragmentCallback != null)
-			mTransportFragmentCallback.onNewRoom(rs);
+		for(int i = 0 ; i < mTransportListeners.size() ; i++){
+			((ITransport) mTransportListeners.get(i)).onNewRoom(rs);
+		}
 	}
 
 	@Override
 	public void onNewMessage(MessageSchema ms) {
+		try {
+			Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+			Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+			r.play();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		mSessionStore.addMessageToRoom(ms);
-		if (mTransportFragmentCallback != null)
-			mTransportFragmentCallback.onNewMessage(ms);
+		for(int i = 0 ; i < mTransportListeners.size() ; i++){
+			((ITransport) mTransportListeners.get(i)).onNewMessage(ms);
+		}
 	}
 
 	@Override
@@ -784,8 +812,9 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 		mCurrentUserProfile.m_email = email;
 		mCurrentUserProfile.m_firstName = firstName;
 		mCurrentUserProfile.m_lastName = lastName;
-		if (mTransportFragmentCallback != null)
-			mTransportFragmentCallback.onCurrentProfileResult(username, userId, firstName, lastName, mobile, email);
+		for(int i = 0 ; i < mTransportListeners.size() ; i++){
+			((ITransport) mTransportListeners.get(i)).onCurrentProfileResult(username, userId, firstName, lastName, mobile, email);
+		}
 	}
 
 	@Override
@@ -808,9 +837,25 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 	}
 
 	@Override
-	public void roomAdded(String roomName, String roomId, String roomDesc,
-			String roomLogo, String roomType) {
+	public void onRoomAdded(String roomName, String roomId, String roomDesc,
+			String roomLogo, String roomType, String members) {
+		RoomSchema rs = new RoomSchema(roomId, roomName, roomDesc, roomLogo, roomType);
+		mSessionStore.addRoom(rs);
+		String[] sMember = members.split(",");
+		for(String str: sMember){
+			rs.addMember(str);
+		}
+		for(int i = 0 ; i < mTransportListeners.size() ; i++){
+			((ITransport) mTransportListeners.get(i)).onRoomAdded(roomName, roomId, roomDesc, roomLogo, roomType, members);
+		}
+	}
+
+	@Override
+	public void onMembersAddedToRoom(String roomId, String memberId) {
 		// TODO Auto-generated method stub
-		
+		RoomSchema room = mSessionStore.getRoomById(roomId);
+		if(room != null){
+			room.addMember(memberId);
+		}
 	}
 }

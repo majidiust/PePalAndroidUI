@@ -61,4 +61,15 @@ public class SessionStore {
 			Log.d(TAG, ex.getMessage());
 		}
 	}
+	
+	public String getUsernameById(String uid){
+		boolean find = false;
+		for(int i = 0 ; i < mFriendList.size() ; i++){
+			FriendSchema tmpFS = (FriendSchema) mFriendList.get(i);
+			if(tmpFS.m_friendId.compareTo(uid) == 0){
+				return tmpFS.m_friendUserName;
+			}
+		}
+		return null;
+	}
 }

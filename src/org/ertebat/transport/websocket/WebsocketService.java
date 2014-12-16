@@ -156,7 +156,7 @@ public class WebsocketService extends Service {
 									status = obj.getString("status");
 									listOfFriends.add(new FriendSchema(id, userName, status));
 								}
-								
+
 								for(int j = 0 ; j < listOfFriends.size() ; j++){
 									FriendSchema fs = (FriendSchema) listOfFriends.get(j);
 									int N = mCallbacks.beginBroadcast();
@@ -220,35 +220,53 @@ public class WebsocketService extends Service {
 							}
 						}
 						else if(code == 5){
-//							try{
-//								JSONArray rooms = jsonObject.getJSONArray("rooms");
-//								//debug(jsonObject.getString("friends"));
-//								Vector<RoomSchema> listOfRooms = new Vector<RoomSchema>();
-//								for(int i = 0 ; i < rooms.length() ; i++){
-//									JSONObject obj = rooms.getJSONObject(i);
-//									String id ,userName, status;
-//									id = obj.getString("_id");
-//									listOfRooms.add(new RoomSchema(id, "room", "", "", "I"));
-//								}
-//								
-//								for(int j = 0 ; j < listOfRooms.size() ; j++){
-//									RoomSchema fs = (RoomSchema) listOfRooms.get(j);
-//									int N = mCallbacks.beginBroadcast();
-//									for (int i = 0; i < N; i++) {
-//										try {
-//
-//											mCallbacks.getBroadcastItem(i).friendAdded(fs.m_friendUserName, fs.m_friendId, fs.m_state);
-//										} 
-//										catch (RemoteException e) {
-//											logCatDebug(e.getMessage());
-//										}
-//									}
-//									mCallbacks.finishBroadcast();
-//								}
-//							}
-//							catch(Exception ex){
-//								debug(ex.getMessage());
-//							}
+							try{
+								debug(payload);
+								//{"message":"IndividualContacts","code":5,"rooms":[{"_id":"548efd505855476c1364b6a1","Type":"I","StartType":"Now","Creator":"548cd282a62cf7e43605052e","__v":0,"StartDate":"2014-12-15T13:35:20.000Z","CreateDate":"2014-12-15T13:35:20.000Z","Requests":[],"Invited":[],"Admins":["548cd282a62cf7e43605052e","548caa70d347180c181583b4"],"Members":["548cd282a62cf7e43605052e","548caa70d347180c181583b4"],"Entities":[]},{"_id":"548f00675855476c1364b6a6","Type":"I","StartType":"Now","Creator":"548caa70d347180c181583b4","__v":0,"StartDate":"2014-12-15T13:35:20.000Z","CreateDate":"2014-12-15T13:35:20.000Z","Requests":[],"Invited":[],"Admins":["548caa70d347180c181583b4","548ee113346798fc22d906d7"],"Members":["548caa70d347180c181583b4","548ee113346798fc22d906d7"],"Entities":[]}]}
+								JSONArray rooms = jsonObject.getJSONArray("rooms");
+								//debug(jsonObject.getString("friends"));
+								Vector<RoomSchema> listOfRooms = new Vector<RoomSchema>();
+								for(int i = 0 ; i < rooms.length() ; i++){
+									JSONObject obj = rooms.getJSONObject(i);
+									String id;
+									id = obj.getString("_id");
+									RoomSchema r = new RoomSchema(id, "room", "", "", "I");
+									JSONArray members = obj.getJSONArray("Members");
+									for(int j = 0 ; j < members.length() ; j++)
+									{
+										String o = (String) members.get(j);
+										debug(o);
+										r.addMember(o);
+									}
+									listOfRooms.add(r);
+								}
+
+								for(int j = 0 ; j < listOfRooms.size() ; j++){
+									RoomSchema fs = (RoomSchema) listOfRooms.get(j);
+									String mem = "";
+									for(int k = 0 ; k < fs.mMembers.size() ; k++)
+									{
+										mem += (String)fs.mMembers.get(k);
+										if(k != fs.mMembers.size() - 1){
+											mem += ",";
+										}
+									}
+									int N = mCallbacks.beginBroadcast();
+									for (int i = 0; i < N; i++) {
+										try {
+											mCallbacks.getBroadcastItem(i).roomAdded("room", fs.mId, fs.mDesc, fs.mLogo, fs.mType, mem);
+										} 
+										catch (RemoteException e) {
+											logCatDebug(e.getMessage());
+										}
+									}
+									mCallbacks.finishBroadcast();
+									
+								}
+							}
+							catch(Exception ex){
+								debug(ex.getMessage());
+							}
 						}
 					}
 					catch(Exception ex){

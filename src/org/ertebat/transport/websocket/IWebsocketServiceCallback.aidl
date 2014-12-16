@@ -10,5 +10,6 @@ oneway interface IWebsocketServiceCallback {
 	void authorized();
 	void currentProfileResult(String username, String userId, String firstName, String lastName, String mobile, String email);
 	void friendAdded(String userName, String id, String status);
-	void roomAdded(String roomName, String roomId, String roomDesc,  String roomLogo, String roomType);
+	void roomAdded(String roomName, String roomId, String roomDesc,  String roomLogo, String roomType, String members);
+	void membersAddedToRoom(String roomId, String memberId);
 }

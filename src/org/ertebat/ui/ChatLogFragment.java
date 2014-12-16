@@ -53,11 +53,14 @@ public class ChatLogFragment extends BaseFragment implements FragmentDialogResul
 		mListViewChats.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-					long arg3) {
+			public void onItemClick(AdapterView<?> arg0, View arg1, final int position, long id) {
 
-				if (arg2 != ListView.INVALID_POSITION) {
+				if (position != ListView.INVALID_POSITION) {
 					Intent intent = new Intent(This, ChatActivity.class);
+					Bundle b = new Bundle();
+					b.putString("roomId",  mChats.get(position).id);
+					b.putString("otherParty",   mChats.get(position).id);
+					intent.putExtras(b);
 					startActivity(intent);
 				}
 			}
@@ -82,28 +85,25 @@ public class ChatLogFragment extends BaseFragment implements FragmentDialogResul
 			}
 		});
 
-		loadSampleData();
+		//loadSampleData();
 
 		return rootView;
 	}
 
 	private void loadSampleData() {
 		mChats.clear();
-
 		ChatSummary chat = new ChatSummary();
 		chat.Date = "1393/03/27";
 		chat.Time = "16:01";
 		chat.Title = "وحید ابراهیمی";
 		chat.Summary = "سلام! پیام آزمایشی ...";
 		mChats.add(chat);
-
 		chat = new ChatSummary();
 		chat.Date = "1393/03/29";
 		chat.Time = "16:34";
 		chat.Title = "وحید ابراهیمی";
 		chat.Summary = "سلام! پیام آزمایشی ...";
 		mChats.add(chat);
-
 		mAdapter.notifyDataSetChanged();
 	}
 
@@ -133,6 +133,44 @@ public class ChatLogFragment extends BaseFragment implements FragmentDialogResul
 			else
 				Log.d(LOG_TAG, "Exception in ChatLog with no message!");
 		}
+	}
 
+	@Override
+	public void onRoomAdded( final String roomName,  final String roomId, String roomDesc,
+			String roomLogo, final String roomType, final String members) {
+		mHandler.post(new Runnable() {
+
+			@Override
+			public void run() {
+				ChatSummary chat = new ChatSummary();
+				chat.Date = "1393/03/29";
+				chat.Time = "16:34";
+				chat.Summary ="";
+				chat.Title = roomId;
+				chat.id = roomId;
+				try{
+					if(roomType.compareTo("I") == 0){
+						chat.Summary += "شرکت کنندگان در جلسه : ";
+						String[] sMember = members.split(",");
+						for(int i = 0 ; i < sMember.length ; i++){
+							if(sMember[i].compareTo(BaseActivity.mCurrentUserProfile.m_uuid) != 0){
+								chat.Title = BaseActivity.mSessionStore.getUsernameById(sMember[i]);
+								chat.Summary += chat.Title;
+							}
+							else{
+								chat.Summary += BaseActivity.mCurrentUserProfile.m_userName;
+							}
+							if(i != sMember.length -1){
+								chat.Summary += " -- ";
+							}
+						}
+					}
+				}
+				catch(Exception ex){
+				}
+				mChats.add(chat);
+				mAdapter.notifyDataSetChanged();
+			}
+		});
 	}
 }
