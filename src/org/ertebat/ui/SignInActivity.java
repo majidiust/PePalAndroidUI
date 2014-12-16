@@ -13,6 +13,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.ertebat.HostConfigActivity;
 import org.ertebat.R;
 import org.ertebat.schema.SettingSchema;
 import org.json.JSONObject;
@@ -27,12 +28,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class SignInActivity extends BaseActivity {
+	private static int mCount = 0;
+	
 	private TextView mTextSignUp;
 	private TextView mTextForgotPass;
 	private EditText mEditUsername;
 	private EditText mEditPassword;
 	private Button mBtnSignIn;
-	private static int mCount = 0 ;
+	private View mViewHidden;
+	
+	private int mHiddenClickCount = 0;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -125,6 +131,21 @@ public class SignInActivity extends BaseActivity {
 						}
 					}
 				}).start();
+			}
+		});
+
+		mViewHidden = findViewById(R.id.viewSignInHidden);
+		mViewHidden.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if (mHiddenClickCount > 2) {
+					Intent intent = new Intent(This, HostConfigActivity.class);
+					startActivity(intent);
+					mHiddenClickCount = 0;
+				} else {
+					mHiddenClickCount++;
+				}
 			}
 		});
 	}

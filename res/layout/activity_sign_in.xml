@@ -6,6 +6,7 @@
     tools:context="org.ertebat.ui.SignInActivity" >
 
     <LinearLayout
+        android:id="@+id/layoutSignInMain"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
@@ -48,6 +49,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/sign_in_vertical_margin"
             android:background="@drawable/style_btn_yellow"
+            android:includeFontPadding="false"
             android:text="@string/btn_signin"
             android:textColor="#000"
             android:textSize="@dimen/generic_label_text_size"
@@ -77,5 +79,11 @@
             android:textSize="@dimen/generic_label_text_size"
             android:textStyle="bold" />
     </LinearLayout>
+    
+    <View
+        android:id="@+id/viewSignInHidden"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/layoutSignInMain" />
 
 </RelativeLayout>

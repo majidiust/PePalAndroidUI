@@ -119,6 +119,12 @@
             android:name=".ui.PasswordRecoveryActivity"
             android:label="@string/title_activity_password_recovery" >
         </activity>
+        <activity
+            android:name=".HostConfigActivity"
+            android:label="@string/title_activity_host_config"
+            android:screenOrientation="sensorPortrait"
+            android:theme="@style/CustomDialog" >
+        </activity>
     </application>
 
 </manifest>

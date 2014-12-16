@@ -1,0 +1,41 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/generic_layout_padding"
+    tools:context="org.ertebat.HostConfigActivity" >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical" >
+
+        <EditText
+            android:id="@+id/editHostConfigAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_default"
+            android:ems="8"
+            android:gravity="center"
+            android:hint="Host IP Address"
+            android:inputType="textUri"
+            android:maxLength="15"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnHostConfigApply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/style_btn_yellow"
+            android:paddingLeft="@dimen/generic_btn_padding"
+            android:paddingRight="@dimen/generic_btn_padding"
+            android:text="Apply"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</RelativeLayout>

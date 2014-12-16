@@ -464,5 +464,6 @@
     <string name="title_activity_contact_profile">ContactProfileActivity</string>
     <string name="title_activity_sign_up">SignUpActivity</string>
     <string name="title_activity_password_recovery">PasswordRecoveryActivity</string>
+    <string name="title_activity_host_config">HostConfigActivity</string>
 
 </resources>

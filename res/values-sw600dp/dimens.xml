@@ -12,8 +12,8 @@
     <dimen name="generic_item_margin">16dp</dimen>
     <dimen name="generic_layout_padding">8dp</dimen>
     <dimen name="generic_list_item_padding">2dp</dimen>
-    <dimen name="generic_btn_text_size">45sp</dimen>
-    <dimen name="generic_edit_text_size">45sp</dimen>
+    <dimen name="generic_btn_text_size">35sp</dimen>
+    <dimen name="generic_edit_text_size">35sp</dimen>
     <dimen name="generic_label_text_size">35sp</dimen>
     <dimen name="generic_spinner_text_size">20sp</dimen>
     <dimen name="generic_label_detail_text_size">15sp</dimen>
@@ -92,7 +92,7 @@
     <dimen name="about_value_margin">16sp</dimen>
     <dimen name="tab_title_text_size">25sp</dimen>
     <dimen name="sign_in_edit_width">512dp</dimen>
-    <dimen name="sign_in_edit_height">128dp</dimen>
+    <dimen name="sign_in_edit_height">96dp</dimen>
     <dimen name="sign_in_vertical_margin">32dp</dimen>
     <dimen name="splash_width">312dp</dimen>
     <dimen name="splash_height">512dp</dimen>

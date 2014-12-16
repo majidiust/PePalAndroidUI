@@ -92,7 +92,7 @@
     <dimen name="about_value_margin">16sp</dimen>
     <dimen name="tab_title_text_size">20sp</dimen>
     <dimen name="sign_in_edit_width">256dp</dimen>
-    <dimen name="sign_in_edit_height">64dp</dimen>
+    <dimen name="sign_in_edit_height">48dp</dimen>
     <dimen name="sign_in_vertical_margin">16dp</dimen>
     <dimen name="splash_width">256dp</dimen>
     <dimen name="splash_height">420dp</dimen>
