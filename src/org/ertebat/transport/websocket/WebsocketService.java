@@ -311,7 +311,6 @@ public class WebsocketService extends Service {
 			{
 				logCatDebug(ex.getMessage());
 			}
-
 		}
 
 		@Override
