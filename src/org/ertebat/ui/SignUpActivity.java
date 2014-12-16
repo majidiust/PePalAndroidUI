@@ -80,7 +80,7 @@ public class SignUpActivity extends BaseActivity {
 							post.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
 
 							HttpResponse response = client.execute(post);
-							if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+							if (response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
 								BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 								String line = "";
 								while ((line = rd.readLine()) != null) {
