@@ -16,6 +16,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.ertebat.R;
 import org.json.JSONObject;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -33,7 +34,7 @@ public class SignUpActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_sign_up);
-		
+
 		getActionBar().hide();
 
 		mEditPhoneNumber = (EditText)findViewById(R.id.editSignUpPhoneNumber);
@@ -81,19 +82,15 @@ public class SignUpActivity extends BaseActivity {
 
 							HttpResponse response = client.execute(post);
 							if (response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
-								BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-								String line = "";
-								while ((line = rd.readLine()) != null) {
-									JSONObject json = new JSONObject(line);
-									if (json.getString("message").contains("successfully")) {
-										showAlert("ثبت نام شما با موفقیت انجام شد.");
-									} else {
-										Log.d("Http", line);
-									}								
-								}
+
+								showAlert("ثبت نام شما با موفقیت انجام شد.");
+								
+								startActivity(new Intent(This, SignInActivity.class));
+								finish();
+															
 							}
-							
-//							client.getConnectionManager().shutdown();
+
+							//							client.getConnectionManager().shutdown();
 
 						} catch (Exception ex) {
 							Log.d(TAG, ex.getMessage());

@@ -130,8 +130,7 @@ public class MainActivity extends BaseActivity {
 					try {
 						Thread.sleep(1000);
 						mWebsocketService.getMyProfile();
-						mWebsocketService.getFriendList();
-						mWebsocketService.getIndividualRooms();
+						getFriendList();
 						//mWebsocketService.getGroupRooms();
 						showToast("getFriendList : " + mCount);
 					} catch (Exception e) {
@@ -177,16 +176,19 @@ public class MainActivity extends BaseActivity {
 
 		if (IsTablet)
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+		
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(1000);
+					mWebsocketService.getMyProfile();
+					getFriendList();
+				} catch (Exception e) {
+					Log.d(TAG, e.getMessage());
+				}
+			}
+		}).start();
 	}
 
-	@Override
-	protected void onDestroy() {
-//		try {
-//			mWebsocketService.disConnectFromHost();
-//			stopService(mWebsocketIntent);
-//		} catch (RemoteException ex) {
-//			logCatDebug(ex.getMessage());
-//		}
-		super.onDestroy();
-	}
 }

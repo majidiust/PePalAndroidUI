@@ -46,6 +46,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -65,6 +67,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat.Builder;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -77,6 +81,7 @@ import org.ertebat.schema.SettingSchema;
 import org.ertebat.transport.ITransport;
 import org.ertebat.transport.websocket.IWebsocketServiceCallback;
 import org.ertebat.transport.websocket.IWebsocketService;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class BaseActivity extends FragmentActivity implements ITransport {
@@ -85,7 +90,8 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 	public static final int DIALOG_PICTURE_GALLERY = 3;
 	public static final int DIALOG_FRAGMENT_MULTI_CHOICE = 4;
 
-	protected List mTransportListeners = new ArrayList<ITransport>();
+	
+	protected static List mTransportListeners = new ArrayList<ITransport>();
 	protected BroadcastReceiver mSipBroadCastRecv;
 	protected NgnEngine mEngine;
 	protected INgnConfigurationService mConfigurationService;
@@ -105,7 +111,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 		@Override
 		public void debug(String msg) throws RemoteException {
 			//String m = msg;
-		//	showToast(msg);
+//			showToast(msg);
 		}
 
 		@Override
@@ -185,6 +191,20 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 			if(mTransportCallback != null)
 				mTransportCallback.onMembersAddedToRoom(roomId, memberId);
 		}
+
+		@Override
+		public void notifyAddedByFriend(String invitedBy)
+				throws RemoteException {
+			if(mTransportCallback != null)
+				mTransportCallback.notifyAddedByFriend(invitedBy);
+		}
+
+		@Override
+		public void notifyAddedToRoom(String invitedBy, String roomId)
+				throws RemoteException {
+			if(mTransportCallback != null)
+				mTransportCallback.notifyAddedToRoom(invitedBy, roomId);
+		}
 	};
 
 	protected ServiceConnection mWebsocketServiceConnection = new ServiceConnection() {
@@ -215,8 +235,6 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 			}
 		}
 	};
-	
-	protected NotificationManager mgr;
 
 	protected static int mLastCommand = 0;
 	protected static ProfileSchema mCurrentUserProfile;
@@ -455,8 +473,6 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 			Log.d("BASE", ex.getMessage());
 			showToast(ex.getMessage());
 		}
-
-		mgr=(NotificationManager)this.getSystemService(Context.NOTIFICATION_SERVICE);
 	}
 
 	@Override
@@ -615,6 +631,76 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 		}
 	}
 
+
+	public void getFriendList(){
+		try{
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					HttpClient client = new DefaultHttpClient();
+					Log.d(TAG, RestAPIAddress.getSignIn());
+					HttpGet get = new HttpGet(RestAPIAddress.getFriendList());
+
+					try {
+						get.setHeader("token", mCurrentUserProfile.m_token);
+						HttpResponse response = client.execute(get);
+						if (response.getStatusLine().getStatusCode() == 200) {
+							BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+							String line = "";
+							String jsonString = "";
+							while ((line = rd.readLine()) != null) {
+								jsonString += line;						
+							}
+							JSONObject jsonObject = new JSONObject(jsonString);
+							String code = jsonObject.getString("code");
+							if(code.compareTo("9") == 0){
+								JSONArray friends = jsonObject.getJSONArray("friends");
+								showToast((jsonObject.getString("friends")));
+								Vector<FriendSchema> listOfFriends = new Vector<FriendSchema>();
+								for(int i = 0 ; i < friends.length() ; i++){
+									JSONObject obj = friends.getJSONObject(i);
+									String id ,userName, status;
+									id = obj.getString("friendId");
+									userName = obj.getString("friendUsername");
+									status = obj.getString("status");
+									listOfFriends.add(new FriendSchema(id, userName, status));
+								}
+
+
+								for(int j = 0 ; j < listOfFriends.size() ; j++){
+									FriendSchema fs = (FriendSchema) listOfFriends.get(j);
+									try{
+										if(mSessionStore != null)
+											mSessionStore.addFriend(fs);
+										if(mTransportCallback != null)
+											mTransportCallback.onNewFriend(fs);
+									}
+									catch(Exception ex){
+										showToast(ex.getMessage());
+									}
+								}
+								
+								mWebsocketService.getIndividualRooms();
+
+							}
+							else{
+								showAlert("i can get the friend list. internet connection is so low");
+							}
+						} else {
+							showAlert("ورود موفقیت آمیز نبود. لطفاً مجدداً تلاش نمائید");
+						}
+					} catch (Exception ex) {
+						Log.d(TAG, ex.getMessage());
+					}
+				}
+			}).start();
+		}
+		catch(Exception ex){
+			logCatDebug(ex.getMessage());
+		}
+	}
+
 	protected void sendTextMessageToServer(final String roomId, final String publishType, final String publishDate, final String content){
 		try{
 			new Thread(new Runnable() {
@@ -739,6 +825,22 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 		// Child classes should override and define the body
 	}
 
+	 @SuppressWarnings("deprecation")
+	 private void Notify(String notificationTitle, String notificationMessage) {
+	  NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+	  @SuppressWarnings("deprecation")
+	  Notification notification = new Notification(R.drawable.ic_dialog_alert,
+	    "New Message", System.currentTimeMillis());
+
+	   Intent notificationIntent = new Intent(this, MainActivity.class);
+	  PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+	    notificationIntent, 0);
+
+	   notification.setLatestEventInfo(BaseActivity.this, notificationTitle,
+	    notificationMessage, pendingIntent);
+	  notificationManager.notify(9999, notification);
+	 }
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (data == null)
@@ -767,13 +869,6 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 		mFragmentDialogListener = listener;
 	}
 
-	public void getFriendList(){
-		try {
-			mWebsocketService.getFriendList();
-		} catch (Exception e) {
-			Log.d(TAG, e.getMessage());
-		}
-	}
 
 	public static String[] getContactNames() {
 		String[] names = new String[mContacts.size()];
@@ -838,7 +933,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 			Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 			Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
 			r.play();
-			 
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -899,6 +994,32 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 		RoomSchema room = mSessionStore.getRoomById(roomId);
 		if(room != null){
 			room.addMember(memberId);
+		}
+	}
+
+	@Override
+	public void notifyAddedByFriend(String invitedBy) {
+		try{
+			//TODO: Show Notification
+			//TODO: Get lists via rest
+			showToast("Invited by : " + invitedBy);
+			getFriendList();
+		}
+		catch(Exception ex){
+			logCatDebug(ex.getMessage());
+		}
+	}
+
+	@Override
+	public void notifyAddedToRoom(String invitedBy, String roomId) {
+		try{
+			//TODO: Show Notification
+			//TODO: Get lists via rest
+			showToast("Invited by : " + invitedBy + " : " + roomId);
+			mWebsocketService.getIndividualRooms();
+		}
+		catch(Exception ex){
+			logCatDebug(ex.getMessage());
 		}
 	}
 }

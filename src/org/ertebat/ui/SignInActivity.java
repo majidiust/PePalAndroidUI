@@ -117,7 +117,6 @@ public class SignInActivity extends BaseActivity {
 									Log.d(TAG, "Sign In was successful. Token = " + mCurrentUserProfile.m_token);
 									mCurrentUserProfile.m_userName = mEditUsername.getText().toString();
 									//@2: Connect to web socket server
-									mWebsocketService.disConnectFromHost();
 									mWebsocketService.connectToHost(mSettings.mWebSocketUrl);
 								} else {
 									Log.d("Http", line);
@@ -148,11 +147,18 @@ public class SignInActivity extends BaseActivity {
 				}
 			}
 		});
+		
+		if(mSessionStore.mIsLoggedIn == true){
+			finish();
+			Intent intent = new Intent(This, MainActivity.class);
+			startActivity(intent);
+		}
 	}
 	
 	@Override
 	public void onConnectedToServer() {
 		super.onConnectedToServer();
+		mSessionStore.mIsLoggedIn = true;
 		showToast("hello : " + (mCount++));
 		mHandler.post(new Runnable() {
 			@Override

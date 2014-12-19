@@ -64,7 +64,6 @@
             android:gravity="center"
             android:hint="@string/lbl_email"
             android:inputType="textEmailAddress"
-            android:maxLength="16"
             android:singleLine="true"
             android:textColor="#000"
             android:textSize="@dimen/generic_edit_text_size"

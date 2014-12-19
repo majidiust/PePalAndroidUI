@@ -261,4 +261,18 @@ public class BaseFragment extends Fragment implements ITransport {
 	public void onMembersAddedToRoom(String roomId, String memberId) {
 		// TODO Auto-generated method stub
 	}
+
+
+	@Override
+	public void notifyAddedByFriend(String invitedBy) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void notifyAddedToRoom(String invitedBy, String roomId) {
+		// TODO Auto-generated method stub
+		
+	}
 }

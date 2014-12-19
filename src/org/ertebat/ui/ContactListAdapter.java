@@ -28,6 +28,7 @@ public class ContactListAdapter extends ArrayAdapter<ContactSummary> {
 		mDataSet = objects;
 	}
 
+	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		LayoutInflater inflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

@@ -210,42 +210,53 @@ public class ChatLogFragment extends BaseFragment implements FragmentDialogResul
 			mAdapter.notifyDataSetChanged();
 		}
 	}
+
+	private boolean isExistRoom(String roomId){
+		for(ChatSummary cs : mChats){
+			if(cs.id.compareTo(roomId) == 0){
+				return true;
+			}
+		}
+		return false;
+	}
 	@Override
 	public void onRoomAdded( final String roomName,  final String roomId, String roomDesc,
 			String roomLogo, final String roomType, final String members) {
-		mHandler.post(new Runnable() {
+		if(isExistRoom(roomId) == false){
+			mHandler.post(new Runnable() {
 
-			@Override
-			public void run() {
-				ChatSummary chat = new ChatSummary();
-				chat.Date = "1393/03/29";
-				chat.Time = "16:34";
-				chat.Summary ="";
-				chat.Title = roomId;
-				chat.id = roomId;
-				try{
-					if(roomType.compareTo("I") == 0){
-						chat.Summary += "شرکت کنندگان در جلسه : ";
-						String[] sMember = members.split(",");
-						for(int i = 0 ; i < sMember.length ; i++){
-							if(sMember[i].compareTo(BaseActivity.mCurrentUserProfile.m_uuid) != 0){
-								chat.Title = BaseActivity.mSessionStore.getUsernameById(sMember[i]);
-								chat.Summary += chat.Title;
-							}
-							else{
-								chat.Summary += BaseActivity.mCurrentUserProfile.m_userName;
-							}
-							if(i != sMember.length -1){
-								chat.Summary += " -- ";
+				@Override
+				public void run() {
+					ChatSummary chat = new ChatSummary();
+					chat.Date = "1393/03/29";
+					chat.Time = "16:34";
+					chat.Summary ="";
+					chat.Title = roomId;
+					chat.id = roomId;
+					try{
+						if(roomType.compareTo("I") == 0){
+							chat.Summary += "شرکت کنندگان در جلسه : ";
+							String[] sMember = members.split(",");
+							for(int i = 0 ; i < sMember.length ; i++){
+								if(sMember[i].compareTo(BaseActivity.mCurrentUserProfile.m_uuid) != 0){
+									chat.Title = BaseActivity.mSessionStore.getUsernameById(sMember[i]);
+									chat.Summary += chat.Title;
+								}
+								else{
+									chat.Summary += BaseActivity.mCurrentUserProfile.m_userName;
+								}
+								if(i != sMember.length -1){
+									chat.Summary += " -- ";
+								}
 							}
 						}
 					}
+					catch(Exception ex){
+					}
+					mChats.add(chat);
+					mAdapter.notifyDataSetChanged();
 				}
-				catch(Exception ex){
-				}
-				mChats.add(chat);
-				mAdapter.notifyDataSetChanged();
-			}
-		});
+			});
+		}
 	}
 }
