@@ -54,13 +54,14 @@ public class SessionStore {
 		return null;
 	}
 	
-	public void addMessageToRoom(MessageSchema ms){
+	public boolean addMessageToRoom(MessageSchema ms){
 		try{
 			RoomSchema room = getRoomById(ms.mTo);
-			room.addMessage(ms);
+			return room.addMessage(ms);
 		}
 		catch(Exception ex){
 			Log.d(TAG, ex.getMessage());
+			return false;
 		}
 	}
 	
@@ -74,4 +75,6 @@ public class SessionStore {
 		}
 		return null;
 	}
+	
+	public static SessionStore mSessionStore = new SessionStore();
 }

@@ -15,6 +15,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.ertebat.R;
 import org.ertebat.schema.RoomSchema;
+import org.ertebat.schema.SessionStore;
 import org.json.JSONObject;
 
 import android.content.Intent;
@@ -145,7 +146,7 @@ public class ContactProfileActivity extends BaseActivity {
 									logCatDebug(ex.getMessage());
 								}
 								final String tmpRoomId = roomId;
-								BaseActivity.mSessionStore.addRoom(new RoomSchema(roomId, "room", "--", "--", "I"));
+								SessionStore.mSessionStore.addRoom(new RoomSchema(roomId, "room", "--", "--", "I"));
 								mHandler.post(new Runnable() {
 									@Override
 									public void run() {
@@ -153,6 +154,7 @@ public class ContactProfileActivity extends BaseActivity {
 										Bundle b = new Bundle();
 										b.putString("roomId", tmpRoomId);
 										b.putString("otherParty", otherParty);
+										b.putString("origin", "contact");
 										intent.putExtras(b);
 										startActivity(intent);
 									}

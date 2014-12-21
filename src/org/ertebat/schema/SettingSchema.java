@@ -1,5 +1,7 @@
 package org.ertebat.schema;
 
 public class SettingSchema {
-	public String mWebSocketUrl = "ws://pepal.ir:1337";
+	public static String mBaseAddr = "pepal.ir";
+	public static String mBaseRestUrl = "http://" + mBaseAddr + ":4000/";
+	public static String mWebSocketUrl = "ws://" + mBaseAddr + ":1337";
 }

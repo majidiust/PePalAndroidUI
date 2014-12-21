@@ -10,4 +10,5 @@ public class ChatMessage {
 	public String ReceptionTime;
 	public String MessageText;
 	public Bitmap MessagePicture;
+	public String MessageId;
 }

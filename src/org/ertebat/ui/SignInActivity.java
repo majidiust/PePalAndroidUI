@@ -15,6 +15,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.ertebat.HostConfigActivity;
 import org.ertebat.R;
+import org.ertebat.schema.SessionStore;
 import org.ertebat.schema.SettingSchema;
 import org.json.JSONObject;
 
@@ -148,7 +149,7 @@ public class SignInActivity extends BaseActivity {
 			}
 		});
 		
-		if(mSessionStore.mIsLoggedIn == true){
+		if(SessionStore.mSessionStore.mIsLoggedIn == true){
 			finish();
 			Intent intent = new Intent(This, MainActivity.class);
 			startActivity(intent);
@@ -158,7 +159,7 @@ public class SignInActivity extends BaseActivity {
 	@Override
 	public void onConnectedToServer() {
 		super.onConnectedToServer();
-		mSessionStore.mIsLoggedIn = true;
+		SessionStore.mSessionStore.mIsLoggedIn = true;
 		showToast("hello : " + (mCount++));
 		mHandler.post(new Runnable() {
 			@Override

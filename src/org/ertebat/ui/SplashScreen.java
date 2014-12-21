@@ -2,6 +2,7 @@ package org.ertebat.ui;
 
 
 import org.ertebat.R;
+import org.ertebat.schema.SessionStore;
 
 import android.os.Bundle;
 import android.content.Intent;
@@ -15,7 +16,7 @@ public final class SplashScreen extends BaseActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.splash_screen);
-		if(BaseActivity.mSessionStore.mIsLoggedIn == true){
+		if(SessionStore.mSessionStore.mIsLoggedIn == true){
 			startActivity(new Intent(SplashScreen.this, SignInActivity.class));
 			finish();
 		}

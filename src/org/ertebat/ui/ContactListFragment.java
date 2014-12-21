@@ -11,6 +11,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.ertebat.R;
 import org.ertebat.schema.FriendSchema;
+import org.ertebat.schema.SessionStore;
 import org.json.JSONObject;
 
 import android.content.Intent;
@@ -38,6 +39,7 @@ public class ContactListFragment extends BaseFragment {
 	private ListView mListViewContacts;
 	private List<ContactSummary> mDataSet;
 	private ContactListAdapter mAdapter;
+	private Object mAddContactLock = new Object();
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -104,9 +106,16 @@ public class ContactListFragment extends BaseFragment {
 			}
 		});
 
+		loadLocal();
+		
 		return rootView;
 	}
-	
+
+	protected void loadLocal(){
+		for(int i = 0 ; i < SessionStore.mSessionStore.mFriendList.size() ; i++){
+			onNewFriend(SessionStore.mSessionStore.mFriendList.get(i));
+		}
+	}
 	protected  void addFriend(final String userName){
 		try{
 			new Thread(new Runnable() {
@@ -154,14 +163,14 @@ public class ContactListFragment extends BaseFragment {
 							catch(Exception ex){
 								Log.d(TAG, ex.getMessage());
 							}
-							
+
 							ShowToast(code);
-							
+
 							if(code.compareTo("-19") == 0){
 								showAlert("کاربری بااین نام وجود ندارد");
 							}
 							else{
-								onNewFriend(new FriendSchema(friendId, friendUsername, state));
+								//onNewFriend(new FriendSchema(friendId, friendUsername, state));
 								mBaseActivity.getFriendList();
 								mHandler.post(new Runnable() {
 									@Override
@@ -184,20 +193,22 @@ public class ContactListFragment extends BaseFragment {
 
 	@Override
 	public void onNewFriend(final FriendSchema fs) {
-		mHandler.post(new Runnable() {
-
-			@Override
-			public void run() {
-				if(!isExistContact(fs.m_friendUserName)){
-					ContactSummary contact = new ContactSummary();
-					contact.ContactPhone = fs.m_friendUserName;
-					contact.ContactName = fs.m_friendUserName;
-					contact.ContactId = fs.m_friendId;
-					mDataSet.add(contact);
-					mAdapter.notifyDataSetChanged();
-				}
+		synchronized (mAddContactLock ) {
+			if(!isExistContact(fs.m_friendUserName))
+			{
+				ContactSummary contact = new ContactSummary();
+				contact.ContactPhone = fs.m_friendUserName;
+				contact.ContactName = fs.m_friendUserName;
+				contact.ContactId = fs.m_friendId;
+				mDataSet.add(contact);
+				mHandler.post(new Runnable() {
+					@Override
+					public void run() {
+						mAdapter.notifyDataSetChanged();
+					}
+				});
 			}
-		});
+		}
 	}
 
 	public boolean isExistContact(String username){

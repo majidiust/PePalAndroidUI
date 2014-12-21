@@ -45,6 +45,35 @@ public class Utilities {
 			return null;
 		}
     }
+	
+	public static Bitmap getPictureThumbnail(Context context, String path, int thumbnailWidth) {
+        try {
+			BitmapFactory.Options onlyBoundsOptions = new BitmapFactory.Options();
+			onlyBoundsOptions.inJustDecodeBounds = true;
+			onlyBoundsOptions.inDither=true;
+			onlyBoundsOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;
+			BitmapFactory.decodeFile(path, onlyBoundsOptions);
+			
+			if ((onlyBoundsOptions.outWidth == -1) || (onlyBoundsOptions.outHeight == -1))
+			    return null;
+
+			int originalWidth = onlyBoundsOptions.outWidth;
+
+			double ratio = (originalWidth > thumbnailWidth) ? (originalWidth / thumbnailWidth) : 1.0;
+
+			BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+			bitmapOptions.inSampleSize = getPowerOfTwoForSampleRatio(ratio);
+			bitmapOptions.inDither=true;
+			bitmapOptions.inPreferredConfig=Bitmap.Config.ARGB_8888;
+			
+			Bitmap bitmap = BitmapFactory.decodeFile(path, bitmapOptions);
+			
+			return bitmap;
+		} catch (Exception ex) {
+			Log.d(TAG, ex.getMessage());
+			return null;
+		}
+    }
 
 	public static String getMonthIndex(String monthAbbreviation) {
 		if (monthAbbreviation.equals("Jan"))

@@ -2,54 +2,58 @@ package org.ertebat.ui;
 
 import java.security.InvalidParameterException;
 
+import org.ertebat.schema.SettingSchema;
+
 public class RestAPIAddress {
-	public static String baseAddress = "http://pepal.ir:4000/";
 	public static String getSignIn(){
-		return baseAddress + "api/signin";
+		return SettingSchema.mBaseRestUrl + "api/signin";
 	}
 	public static String getSignUp(){
-		return baseAddress + "api/signup";
+		return SettingSchema.mBaseRestUrl + "api/signup";
 	}
 	public static String getSignOut(){
-		return baseAddress + "api/signout";
+		return SettingSchema.mBaseRestUrl + "api/signout";
 	}
 	public static String getUsernameViaUserId(){
-		return baseAddress + "api/getUsernameViaUserId";
+		return SettingSchema.mBaseRestUrl + "api/getUsernameViaUserId";
 	}
 	public static String getUserByMail(){
-		return baseAddress + "api/getUserByMail";
+		return SettingSchema.mBaseRestUrl + "api/getUserByMail";
 	}
 	public static String getGroupContacts(){
-		return baseAddress + "api/getGroupContacts";
+		return SettingSchema.mBaseRestUrl + "api/getGroupContacts";
 	}
 	public static String getIndividualContacts(){
-		return baseAddress + "api/getIndividualContacts";
+		return SettingSchema.mBaseRestUrl + "api/getIndividualContacts";
 	}
 	public static String getCurrentProfile(){
-		return baseAddress + "api/getCurrentProfile";
+		return SettingSchema.mBaseRestUrl + "api/getCurrentProfile";
 	}
 	public static String getMyProfile(){
-		return baseAddress + "api/getCurrentProfile";
+		return SettingSchema.mBaseRestUrl + "api/getCurrentProfile";
 	}
 	public static String getUserProfile(){
-		return baseAddress + "api/getUserProfile";
+		return SettingSchema.mBaseRestUrl + "api/getUserProfile";
 	}
 	public static String getSaveProfile(){
-		return baseAddress + "api/saveProfile";
+		return SettingSchema.mBaseRestUrl + "api/saveProfile";
 	}
 	public static String getUploadProfilePicture(){
-		return baseAddress + "api/uploadProfilePic";
+		return SettingSchema.mBaseRestUrl + "api/uploadProfilePic";
 	}
 	public static String getAddFriend(){
-		return baseAddress + "api/addFriendToTheList";
+		return SettingSchema.mBaseRestUrl + "api/addFriendToTheList";
 	}
 	public static String getCreateIndividualRoom(){
-		return baseAddress + "chat/createIndividualRoom";
+		return SettingSchema.mBaseRestUrl + "chat/createIndividualRoom";
 	}
 	public static String getFriendList(){
-		return baseAddress + "api/getFriendList";
+		return SettingSchema.mBaseRestUrl + "api/getFriendList";
 	}
 	public static String getSendMessage(){
-		return baseAddress + "chat/sendTextMessageTo";
+		return SettingSchema.mBaseRestUrl + "chat/sendTextMessageTo";
+	}
+	public static String getIncommingMessage(){
+		return SettingSchema.mBaseRestUrl + "chat/getIncomingMessage";
 	}
 }

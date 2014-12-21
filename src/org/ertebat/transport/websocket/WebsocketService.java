@@ -6,21 +6,37 @@ package org.ertebat.transport.websocket;
 import java.util.Vector;
 
 import org.ertebat.schema.FriendSchema;
+import org.ertebat.schema.MessageSchema;
 import org.ertebat.schema.RoomSchema;
+import org.ertebat.schema.SessionStore;
 import org.ertebat.transport.websocket.IWebsocketService;
 import org.ertebat.transport.websocket.IWebsocketServiceCallback;
+import org.ertebat.ui.BaseActivity;
+import org.ertebat.ui.ChatActivity;
+import org.ertebat.ui.MainActivity;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import de.tavendo.autobahn.WebSocketConnection;
+import android.R;
+import android.app.AlarmManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 
+import android.view.ViewDebug.FlagToString;
 import de.tavendo.autobahn.WebSocket;
 import de.tavendo.autobahn.WebSocketConnection;
 import de.tavendo.autobahn.WebSocketConnectionHandler;
@@ -34,7 +50,9 @@ public class WebsocketService extends Service {
 	private static final String TAG = "WebsocketService";
 	final RemoteCallbackList<IWebsocketServiceCallback> mCallbacks = new RemoteCallbackList<IWebsocketServiceCallback>();
 	protected  String wsuri = "ws://192.168.1.5:1337";
-
+	private int mNotificationID;
+	private PendingIntent mAlarmIntent;
+	private Context context = this;
 	//websocket requirements
 	protected  WebSocketConnection mConnection = new WebSocketConnection();
 
@@ -47,6 +65,29 @@ public class WebsocketService extends Service {
 	@Override
 	public boolean onUnbind (Intent intent){
 		return true;
+	}
+
+	private void showNotification(String title, String text, Intent intent){
+		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+
+		NotificationManager notificationManager;
+		notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+		.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_menu_help))
+		.setSmallIcon(R.drawable.ic_dialog_info)
+		.setContentTitle(title)
+		.setContentText(text)
+		.setContentIntent(contentIntent).setAutoCancel(true);
+		notificationManager.notify(mNotificationID, builder.build());
+	}
+
+	private void getPictureImage(){
+		try{
+
+		}
+		catch(Exception ex){
+			logCatDebug(ex.getMessage());
+		}
 	}
 
 	private void start() {
@@ -198,23 +239,54 @@ public class WebsocketService extends Service {
 							else if(code == 103){
 								try{
 									JSONObject tmpObject = new JSONObject(jsonObject.getString("value"));
+									String type = tmpObject.getString("type");
 									String roomId = tmpObject.getString("roomId");
 									String from = tmpObject.getString("from");
 									String content = tmpObject.getString("content");
 									String date = tmpObject.getString("date");
 									String messageId = tmpObject.getString("id");
+									sendTextMessageAck(messageId);
+
+									boolean isExist = false;
 									//debug(payload);
 									int N = mCallbacks.beginBroadcast();
 									for (int i = 0; i < N; i++) {
 										try {
-
-											mCallbacks.getBroadcastItem(i).newMessage(messageId, from, roomId, date, date, content);
+											isExist = true;
+											mCallbacks.getBroadcastItem(i).newMessage(type, messageId, from, roomId, date, date, content);
 										} 
 										catch (RemoteException e) {
 											logCatDebug(e.getMessage());
 										}
 									}
 									mCallbacks.finishBroadcast();
+									if(isExist == false){
+										//if(SessionStore.mSessionStore != null)
+										//{
+										//	if(!SessionStore.mSessionStore.getRoomById(roomId).isExistMessage(messageId)){
+												//BaseActivity.mSessionStore.addMessageToRoom(new MessageSchema(messageId, from, roomId, date, date, content));
+												Intent showMessage = new Intent(context, ChatActivity.class);
+												showMessage.putExtra("origin", "notification");
+												showMessage.putExtra("roomId", roomId);
+												showMessage.putExtra("otherParty", from);
+												showMessage.putExtra("message", content);
+												showMessage.putExtra("messageId", messageId);
+												showMessage.putExtra("from", from);
+												showMessage.putExtra("date", date);
+												showNotification("پیام از " + from, content, showMessage);
+												Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+												Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+												r.play();
+										//	}
+										////	else{
+										//		logCatDebug("exist in the list");
+										//	}
+										//}
+										//else{
+										//	logCatDebug("not exist");
+
+										//}
+									}
 								}
 								catch(Exception ex){
 									logCatDebug(ex.getMessage());
@@ -242,10 +314,10 @@ public class WebsocketService extends Service {
 							}
 							else if(code == 106){
 								try{
-									debug(payload);
+									//debug(payload);
 									String invitedBy = (jsonObject.getString("invitedBy"));
 									String roomId = (jsonObject.getString("roomId"));
-									debug("%%%% : "  + invitedBy + " : " + roomId);
+									//debug("%%%% : "  + invitedBy + " : " + roomId);
 									int N = mCallbacks.beginBroadcast();
 									for (int i = 0; i < N; i++) {
 										try {
@@ -319,6 +391,7 @@ public class WebsocketService extends Service {
 
 					@Override
 					public void onClose(int code, String reason) {
+						start();
 						debug("Connection lost.");
 						int N = mCallbacks.beginBroadcast();
 						for (int i = 0; i < N; i++) {
@@ -338,6 +411,15 @@ public class WebsocketService extends Service {
 		}
 	}
 
+	private void sendTextMessageAck(String eventId){
+		try{
+			String cmd = "{\"requestCode\" : \"12\", \"message\": \"AckOfTextMessage\", \"eventId\" : \"" + eventId + "\"}";
+			mConnection.sendTextMessage(cmd);
+		}
+		catch(Exception ex){
+			logCatDebug(ex.getMessage());
+		}
+	}
 
 	private final IWebsocketService.Stub mBinder = new IWebsocketService.Stub() {
 
@@ -527,7 +609,7 @@ public class WebsocketService extends Service {
 	protected void logCatDebug(String txt){
 		try{
 			//	if(false)
-			//		Log.d(TAG, txt);
+					Log.d(TAG, txt);
 		}
 		catch(Exception ex){
 

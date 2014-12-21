@@ -13,12 +13,14 @@ import org.ertebat.R.id;
 import org.ertebat.R.layout;
 import org.ertebat.schema.MessageSchema;
 import org.ertebat.schema.RoomSchema;
+import org.ertebat.schema.SessionStore;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.RemoteException;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -43,6 +45,8 @@ public class ChatActivity extends BaseActivity {
 	private String mRoomId = "";
 	private String mOtherParty = "";
 
+	private Object mAddMessageLock = new Object();
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -51,11 +55,22 @@ public class ChatActivity extends BaseActivity {
 		getActionBar().hide();
 		TAG = "ChatActivity";
 
+		String content, messageId, from, date;
 		try{
 			Bundle b = getIntent().getExtras();
 			mRoomId = b.getString("roomId");
 			mOtherParty = b.getString("otherParty");
-			mSessionStore.mCurrentRoomId = mRoomId;
+			String origin = b.getString("origin");
+			SessionStore.mSessionStore.mCurrentRoomId = mRoomId;
+
+			if(origin.equals("notification")){
+				content = b.getString("message");
+				messageId = b.getString("messageId");
+				from = b.getString("from");
+				date = b.getString("date");
+				showToast(messageId + " : " + from + " : " + mRoomId);
+				SessionStore.mSessionStore.addMessageToRoom(new MessageSchema(messageId, from, mRoomId, date, date, content));
+			}
 		}
 		catch(Exception ex){
 			Log.d(TAG, ex.getMessage());
@@ -194,28 +209,20 @@ public class ChatActivity extends BaseActivity {
 
 	protected void loadHistory(){
 		try{
-			RoomSchema room = mSessionStore.getRoomById(mRoomId);
+			RoomSchema room = SessionStore.mSessionStore.getRoomById(mRoomId);
 			if(room != null){
 				Vector<MessageSchema> messages = room.getAllMessages();
 				for(int i = 0 ; i < messages.size() ; i++ ){
-					ChatMessage message = new ChatMessage();
-					message.IsSenderSelf = false;
-					if(messages.get(i).mFrom.compareTo(mCurrentUserProfile.m_userName) == 0){
-						message.IsSenderSelf = true;
-					}
-					message.MessageText = messages.get(i).mBody;
-					message.ReceptionTime = messages.get(i).mDate;
-					message.Type = ChatMessageType.Text;
-					addMessage(message);
+					onNewMessage(messages.get(i));
 				}
 			}
 		}
 		catch(Exception ex){
-			showToast(ex.getMessage());
+			logCatDebug((ex.getMessage()));
 		}
 	}
 	protected void checkMessages() {
-		// TODO: @Majid, check for messages here
+		loadHistory();
 	}
 
 	private void createPictureMessage(boolean self, Bitmap picture) {
@@ -239,10 +246,10 @@ public class ChatActivity extends BaseActivity {
 		mDataSet.add(message);
 		mAdapter.notifyDataSetChanged();
 	}
-	
+
 	@Override
 	protected void onDestroy() {
-		mSessionStore.mCurrentRoomId = null;
+		SessionStore.mSessionStore.mCurrentRoomId = null;
 		super.onDestroy();
 	}
 
@@ -256,13 +263,11 @@ public class ChatActivity extends BaseActivity {
 			Uri selectedImage = data.getData();
 			width = (int)getResources().getDimension(R.dimen.chat_message_item_picture_width);
 			createPictureMessage(true, Utilities.getPictureThumbnail(This, selectedImage, width));
-			//			showAlert("Result", selectedImage.getPath());
 			break;
 		case DIALOG_TAKE_PICTURE:
 			Uri takenImage = data.getData();
 			width = (int)getResources().getDimension(R.dimen.chat_message_item_picture_width);
 			createPictureMessage(true, Utilities.getPictureThumbnail(This, takenImage, width));
-			//			showAlert("Result", takenImage.getPath());
 			break;
 		default:
 			super.onActivityResult(requestCode, resultCode, data);
@@ -270,25 +275,48 @@ public class ChatActivity extends BaseActivity {
 		}		
 	}
 
+	private boolean findMessageInRoom(MessageSchema ms){
+		for(ChatMessage cm : mDataSet){
+			if(cm.MessageId.equals(ms.mId))
+				return true;
+		}
+		return false;
+	}
 	@Override
 	public void onNewMessage(final MessageSchema ms) {
-		showToast(mCurrentUserProfile.m_userName + " : " + ms.mFrom);
-		if(ms.mTo.compareTo(mRoomId) == 0){
-			mHandler.post(new Runnable() {
-				@Override
-				public void run() {
-					ChatMessage message = new ChatMessage();
-					message.IsSenderSelf = false;
-					
-					if(ms.mFrom.compareTo(mCurrentUserProfile.m_userName) == 0){
-						message.IsSenderSelf = true;
-					}
-					message.MessageText = ms.mBody;
-					message.ReceptionTime = ms.mDate;
+		synchronized (mAddMessageLock) {
+			if(ms.mTo.equals(mRoomId) && !findMessageInRoom(ms)){
+				final ChatMessage message = new ChatMessage();
+				if(ms.mType.equals("Text")){
 					message.Type = ChatMessageType.Text;
-					addMessage(message);
 				}
-			});
+				else if(ms.mType.equals("Picture")){
+					message.Type = ChatMessageType.Picture;
+					try{
+					String path = Environment.getExternalStoragePublicDirectory(
+							Environment.DIRECTORY_PICTURES).getPath() + "/entities/" + ms.mId + ".png";
+					int width = (int)getResources().getDimension(R.dimen.chat_message_item_picture_width);
+					message.MessagePicture = Utilities.getPictureThumbnail(This, path, width);
+					}
+					catch(Exception ex){
+						logCatDebug(ex.getMessage());
+					}
+				}
+				message.IsSenderSelf = false;
+				message.MessageId = ms.mId;
+				if(ms.mFrom.equals(mCurrentUserProfile.m_userName)){
+					message.IsSenderSelf = true;
+				}
+				message.MessageText = ms.mBody;
+				message.ReceptionTime = ms.mDate;
+				mDataSet.add(message);
+				mHandler.post(new Runnable() {
+					@Override
+					public void run() {
+						mAdapter.notifyDataSetChanged();
+					}
+				});
+			}
 		}
 	}
 }

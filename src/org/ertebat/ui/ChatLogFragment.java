@@ -10,6 +10,7 @@ import org.ertebat.R;
 import org.ertebat.R.id;
 import org.ertebat.R.layout;
 import org.ertebat.schema.MessageSchema;
+import org.ertebat.schema.SessionStore;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -32,6 +33,7 @@ public class ChatLogFragment extends BaseFragment implements FragmentDialogResul
 	private Button mBtnNewChat;
 	private Button mBtnSettings;
 	private BaseActivity mBase;
+	private Object newRoomLock = new Object();
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,6 +65,7 @@ public class ChatLogFragment extends BaseFragment implements FragmentDialogResul
 					Bundle b = new Bundle();
 					b.putString("roomId",  mChats.get(position).id);
 					b.putString("otherParty",   mChats.get(position).id);
+					b.putString("origin", "chatlog");
 					intent.putExtras(b);
 					startActivity(intent);
 				}
@@ -146,7 +149,7 @@ public class ChatLogFragment extends BaseFragment implements FragmentDialogResul
 	@Override
 	public void onNewMessage(MessageSchema ms) {
 		try{
-			if(BaseActivity.mSessionStore.mCurrentRoomId == null || BaseActivity.mSessionStore.mCurrentRoomId.compareTo(ms.mTo) != 0){
+			if(SessionStore.mSessionStore.mCurrentRoomId == null || SessionStore.mSessionStore.mCurrentRoomId.compareTo(ms.mTo) != 0){
 				final int location = findRoomLocationInList(ms.mTo) ;
 				if(location >= 0){
 					mHandler.post(new Runnable() {
@@ -176,38 +179,16 @@ public class ChatLogFragment extends BaseFragment implements FragmentDialogResul
 
 	private void loadRooms(){
 		mChats.clear();
-		for(int ii = 0 ; ii < BaseActivity.mSessionStore.mRooms.size() ; ii++){
-			final String roomId = BaseActivity.mSessionStore.mRooms.get(ii).mId;
-			final String roomType = BaseActivity.mSessionStore.mRooms.get(ii).mType;
-			final String members = BaseActivity.mSessionStore.mRooms.get(ii).serializeMembers();
-			ChatSummary chat = new ChatSummary();
-			chat.Date = "1393/03/29";
-			chat.Time = "16:34";
-			chat.Summary ="";
-			chat.Title = roomId;
-			chat.id = roomId;
-			try{
-				if(roomType.compareTo("I") == 0){
-					chat.Summary += "شرکت کنندگان در جلسه : ";
-					String[] sMember = members.split(",");
-					for(int i = 0 ; i < sMember.length ; i++){
-						if(sMember[i].compareTo(BaseActivity.mCurrentUserProfile.m_uuid) != 0){
-							chat.Title = BaseActivity.mSessionStore.getUsernameById(sMember[i]);
-							chat.Summary += chat.Title;
-						}
-						else{
-							chat.Summary += BaseActivity.mCurrentUserProfile.m_userName;
-						}
-						if(i != sMember.length -1){
-							chat.Summary += " -- ";
-						}
-					}
-				}
-			}
-			catch(Exception ex){
-			}
-			mChats.add(chat);
-			mAdapter.notifyDataSetChanged();
+		for(int ii = 0 ; ii < SessionStore.mSessionStore.mRooms.size() ; ii++){
+			final String roomId = SessionStore.mSessionStore.mRooms.get(ii).mId;
+			final String roomType = SessionStore.mSessionStore.mRooms.get(ii).mType;
+			final String members = SessionStore.mSessionStore.mRooms.get(ii).serializeMembers();
+			onRoomAdded(SessionStore.mSessionStore.mRooms.get(ii).mName, 
+					roomId,
+					roomType,
+					SessionStore.mSessionStore.mRooms.get(ii).mLogo,
+					SessionStore.mSessionStore.mRooms.get(ii).mType,
+					members);
 		}
 	}
 
@@ -222,41 +203,42 @@ public class ChatLogFragment extends BaseFragment implements FragmentDialogResul
 	@Override
 	public void onRoomAdded( final String roomName,  final String roomId, String roomDesc,
 			String roomLogo, final String roomType, final String members) {
-		if(isExistRoom(roomId) == false){
-			mHandler.post(new Runnable() {
-
-				@Override
-				public void run() {
-					ChatSummary chat = new ChatSummary();
-					chat.Date = "1393/03/29";
-					chat.Time = "16:34";
-					chat.Summary ="";
-					chat.Title = roomId;
-					chat.id = roomId;
-					try{
-						if(roomType.compareTo("I") == 0){
-							chat.Summary += "شرکت کنندگان در جلسه : ";
-							String[] sMember = members.split(",");
-							for(int i = 0 ; i < sMember.length ; i++){
-								if(sMember[i].compareTo(BaseActivity.mCurrentUserProfile.m_uuid) != 0){
-									chat.Title = BaseActivity.mSessionStore.getUsernameById(sMember[i]);
-									chat.Summary += chat.Title;
-								}
-								else{
-									chat.Summary += BaseActivity.mCurrentUserProfile.m_userName;
-								}
-								if(i != sMember.length -1){
-									chat.Summary += " -- ";
-								}
+		synchronized (newRoomLock) {
+			if(isExistRoom(roomId) == false){
+				ChatSummary chat = new ChatSummary();
+				chat.Date = "1393/03/29";
+				chat.Time = "16:34";
+				chat.Summary ="";
+				chat.Title = roomId;
+				chat.id = roomId;
+				try{
+					if(roomType.compareTo("I") == 0){
+						chat.Summary += "شرکت کنندگان در جلسه : ";
+						String[] sMember = members.split(",");
+						for(int i = 0 ; i < sMember.length ; i++){
+							if(sMember[i].compareTo(BaseActivity.mCurrentUserProfile.m_uuid) != 0){
+								chat.Title = SessionStore.mSessionStore.getUsernameById(sMember[i]);
+								chat.Summary += chat.Title;
+							}
+							else{
+								chat.Summary += BaseActivity.mCurrentUserProfile.m_userName;
+							}
+							if(i != sMember.length -1){
+								chat.Summary += " -- ";
 							}
 						}
 					}
-					catch(Exception ex){
-					}
-					mChats.add(chat);
-					mAdapter.notifyDataSetChanged();
 				}
-			});
-		}
+				catch(Exception ex){
+				}
+				mChats.add(chat);
+				mHandler.post(new Runnable() {
+					@Override
+					public void run() {
+						mAdapter.notifyDataSetChanged();
+					}
+				});
+			}
+		};
 	}
 }

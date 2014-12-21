@@ -7,12 +7,17 @@ package org.ertebat.ui;
  */
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
@@ -20,6 +25,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.doubango.ngn.NgnEngine;
@@ -57,12 +63,15 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Debug;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -90,7 +99,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 	public static final int DIALOG_PICTURE_GALLERY = 3;
 	public static final int DIALOG_FRAGMENT_MULTI_CHOICE = 4;
 
-	
+
 	protected static List mTransportListeners = new ArrayList<ITransport>();
 	protected BroadcastReceiver mSipBroadCastRecv;
 	protected NgnEngine mEngine;
@@ -111,7 +120,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 		@Override
 		public void debug(String msg) throws RemoteException {
 			//String m = msg;
-//			showToast(msg);
+			showToast(msg);
 		}
 
 		@Override
@@ -121,14 +130,15 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 		}
 
 		@Override
-		public void newMessage(String messageId, String from, String roomId, String date,
+		public void newMessage(String type, String messageId, String from, String roomId, String date,
 				String time, String content) throws RemoteException {
 			if(mTransportCallback != null)
-				mTransportCallback.onNewMessage(new MessageSchema(messageId, from, roomId, date, time, content));
+				mTransportCallback.onNewMessage(new MessageSchema(type, messageId, from, roomId, date, time, content));
 		}
 
 		@Override
 		public void connectedToHost(String uri) throws RemoteException {
+			showToast("Connected to the host");
 			mWebsocketService.sendTextMessageToRoom("--", "--");
 			if(mTransportCallback != null)
 				mTransportCallback.onConnectedToServer();
@@ -136,6 +146,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 
 		@Override
 		public void disConnectedFromHost() throws RemoteException {
+			showToast("Disconnect from the host");
 			if(mTransportCallback != null)
 				mTransportCallback.onDisconnctedFromServer();
 		}
@@ -166,8 +177,8 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 				throws RemoteException {
 			try{
 				FriendSchema fs = new FriendSchema(id, userName, status);
-				if(mSessionStore != null)
-					mSessionStore.addFriend(fs);
+				if(SessionStore.mSessionStore != null)
+					SessionStore.mSessionStore.addFriend(fs);
 				if(mTransportCallback != null)
 					mTransportCallback.onNewFriend(fs);
 			}
@@ -179,7 +190,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 		@Override
 		public void roomAdded(String roomName, String roomId, String roomDesc,
 				String roomLogo, String roomType, String members) throws RemoteException {
-			showToast("Get indi room : " + roomId);
+			//showToast("Get indi room : " + roomId);
 			if(mTransportCallback != null)
 				mTransportCallback.onRoomAdded(roomName, roomId, roomDesc, roomLogo, roomType, members);
 
@@ -239,7 +250,6 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 	protected static int mLastCommand = 0;
 	protected static ProfileSchema mCurrentUserProfile;
 	protected static SettingSchema mSettings = new SettingSchema();
-	protected static SessionStore mSessionStore = new SessionStore();
 	// TODO: @Majid, load the contacts into this list and use it anywhere you need. I have used it for adding a contact to a chat
 	protected static List<ContactSummary> mContacts;
 
@@ -594,6 +604,88 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 		}
 	}
 
+	public void getIncommingMessage(){
+		try{
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					HttpClient client = new DefaultHttpClient();
+					Log.d(TAG, RestAPIAddress.getSignIn());
+					HttpGet getProfileRest = new HttpGet(RestAPIAddress.getIncommingMessage());	
+					getProfileRest.addHeader("token", mCurrentUserProfile.m_token);
+					try {
+						HttpResponse response = client.execute(getProfileRest);
+						if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+							BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+							String line = "";
+							String jsonString = "";
+							while ((line = rd.readLine()) != null) {
+								jsonString += line;						
+							}
+
+							JSONObject json = new JSONObject(jsonString);
+							if(json.getString("code").equals("103")){
+								JSONObject value = new JSONObject(json.getString("value"));
+								String type = "";
+								String date = "";
+								String from = "";
+								String content = "";
+								String roomId = "";
+								String id  =  "";
+								try{
+									type = value.getString("type");
+								}
+								catch(Exception ex){
+									logCatDebug(ex.getMessage());
+								}
+								try{
+									date = value.getString("date");
+								}
+								catch(Exception ex){
+									logCatDebug(ex.getMessage());
+								}
+								try{
+									from = value.getString("from");
+								}
+								catch(Exception ex){
+									logCatDebug(ex.getMessage());
+								}
+								try{
+									id = value.getString("id");
+								}
+								catch(Exception ex){
+									logCatDebug(ex.getMessage());
+								}
+								try{
+									content = value.getString("content");
+								}
+								catch(Exception ex){
+									logCatDebug(ex.getMessage());
+								}
+								try{
+									roomId = value.getString("roomId");
+								}
+								catch(Exception ex){
+									logCatDebug(ex.getMessage());
+								}
+
+								if(mTransportCallback != null)
+									mTransportCallback.onNewMessage(new MessageSchema(id, from, roomId, date, date, content));
+							}
+						} else {
+							showAlert("سیستم قادر به دریافت اطلاعات کاربر نمی باشد.");
+						}
+					} catch (Exception ex) {
+						Log.d(TAG, ex.getMessage());
+					}
+				}
+			}).start();
+		}
+		catch(Exception ex){
+			logCatDebug(ex.getMessage());
+		}
+	}
+
 	protected void saveProfile(final String uid, final String firstName, final String lastName, final String email){
 		try{
 			new Thread(new Runnable() {
@@ -656,7 +748,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 							String code = jsonObject.getString("code");
 							if(code.compareTo("9") == 0){
 								JSONArray friends = jsonObject.getJSONArray("friends");
-								showToast((jsonObject.getString("friends")));
+								//showToast((jsonObject.getString("friends")));
 								Vector<FriendSchema> listOfFriends = new Vector<FriendSchema>();
 								for(int i = 0 ; i < friends.length() ; i++){
 									JSONObject obj = friends.getJSONObject(i);
@@ -671,8 +763,8 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 								for(int j = 0 ; j < listOfFriends.size() ; j++){
 									FriendSchema fs = (FriendSchema) listOfFriends.get(j);
 									try{
-										if(mSessionStore != null)
-											mSessionStore.addFriend(fs);
+										if(SessionStore.mSessionStore != null)
+											SessionStore.mSessionStore.addFriend(fs);
 										if(mTransportCallback != null)
 											mTransportCallback.onNewFriend(fs);
 									}
@@ -680,7 +772,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 										showToast(ex.getMessage());
 									}
 								}
-								
+
 								mWebsocketService.getIndividualRooms();
 
 							}
@@ -825,21 +917,21 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 		// Child classes should override and define the body
 	}
 
-	 @SuppressWarnings("deprecation")
-	 private void Notify(String notificationTitle, String notificationMessage) {
-	  NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-	  @SuppressWarnings("deprecation")
-	  Notification notification = new Notification(R.drawable.ic_dialog_alert,
-	    "New Message", System.currentTimeMillis());
+	@SuppressWarnings("deprecation")
+	private void Notify(String notificationTitle, String notificationMessage) {
+		NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		@SuppressWarnings("deprecation")
+		Notification notification = new Notification(R.drawable.ic_dialog_alert,
+				"New Message", System.currentTimeMillis());
 
-	   Intent notificationIntent = new Intent(this, MainActivity.class);
-	  PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-	    notificationIntent, 0);
+		Intent notificationIntent = new Intent(this, MainActivity.class);
+		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+				notificationIntent, 0);
 
-	   notification.setLatestEventInfo(BaseActivity.this, notificationTitle,
-	    notificationMessage, pendingIntent);
-	  notificationManager.notify(9999, notification);
-	 }
+		notification.setLatestEventInfo(BaseActivity.this, notificationTitle,
+				notificationMessage, pendingIntent);
+		notificationManager.notify(9999, notification);
+	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -928,18 +1020,57 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 	}
 
 	@Override
-	public void onNewMessage(MessageSchema ms) {
-		try {
-			Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-			Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-			r.play();
+	public void onNewMessage(final MessageSchema ms) {
+		if(SessionStore.mSessionStore.addMessageToRoom(ms))
+		{
+			try {
+				Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+				Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+				r.play();
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		mSessionStore.addMessageToRoom(ms);
-		for(int i = 0 ; i < mTransportListeners.size() ; i++){
-			((ITransport) mTransportListeners.get(i)).onNewMessage(ms);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			if(ms.mType.equals("Text")){
+				for(int i = 0 ; i < mTransportListeners.size() ; i++){
+					((ITransport) mTransportListeners.get(i)).onNewMessage(ms);
+				}
+			}
+			else if(ms.mType.equals("Picture")){
+				Thread imageLoader = new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+						try {
+							URL url = new URL(SettingSchema.mBaseRestUrl + "uploaded/entities/" + ms.mBody);
+							showToast(SettingSchema.mBaseRestUrl + "uploaded/entities/" + ms.mBody);
+							Log.d(TAG, url.toExternalForm());
+							HttpGet httpRequest = null;
+							httpRequest = new HttpGet(url.toURI());
+							HttpClient httpclient = new DefaultHttpClient();
+							HttpResponse response = (HttpResponse) httpclient
+							.execute(httpRequest);
+							HttpEntity entity = response.getEntity();
+							BufferedHttpEntity b_entity = new BufferedHttpEntity(entity);
+							InputStream input = b_entity.getContent();
+							Bitmap image = BitmapFactory.decodeStream(input);
+							File pictureFileDirectory = new File(Environment.getExternalStoragePublicDirectory(
+									Environment.DIRECTORY_PICTURES).getPath() + "/entities");
+							pictureFileDirectory.mkdirs();
+							File pictureFile = new File(pictureFileDirectory, ms.mId + ".png");
+							FileOutputStream fos = new FileOutputStream(pictureFile);
+							image.compress(Bitmap.CompressFormat.PNG, 100, fos);
+							fos.close();
+							for(int i = 0 ; i < mTransportListeners.size() ; i++){
+								((ITransport) mTransportListeners.get(i)).onNewMessage(ms);
+							}
+						} catch (final Exception ex) {
+							showToast(ex.getMessage());
+						}
+					}
+				});
+				imageLoader.start();
+			}
 		}
 	}
 
@@ -978,7 +1109,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 	public void onRoomAdded(String roomName, String roomId, String roomDesc,
 			String roomLogo, String roomType, String members) {
 		RoomSchema rs = new RoomSchema(roomId, roomName, roomDesc, roomLogo, roomType);
-		mSessionStore.addRoom(rs);
+		SessionStore.mSessionStore.addRoom(rs);
 		String[] sMember = members.split(",");
 		for(String str: sMember){
 			rs.addMember(str);
@@ -991,7 +1122,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 	@Override
 	public void onMembersAddedToRoom(String roomId, String memberId) {
 		// TODO Auto-generated method stub
-		RoomSchema room = mSessionStore.getRoomById(roomId);
+		RoomSchema room = SessionStore.mSessionStore.getRoomById(roomId);
 		if(room != null){
 			room.addMember(memberId);
 		}
@@ -1002,7 +1133,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 		try{
 			//TODO: Show Notification
 			//TODO: Get lists via rest
-			showToast("Invited by : " + invitedBy);
+			//showToast("Invited by : " + invitedBy);
 			getFriendList();
 		}
 		catch(Exception ex){
@@ -1015,7 +1146,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 		try{
 			//TODO: Show Notification
 			//TODO: Get lists via rest
-			showToast("Invited by : " + invitedBy + " : " + roomId);
+			//showToast("Invited by : " + invitedBy + " : " + roomId);
 			mWebsocketService.getIndividualRooms();
 		}
 		catch(Exception ex){

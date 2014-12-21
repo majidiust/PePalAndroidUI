@@ -17,7 +17,7 @@ public class RoomSchema {
 		mDesc = desc;
 		mId = id;
 	}
-	public void addMessage(MessageSchema ms){
+	public boolean addMessage(MessageSchema ms){
 		boolean find = false;
 		for(int i = 0 ; i < mMessages.size() ; i++){
 			if(mMessages.get(i).mId.compareTo(ms.mId) == 0){
@@ -27,6 +27,19 @@ public class RoomSchema {
 		}
 		if(!find)
 			mMessages.add(ms);
+		
+		return !find;
+	}
+	
+	public boolean isExistMessage(String eventId){
+		boolean find = false;
+		for(int i = 0 ; i < mMessages.size() ; i++){
+			if(mMessages.get(i).mId.compareTo(eventId) == 0){
+				find = true;
+				break;
+			}
+		}
+		return find;
 	}
 	
 	public void addMember(String uid){

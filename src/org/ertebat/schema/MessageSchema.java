@@ -8,6 +8,7 @@ public class MessageSchema {
     public String mBody;
     public String mId;
     public boolean mIsRead;
+    public String mType;
     public MessageSchema(String id, String from, String to, String date, String time, String body){
     	mFrom = from;
     	mTo = to;
@@ -16,5 +17,16 @@ public class MessageSchema {
     	mBody = body;
     	mIsRead = false;
     	mId = id;
+    	mType = "Text";
+    }
+    public MessageSchema(String type, String id, String from, String to, String date, String time, String body){
+    	mFrom = from;
+    	mTo = to;
+    	mDate = date;
+    	mTime = time;
+    	mBody = body;
+    	mIsRead = false;
+    	mId = id;
+    	mType = type;
     }
 }
