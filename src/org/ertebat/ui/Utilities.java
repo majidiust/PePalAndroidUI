@@ -3,9 +3,11 @@ import java.io.InputStream;
 import java.security.InvalidParameterException;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.Log;
 
 public class Utilities {
@@ -103,6 +105,7 @@ public class Utilities {
 		else
 			throw new InvalidParameterException("Invalid month abbreviation.");
 	}
+
 
 	private static int getPowerOfTwoForSampleRatio(double ratio){
         int k = Integer.highestOneBit((int)Math.floor(ratio));

@@ -6,14 +6,19 @@ package org.ertebat.ui;
  *
  */
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Vector;
 
@@ -26,6 +31,11 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.BufferedHttpEntity;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.ContentBody;
+import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.doubango.ngn.NgnEngine;
@@ -63,18 +73,22 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Debug;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.Builder;
@@ -831,6 +845,60 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 	public static void logCatDebug(String msg){
 		Log.d(TAG, msg);
 	}
+
+	public String getPath(Uri uri) {
+		String[] projection = { MediaStore.Images.Media.DATA };
+		Cursor cursor = managedQuery(uri, projection, null, null, null);
+		int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+		cursor.moveToFirst();
+		return cursor.getString(column_index);
+	}
+
+	protected void uploadImageToTheServer(Uri selectedImage, String mRoomId){
+		try{
+			final String url = RestAPIAddress.getSendPictureMessage() + "/" + mRoomId + "/Now/Now";
+			final String path =  getPath(selectedImage);
+
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					try{
+						//1. Get the thumbnail
+						int width = (int) getResources().getDimension(org.ertebat.R.dimen.chat_message_item_picture_width);
+						Bitmap image = Utilities.getPictureThumbnail(This, path, width);
+						//2. 
+						File pictureFileDirectory = new File(Environment.getExternalStoragePublicDirectory(
+								Environment.DIRECTORY_PICTURES).getPath() + "/ertebat/tmp");
+						pictureFileDirectory.mkdirs();
+						Calendar cal = Calendar.getInstance();
+				    	long id = cal.getTimeInMillis();
+						File pictureFile = new File(pictureFileDirectory, id + ".png");
+						FileOutputStream fos = new FileOutputStream(pictureFile);
+						image.compress(Bitmap.CompressFormat.PNG, 0, fos);
+						fos.close();
+						HttpClient httpclient = new DefaultHttpClient();
+						HttpPost httppost = new HttpPost(url);
+						httppost.setHeader("token", mCurrentUserProfile.m_token);
+						MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+						ContentBody content = new FileBody(pictureFile);//, "multipart/form-data");
+						reqEntity.addPart("uploaded", content);
+						httppost.setEntity(reqEntity);
+						HttpResponse response = httpclient.execute(httppost);
+						pictureFile.delete();
+						Log.d("File", "Response: " + response.getStatusLine().getReasonPhrase());
+
+					} catch (Exception ex) {
+						Log.d("File", ex.getMessage());
+					}
+				}
+			}).start();
+		}
+		catch(Exception ex){
+			showToast(ex.getMessage());
+		}
+	}
+
 	/**
 	 * displays a given message at the bottom of the page
 	 * @param message
@@ -1042,25 +1110,25 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 					@Override
 					public void run() {
 						try {
-							URL url = new URL(SettingSchema.mBaseRestUrl + "uploaded/entities/" + ms.mBody);
-							showToast(SettingSchema.mBaseRestUrl + "uploaded/entities/" + ms.mBody);
-							Log.d(TAG, url.toExternalForm());
-							HttpGet httpRequest = null;
-							httpRequest = new HttpGet(url.toURI());
-							HttpClient httpclient = new DefaultHttpClient();
-							HttpResponse response = (HttpResponse) httpclient
-							.execute(httpRequest);
-							HttpEntity entity = response.getEntity();
-							BufferedHttpEntity b_entity = new BufferedHttpEntity(entity);
-							InputStream input = b_entity.getContent();
-							Bitmap image = BitmapFactory.decodeStream(input);
-							File pictureFileDirectory = new File(Environment.getExternalStoragePublicDirectory(
-									Environment.DIRECTORY_PICTURES).getPath() + "/entities");
-							pictureFileDirectory.mkdirs();
-							File pictureFile = new File(pictureFileDirectory, ms.mId + ".png");
-							FileOutputStream fos = new FileOutputStream(pictureFile);
-							image.compress(Bitmap.CompressFormat.PNG, 100, fos);
-							fos.close();
+							//							URL url = new URL(SettingSchema.mBaseRestUrl + "uploaded/entities/" + ms.mBody);
+							//							showToast(SettingSchema.mBaseRestUrl + "uploaded/entities/" + ms.mBody);
+							//							Log.d(TAG, url.toExternalForm());
+							//							HttpGet httpRequest = null;
+							//							httpRequest = new HttpGet(url.toURI());
+							//							HttpClient httpclient = new DefaultHttpClient();
+							//							HttpResponse response = (HttpResponse) httpclient
+							//							.execute(httpRequest);
+							//							HttpEntity entity = response.getEntity();
+							//							BufferedHttpEntity b_entity = new BufferedHttpEntity(entity);
+							//							InputStream input = b_entity.getContent();
+							//							Bitmap image = BitmapFactory.decodeStream(input);
+							//							File pictureFileDirectory = new File(Environment.getExternalStoragePublicDirectory(
+							//									Environment.DIRECTORY_PICTURES).getPath() + "/entities");
+							//							pictureFileDirectory.mkdirs();
+							//							File pictureFile = new File(pictureFileDirectory, ms.mId + ".png");
+							//							FileOutputStream fos = new FileOutputStream(pictureFile);
+							//							image.compress(Bitmap.CompressFormat.PNG, 100, fos);
+							//							fos.close();
 							for(int i = 0 ; i < mTransportListeners.size() ; i++){
 								((ITransport) mTransportListeners.get(i)).onNewMessage(ms);
 							}
@@ -1153,4 +1221,5 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 			logCatDebug(ex.getMessage());
 		}
 	}
+
 }

@@ -56,4 +56,7 @@ public class RestAPIAddress {
 	public static String getIncommingMessage(){
 		return SettingSchema.mBaseRestUrl + "chat/getIncomingMessage";
 	}
+	public static String getSendPictureMessage(){
+		return SettingSchema.mBaseRestUrl + "chat/sendPictureMessageTo";
+	}
 }

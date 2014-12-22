@@ -1,4 +1,8 @@
 package org.ertebat.ui;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -6,6 +10,10 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Vector;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.ertebat.R;
 import org.ertebat.R.dimen;
 import org.ertebat.R.drawable;
@@ -14,10 +22,17 @@ import org.ertebat.R.layout;
 import org.ertebat.schema.MessageSchema;
 import org.ertebat.schema.RoomSchema;
 import org.ertebat.schema.SessionStore;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.ContentBody;
+import org.apache.http.entity.mime.content.FileBody;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -46,6 +61,8 @@ public class ChatActivity extends BaseActivity {
 	private String mOtherParty = "";
 
 	private Object mAddMessageLock = new Object();
+	private int maxWidth = 1280;
+	private int maxHeight = 720;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -253,6 +270,7 @@ public class ChatActivity extends BaseActivity {
 		super.onDestroy();
 	}
 
+	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (data == null)
@@ -260,14 +278,14 @@ public class ChatActivity extends BaseActivity {
 		int width;
 		switch (requestCode) {
 		case DIALOG_PICTURE_GALLERY:
-			Uri selectedImage = data.getData();
+			final Uri selectedImage = data.getData();
 			width = (int)getResources().getDimension(R.dimen.chat_message_item_picture_width);
-			createPictureMessage(true, Utilities.getPictureThumbnail(This, selectedImage, width));
+			uploadImageToTheServer(selectedImage, mRoomId);
 			break;
 		case DIALOG_TAKE_PICTURE:
 			Uri takenImage = data.getData();
 			width = (int)getResources().getDimension(R.dimen.chat_message_item_picture_width);
-			createPictureMessage(true, Utilities.getPictureThumbnail(This, takenImage, width));
+			uploadImageToTheServer(takenImage,mRoomId);
 			break;
 		default:
 			super.onActivityResult(requestCode, resultCode, data);
@@ -292,15 +310,15 @@ public class ChatActivity extends BaseActivity {
 				}
 				else if(ms.mType.equals("Picture")){
 					message.Type = ChatMessageType.Picture;
-					try{
-					String path = Environment.getExternalStoragePublicDirectory(
-							Environment.DIRECTORY_PICTURES).getPath() + "/entities/" + ms.mId + ".png";
-					int width = (int)getResources().getDimension(R.dimen.chat_message_item_picture_width);
-					message.MessagePicture = Utilities.getPictureThumbnail(This, path, width);
-					}
-					catch(Exception ex){
-						logCatDebug(ex.getMessage());
-					}
+					//					try{
+					//					String path = Environment.getExternalStoragePublicDirectory(
+					//							Environment.DIRECTORY_PICTURES).getPath() + "/entities/" + ms.mId + ".png";
+					//					int width = (int)getResources().getDimension(R.dimen.chat_message_item_picture_width);
+					//					message.MessagePicture = Utilities.getPictureThumbnail(This, path, width);
+					//					}
+					//					catch(Exception ex){
+					//						logCatDebug(ex.getMessage());
+					//					}
 				}
 				message.IsSenderSelf = false;
 				message.MessageId = ms.mId;
