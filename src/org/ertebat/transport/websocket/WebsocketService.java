@@ -244,6 +244,7 @@ public class WebsocketService extends Service {
 									String from = tmpObject.getString("from");
 									String content = tmpObject.getString("content");
 									String date = tmpObject.getString("date");
+									String fromId = tmpObject.getString("fromId");
 									String messageId = tmpObject.getString("id");
 									sendTextMessageAck(messageId);
 
@@ -253,7 +254,7 @@ public class WebsocketService extends Service {
 									for (int i = 0; i < N; i++) {
 										try {
 											isExist = true;
-											mCallbacks.getBroadcastItem(i).newMessage(type, messageId, from, roomId, date, date, content);
+											mCallbacks.getBroadcastItem(i).newMessage(type, messageId, fromId, from, roomId, date, date, content);
 										} 
 										catch (RemoteException e) {
 											logCatDebug(e.getMessage());
@@ -272,6 +273,7 @@ public class WebsocketService extends Service {
 												showMessage.putExtra("message", content);
 												showMessage.putExtra("messageId", messageId);
 												showMessage.putExtra("from", from);
+												showMessage.putExtra("fromId", fromId);
 												showMessage.putExtra("date", date);
 												showNotification("پیام از " + from, content, showMessage);
 												Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);

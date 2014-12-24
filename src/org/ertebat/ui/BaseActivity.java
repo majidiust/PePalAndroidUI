@@ -60,9 +60,11 @@ import org.doubango.ngn.utils.NgnUriUtils;
 import android.R;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -93,6 +95,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.Builder;
 import android.util.Log;
+import android.view.Gravity;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.ertebat.schema.FriendSchema;
@@ -124,6 +128,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 	protected CallActivityStatus mCurrentStatus = CallActivityStatus.CAS_Idle;
 	protected Context This = null;
 	protected Handler mHandler;
+	protected Dialog mDialog;
 	protected FragmentDialogResultListener mFragmentDialogListener;
 	protected static String TAG = "BaseActivity";
 	protected ITransport mTransportCallback;
@@ -144,10 +149,10 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 		}
 
 		@Override
-		public void newMessage(String type, String messageId, String from, String roomId, String date,
+		public void newMessage(String type, String messageId, String fromId, String fromUsername, String roomId, String date,
 				String time, String content) throws RemoteException {
 			if(mTransportCallback != null)
-				mTransportCallback.onNewMessage(new MessageSchema(type, messageId, from, roomId, date, time, content));
+				mTransportCallback.onNewMessage(new MessageSchema(type, messageId, fromId, fromUsername, roomId, date, time, content));
 		}
 
 		@Override
@@ -646,8 +651,15 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 								String content = "";
 								String roomId = "";
 								String id  =  "";
+								String fromId = "";
 								try{
 									type = value.getString("type");
+								}
+								catch(Exception ex){
+									logCatDebug(ex.getMessage());
+								}
+								try{
+									fromId = value.getString("fromId");
 								}
 								catch(Exception ex){
 									logCatDebug(ex.getMessage());
@@ -684,7 +696,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 								}
 
 								if(mTransportCallback != null)
-									mTransportCallback.onNewMessage(new MessageSchema(id, from, roomId, date, date, content));
+									mTransportCallback.onNewMessage(new MessageSchema(id, fromId, from, roomId, date, date, content));
 							}
 						} else {
 							showAlert("سیستم قادر به دریافت اطلاعات کاربر نمی باشد.");
@@ -722,9 +734,9 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 							mCurrentUserProfile.m_firstName = firstName;
 							mCurrentUserProfile.m_lastName = lastName;
 							mCurrentUserProfile.m_email = email;
-							showAlert("پروفایل شما با موفقیت بروز شد.");
+							
 						} else {
-							showAlert("ورود موفقیت آمیز نبود. لطفاً مجدداً تلاش نمائید");
+							
 						}
 					} catch (Exception ex) {
 						Log.d(TAG, ex.getMessage());
@@ -808,6 +820,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 	}
 
 	protected void sendTextMessageToServer(final String roomId, final String publishType, final String publishDate, final String content){
+		showWaitingDialog("ارسال پیام", "در حال ارسال پیام به سرور. لطفا منتظر بمانید....");
 		try{
 			new Thread(new Runnable() {
 
@@ -898,6 +911,53 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 			showToast(ex.getMessage());
 		}
 	}
+	
+	protected void uploadProfilePictureToTheServer(Uri selectedImage){
+		try{
+			final String url = RestAPIAddress.getUploadProfilePicture();
+			final String path =  getPath(selectedImage);
+
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					try{
+						//1. Get the thumbnail
+						int width = (int) getResources().getDimension(org.ertebat.R.dimen.user_profile_thumbnail_size);
+						Bitmap image = Utilities.getPictureThumbnail(This, path, width);
+						//2. 
+						File pictureFileDirectory = new File(Environment.getExternalStoragePublicDirectory(
+								Environment.DIRECTORY_PICTURES).getPath() + "/ertebat/tmp");
+						pictureFileDirectory.mkdirs();
+						Calendar cal = Calendar.getInstance();
+				    	long id = cal.getTimeInMillis();
+						File pictureFile = new File(pictureFileDirectory, id + ".png");
+						FileOutputStream fos = new FileOutputStream(pictureFile);
+						image.compress(Bitmap.CompressFormat.PNG, 0, fos);
+						fos.close();
+						HttpClient httpclient = new DefaultHttpClient();
+						HttpPost httppost = new HttpPost(url);
+						httppost.setHeader("token", mCurrentUserProfile.m_token);
+						MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+						ContentBody content = new FileBody(pictureFile);//, "multipart/form-data");
+						reqEntity.addPart("uploaded", content);
+						httppost.setEntity(reqEntity);
+						HttpResponse response = httpclient.execute(httppost);
+						pictureFile.delete();
+						Log.d("File", "Response: " + response.getStatusLine().getReasonPhrase());
+						closeWaitingDialog();
+						showAlert("تصویر شما بروز رسانی گردید.");
+
+					} catch (Exception ex) {
+						Log.d("File", ex.getMessage());
+					}
+				}
+			}).start();
+		}
+		catch(Exception ex){
+			showToast(ex.getMessage());
+		}
+	}
 
 	/**
 	 * displays a given message at the bottom of the page
@@ -959,6 +1019,33 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 
 	protected void onAlertClosed(int alertID) {
 
+	}
+
+	/**
+	 * displays a custom wait message
+	 * @param title: title of the message
+	 * @param message: the message text
+	 */
+	protected void showWaitingDialog(final String title, final String message) {
+		mHandler.post(new Runnable() {
+
+			@Override
+			public void run() {
+				mDialog = ProgressDialog.show(This, title, message, true);
+				TextView tvMessage = (TextView) mDialog
+				.findViewById(android.R.id.message);
+				tvMessage.setGravity(Gravity.LEFT);
+			}
+		});		
+	}
+
+	/**
+	 * closes the wait message dialog if it is open
+	 */
+	protected void closeWaitingDialog() {
+		if (mDialog != null) {
+			mDialog.dismiss();
+		}
 	}
 
 	protected void showMultiChoiceDialog(String[] choices, String callback, String dialogTitle) {

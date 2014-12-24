@@ -72,7 +72,7 @@ public class ChatActivity extends BaseActivity {
 		getActionBar().hide();
 		TAG = "ChatActivity";
 
-		String content, messageId, from, date;
+		String content, messageId, from, date, fromId;
 		try{
 			Bundle b = getIntent().getExtras();
 			mRoomId = b.getString("roomId");
@@ -85,8 +85,9 @@ public class ChatActivity extends BaseActivity {
 				messageId = b.getString("messageId");
 				from = b.getString("from");
 				date = b.getString("date");
+				fromId = b.getString("fromId");
 				showToast(messageId + " : " + from + " : " + mRoomId);
-				SessionStore.mSessionStore.addMessageToRoom(new MessageSchema(messageId, from, mRoomId, date, date, content));
+				SessionStore.mSessionStore.addMessageToRoom(new MessageSchema(messageId, fromId, from, mRoomId, date, date, content));
 			}
 		}
 		catch(Exception ex){
@@ -310,21 +311,15 @@ public class ChatActivity extends BaseActivity {
 				}
 				else if(ms.mType.equals("Picture")){
 					message.Type = ChatMessageType.Picture;
-					//					try{
-					//					String path = Environment.getExternalStoragePublicDirectory(
-					//							Environment.DIRECTORY_PICTURES).getPath() + "/entities/" + ms.mId + ".png";
-					//					int width = (int)getResources().getDimension(R.dimen.chat_message_item_picture_width);
-					//					message.MessagePicture = Utilities.getPictureThumbnail(This, path, width);
-					//					}
-					//					catch(Exception ex){
-					//						logCatDebug(ex.getMessage());
-					//					}
 				}
 				message.IsSenderSelf = false;
 				message.MessageId = ms.mId;
-				if(ms.mFrom.equals(mCurrentUserProfile.m_userName)){
+				message.SenderID = ms.mFromId;
+				message.SenderUserName = ms.mFromUserName;
+				if(ms.mFromUserName.equals(mCurrentUserProfile.m_userName)){
 					message.IsSenderSelf = true;
 				}
+				
 				message.MessageText = ms.mBody;
 				message.ReceptionTime = ms.mDate;
 				mDataSet.add(message);

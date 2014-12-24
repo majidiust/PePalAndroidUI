@@ -71,7 +71,6 @@ public class ChatMessageAdapter extends ArrayAdapter<ChatMessage> {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
 		}
 		
 		text = (TextView)(itemView.findViewById(R.id.txtChatMessageListItemDateTime));
@@ -80,7 +79,20 @@ public class ChatMessageAdapter extends ArrayAdapter<ChatMessage> {
 		if (!message.IsSenderSelf) {
 			ImageView image = (ImageView)(itemView.findViewById(R.id.imgChatMessageListItemPicture));
 			image.setImageBitmap(mContactPicture);
+			try{
+				ImageView senderImage = (ImageView)itemView.findViewById(R.id.imgChatMessageListItemPicture);
+				int width = (int) getContext().getResources().getDimension(org.ertebat.R.dimen.chat_message_item_thumb_size);
+				Picasso.with(getContext()).load(SettingSchema.mBaseRestUrl + "uploaded/profiles/" + message.SenderID + ".png").resize(width, width)
+				  .centerInside().placeholder(org.ertebat.R.drawable.ic_default_user_picture).error(org.ertebat.R.drawable.ic_default_user_picture).into(image);
+
+			}
+			catch(Exception ex){
+				ex.printStackTrace();
+			}
+			
 		}
+		
+		
 		
 		return itemView;
 	}

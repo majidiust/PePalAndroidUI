@@ -11,6 +11,7 @@ import org.ertebat.R.id;
 import org.ertebat.R.layout;
 import org.ertebat.schema.MessageSchema;
 import org.ertebat.schema.SessionStore;
+import org.ertebat.schema.SettingSchema;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -213,12 +214,14 @@ public class ChatLogFragment extends BaseFragment implements FragmentDialogResul
 				chat.id = roomId;
 				try{
 					if(roomType.compareTo("I") == 0){
+						chat.Type = "I";
 						chat.Summary += "شرکت کنندگان در جلسه : ";
 						String[] sMember = members.split(",");
 						for(int i = 0 ; i < sMember.length ; i++){
 							if(sMember[i].compareTo(BaseActivity.mCurrentUserProfile.m_uuid) != 0){
 								chat.Title = SessionStore.mSessionStore.getUsernameById(sMember[i]);
 								chat.Summary += chat.Title;
+								chat.logo = SettingSchema.mBaseRestUrl + "uploaded/profiles/" + sMember[i] + ".png";
 							}
 							else{
 								chat.Summary += BaseActivity.mCurrentUserProfile.m_userName;
@@ -227,6 +230,9 @@ public class ChatLogFragment extends BaseFragment implements FragmentDialogResul
 								chat.Summary += " -- ";
 							}
 						}
+					}
+					else{
+						chat.Type = "G";
 					}
 				}
 				catch(Exception ex){

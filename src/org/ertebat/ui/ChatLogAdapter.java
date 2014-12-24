@@ -2,6 +2,9 @@ package org.ertebat.ui;
 import java.util.List;
 
 import org.ertebat.R;
+import org.ertebat.schema.SettingSchema;
+
+import com.squareup.picasso.Picasso;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -10,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ChatLogAdapter extends ArrayAdapter<ChatSummary> {
@@ -61,8 +65,16 @@ public class ChatLogAdapter extends ArrayAdapter<ChatSummary> {
 			text.setVisibility(View.GONE);
 		}
 
-		//	TODO: Put a proper picture on the ImageView
-
+		try{
+			String logo = mChats.get(position).logo;
+			ImageView image = (ImageView)itemView.findViewById(R.id.imgChatLogListItemPicture);
+			int width = (int) getContext().getResources().getDimension(org.ertebat.R.dimen.user_profile_thumbnail_size);
+			Picasso.with(getContext()).load(logo).resize(width, width)
+			.centerInside().placeholder(org.ertebat.R.drawable.ic_chat_logo_default).error(org.ertebat.R.drawable.ic_chat_logo_default).into(image);
+		}
+		catch(Exception ex){
+			ex.printStackTrace();
+		}
 		return itemView;
 	}
 }

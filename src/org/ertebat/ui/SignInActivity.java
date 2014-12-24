@@ -84,6 +84,8 @@ public class SignInActivity extends BaseActivity {
 					showAlert("لطفاً نام کاربری و رمز عبور خود را وارد نمائید");
 					return;
 				}
+				
+				showWaitingDialog("در حال اتصال به سرور", "لطفا منتظر بمانید...");
 
 				new Thread(new Runnable() {
 
@@ -119,6 +121,7 @@ public class SignInActivity extends BaseActivity {
 									mCurrentUserProfile.m_userName = mEditUsername.getText().toString();
 									//@2: Connect to web socket server
 									mWebsocketService.connectToHost(mSettings.mWebSocketUrl);
+									closeWaitingDialog();
 								} else {
 									Log.d("Http", line);
 								}		

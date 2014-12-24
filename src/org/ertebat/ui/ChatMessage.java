@@ -11,4 +11,5 @@ public class ChatMessage {
 	public String MessageText;
 	public Bitmap MessagePicture;
 	public String MessageId;
+	public String SenderUserName;
 }

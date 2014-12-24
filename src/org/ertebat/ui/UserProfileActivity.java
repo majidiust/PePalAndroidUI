@@ -1,6 +1,9 @@
 package org.ertebat.ui;
 
 import org.ertebat.R;
+import org.ertebat.schema.SettingSchema;
+
+import com.squareup.picasso.Picasso;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -23,6 +26,7 @@ public class UserProfileActivity extends BaseActivity {
 	private EditText mEditEmail;
 	private ImageView mImageThumbnail;
 	private Button mBtnSubmit;
+	private Uri mSelectedPicture;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -87,14 +91,24 @@ public class UserProfileActivity extends BaseActivity {
 				String lastName = mEditSurname.getText().toString();
 				String email = mEditEmail.getText().toString();
 				saveProfile(mCurrentUserProfile.m_uuid, firstName, lastName, email);
+				if(mSelectedPicture != null){
+					showWaitingDialog("باالاگذاری تصاویر", "در حال بالاگذاری تصاویر، لطفا منتظر بمانید...."); 
+					uploadProfilePictureToTheServer(mSelectedPicture);
+				}
 			}
 		});
+		
+		int width = (int) This.getResources().getDimension(org.ertebat.R.dimen.user_profile_thumbnail_size);
+		Picasso.with(This).load(SettingSchema.mBaseRestUrl + "uploaded/profiles/" + mCurrentUserProfile.m_uuid + ".png").resize(width, width)
+		  .centerInside().placeholder(org.ertebat.R.drawable.ic_default_user_picture).error(org.ertebat.R.drawable.ic_default_user_picture).into(mImageThumbnail);
 	}
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             return;
         }
+        if (data == null)
+			return;
 
         Bundle extras;
 
@@ -104,6 +118,7 @@ public class UserProfileActivity extends BaseActivity {
             if (extras != null) {
                 Bitmap photo = extras.getParcelable("data");
                 mImageThumbnail.setImageBitmap(photo);
+                mSelectedPicture = data.getData();
             }
             break;
         default:

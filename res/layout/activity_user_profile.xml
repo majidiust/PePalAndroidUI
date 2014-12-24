@@ -11,7 +11,7 @@
         android:layout_height="@dimen/user_profile_thumbnail_size"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/user_profile_item_margin_vertical"
-        android:background="@drawable/ic_contact" />
+         />
 
     <TextView
         android:id="@+id/txtUserProfilePhoneNumber"

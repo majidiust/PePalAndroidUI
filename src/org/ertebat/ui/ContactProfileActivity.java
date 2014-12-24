@@ -16,7 +16,10 @@ import org.apache.http.message.BasicNameValuePair;
 import org.ertebat.R;
 import org.ertebat.schema.RoomSchema;
 import org.ertebat.schema.SessionStore;
+import org.ertebat.schema.SettingSchema;
 import org.json.JSONObject;
+
+import com.squareup.picasso.Picasso;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,6 +27,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ContactProfileActivity extends BaseActivity {
@@ -32,6 +36,7 @@ public class ContactProfileActivity extends BaseActivity {
 	private Button mBtnChat;
 	private Button mBtnAudioCall;
 	private Button mBtnVideoCall;
+	private ImageView mProfileImage;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +93,11 @@ public class ContactProfileActivity extends BaseActivity {
 		mTextName.setText(name);
 		mTextPhone.setText(phone);
 		getUserProfile(userId);
+		
+		mProfileImage = (ImageView)  findViewById(R.id.imgContactProfileThumbnail);
+		int width = (int) This.getResources().getDimension(org.ertebat.R.dimen.user_profile_thumbnail_size);
+		Picasso.with(This).load(SettingSchema.mBaseRestUrl + "uploaded/profiles/" + userId + ".png").resize(width, width)
+		  .centerInside().placeholder(org.ertebat.R.drawable.ic_default_user_picture).error(org.ertebat.R.drawable.ic_default_user_picture).into(mProfileImage);
 	}
 
 	@Override

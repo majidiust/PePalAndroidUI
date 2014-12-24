@@ -6,4 +6,6 @@ public class ChatSummary {
 	public String Time;
 	public int NewMessageCount;
 	public String id;
+	public String Type;
+	public String logo;
 }
