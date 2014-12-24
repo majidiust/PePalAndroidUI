@@ -1,6 +1,5 @@
 eclipse.preferences.version=1
 encoding//src/org/ertebat/transport/websocket/WebsocketService.java=UTF-8
-encoding//src/org/ertebat/ui/BaseActivity.java=UTF-8
 encoding//src/org/ertebat/ui/ChatActivity.java=UTF-8
 encoding//src/org/ertebat/ui/ChatLogFragment.java=UTF-8
 encoding//src/org/ertebat/ui/ContactListFragment.java=UTF-8
@@ -8,3 +7,4 @@ encoding//src/org/ertebat/ui/ContactProfileActivity.java=UTF-8
 encoding//src/org/ertebat/ui/PictureInsertionMethod.java=UTF-8
 encoding//src/org/ertebat/ui/SignInActivity.java=UTF-8
 encoding//src/org/ertebat/ui/SignUpActivity.java=UTF-8
+encoding//src/org/ertebat/ui/UserProfileActivity.java=UTF-8

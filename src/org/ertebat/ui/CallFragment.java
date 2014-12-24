@@ -7,7 +7,6 @@ import org.doubango.ngn.model.NgnContact;
 import org.doubango.ngn.sip.NgnAVSession;
 import org.doubango.ngn.utils.NgnStringUtils;
 import org.doubango.ngn.utils.NgnUriUtils;
-
 import org.ertebat.R;
 import org.ertebat.R.drawable;
 import org.ertebat.R.id;
@@ -76,6 +75,7 @@ public class CallFragment extends BaseFragment {
 		super.onCreateView(inflater, container, savedInstanceState);
 		
 		View rootView = inflater.inflate(R.layout.fragment_call, container, false);
+	
 
 		mLayoutNumberBar = (RelativeLayout)rootView.findViewById(R.id.layoutCallNumberBar);
 		mLayoutCallButtons = (LinearLayout)rootView.findViewById(R.id.layoutCallDialButtons);
@@ -109,8 +109,8 @@ public class CallFragment extends BaseFragment {
 			
 			@Override
 			public void onClick(View v) {
-				if(mAVSession != null){
-					mAVSession.toggleCamera();
+				if(mBaseActivity.mAVSession != null){
+					mBaseActivity.mAVSession.toggleCamera();
 				}
 			}
 		});
@@ -211,11 +211,11 @@ public class CallFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				if(mSipService.isRegistered())
+				if(mBaseActivity.mSipService.isRegistered())
 				{
 					final String remoteUri = mDialedNumber;
 					final String validUri = NgnUriUtils.makeValidSipUri(remoteUri);
-					NgnAVSession AVSession = NgnAVSession.createOutgoingSession(mSipService.getSipStack(),
+					NgnAVSession AVSession = NgnAVSession.createOutgoingSession(mBaseActivity.mSipService.getSipStack(),
 							NgnMediaType.Audio);//.AudioVideo);
 					AVSession.setRemotePartyUri(remoteUri); // HACK
 					if(AVSession.makeCall(validUri)){
@@ -236,11 +236,11 @@ public class CallFragment extends BaseFragment {
 			
 			@Override
 			public void onClick(View v) {
-				if(mSipService.isRegistered())
+				if(mBaseActivity.mSipService.isRegistered())
 				{
 					final String remoteUri = mDialedNumber;
 					final String validUri = NgnUriUtils.makeValidSipUri(remoteUri);
-					NgnAVSession AVSession = NgnAVSession.createOutgoingSession(mSipService.getSipStack(),
+					NgnAVSession AVSession = NgnAVSession.createOutgoingSession(mBaseActivity.mSipService.getSipStack(),
 							NgnMediaType.AudioVideo);
 					AVSession.setRemotePartyUri(remoteUri); // HACK
 					if(AVSession.makeCall(validUri)){
@@ -272,8 +272,8 @@ public class CallFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				if(mAVSession != null)
-					mAVSession.hangUpCall();
+				if(mBaseActivity.mAVSession != null)
+					mBaseActivity.mAVSession.hangUpCall();
 			}
 		});
 
@@ -282,8 +282,8 @@ public class CallFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				if (mAVSession != null) {
-					mAVSession.hangUpCall();
+				if (mBaseActivity.mAVSession != null) {
+					mBaseActivity.mAVSession.hangUpCall();
 				}
 			}
 		});
@@ -293,8 +293,8 @@ public class CallFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				if (mAVSession != null) {
-					mAVSession.hangUpCall();
+				if (mBaseActivity.mAVSession != null) {
+					mBaseActivity.mAVSession.hangUpCall();
 				}
 				//				changeStatus(CallActivityStatus.CAS_NumberEntry);
 			}
@@ -305,8 +305,8 @@ public class CallFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				if (mAVSession != null) {
-					mAVSession.hangUpCall();
+				if (mBaseActivity.mAVSession != null) {
+					mBaseActivity.mAVSession.hangUpCall();
 				}
 			}
 		});
@@ -316,8 +316,8 @@ public class CallFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				if (mAVSession != null) {
-					mAVSession.acceptCall();
+				if (mBaseActivity.mAVSession != null) {
+					mBaseActivity.mAVSession.acceptCall();
 				}
 			}
 		});
@@ -328,7 +328,7 @@ public class CallFragment extends BaseFragment {
 			@Override
 			public void onClick(View v) {
 				if (!mIsSipConnected) {
-					// SignInNGN();
+					mBaseActivity.signInNGN();
 					/**
 					 * TODO: @Majid, when successfully connected to the SIP server change the button background like below
 					 */
@@ -339,7 +339,7 @@ public class CallFragment extends BaseFragment {
 					
 					mIsSipConnected = true;
 				} else {
-					// SignOutNGN();
+					mBaseActivity.signOutNGN();
 					/**
 					 * TODO: @Majid, when successfully disconnected from the SIP server change the button background like below
 					 */
@@ -377,20 +377,20 @@ public class CallFragment extends BaseFragment {
 		NgnInviteEventArgs args = getActivity().getIntent().getParcelableExtra(NgnEventArgs.EXTRA_EMBEDDED);
 		if(args != null)
 		{
-			mAVSession = NgnAVSession.getSession(args.getSessionId());
-			if(mAVSession == null){
+			mBaseActivity.mAVSession = NgnAVSession.getSession(args.getSessionId());
+			if(mBaseActivity.mAVSession == null){
 				changeStatus(CallActivityStatus.CAS_Idle);
 			}
 			else {
-				mIsVideoCall = mAVSession.getMediaType() == NgnMediaType.AudioVideo ||
-					mAVSession.getMediaType() == NgnMediaType.Video;
-				final NgnContact remoteParty = mEngine.getContactService().getContactByUri(mAVSession.getRemotePartyUri());
+				mIsVideoCall = mBaseActivity.mAVSession.getMediaType() == NgnMediaType.AudioVideo ||
+						mBaseActivity.mAVSession.getMediaType() == NgnMediaType.Video;
+				final NgnContact remoteParty = mBaseActivity.mEngine.getContactService().getContactByUri(mBaseActivity.mAVSession.getRemotePartyUri());
 				String number;
 				if(remoteParty != null){
 					number = remoteParty.getDisplayName();
 				}
 				else{
-					number = NgnUriUtils.getDisplayName(mAVSession.getRemotePartyUri());
+					number = NgnUriUtils.getDisplayName(mBaseActivity.mAVSession.getRemotePartyUri());
 				}
 				if(NgnStringUtils.isNullOrEmpty(number)){
 					number = "0000000000";
@@ -399,7 +399,7 @@ public class CallFragment extends BaseFragment {
 				mDialedNumber = number;
 				mTextIncomingCaller.setText(mDialedNumber);
 				changeStatus(CallActivityStatus.CAS_Incoming);
-				mAVSession.setContext(this.getActivity());
+				mBaseActivity.mAVSession.setContext(this.getActivity());
 			}
 		}
 		else
@@ -416,11 +416,11 @@ public class CallFragment extends BaseFragment {
 			@Override
 			public void run() {
 				if (mDialedNumber.length() >= MAX_NUMBERS ||
-						(mCurrentStatus != CallActivityStatus.CAS_Idle &&
-								mCurrentStatus != CallActivityStatus.CAS_NumberEntry))
+						(mBaseActivity.mCurrentStatus != CallActivityStatus.CAS_Idle &&
+								mBaseActivity.mCurrentStatus != CallActivityStatus.CAS_NumberEntry))
 					return;
 
-				if (mCurrentStatus == CallActivityStatus.CAS_Idle)
+				if (mBaseActivity.mCurrentStatus == CallActivityStatus.CAS_Idle)
 					changeStatus(CallActivityStatus.CAS_NumberEntry);
 
 				mDialedNumber += button.toString();
@@ -430,8 +430,8 @@ public class CallFragment extends BaseFragment {
 	}
 
 	protected void changeStatus(CallActivityStatus newStatus) {			
-		mCurrentStatus = newStatus;
-		switch (mCurrentStatus) {
+		mBaseActivity.mCurrentStatus = newStatus;
+		switch (mBaseActivity.mCurrentStatus) {
 		case CAS_Idle:
 			mLayoutNumberBar.setVisibility(View.VISIBLE);
 			mLayoutCallButtons.setVisibility(View.INVISIBLE);
@@ -496,7 +496,43 @@ public class CallFragment extends BaseFragment {
 		}
 	}
 
-	protected void SetCallState(NgnInviteEventTypes callState) {
+	@Override
+	public void OnIncommingCall(NgnInviteEventArgs args) {
+		if(args != null)
+		{
+			mBaseActivity.mAVSession = NgnAVSession.getSession(args.getSessionId());
+			if(mBaseActivity.mAVSession == null){
+				changeStatus(CallActivityStatus.CAS_Idle);
+			}
+			else {
+				mIsVideoCall = mBaseActivity.mAVSession.getMediaType() == NgnMediaType.AudioVideo ||
+						mBaseActivity.mAVSession.getMediaType() == NgnMediaType.Video;
+				final NgnContact remoteParty = mBaseActivity.mEngine.getContactService().getContactByUri(mBaseActivity.mAVSession.getRemotePartyUri());
+				String number;
+				if(remoteParty != null){
+					number = remoteParty.getDisplayName();
+				}
+				else{
+					number = NgnUriUtils.getDisplayName(mBaseActivity.mAVSession.getRemotePartyUri());
+				}
+				if(NgnStringUtils.isNullOrEmpty(number)){
+					number = "0000000000";
+				}
+
+				mDialedNumber = number;
+				mTextIncomingCaller.setText(mDialedNumber);
+				changeStatus(CallActivityStatus.CAS_Incoming);
+				mBaseActivity.mAVSession.setContext(getActivity());
+			}
+		}
+		else
+		{
+			changeStatus(CallActivityStatus.CAS_Idle);
+		}
+	}
+	
+	@Override
+	public void SetCallState(NgnInviteEventTypes callState) {
 		AnimationDrawable frameAnimation = null;
 		switch (callState) {
 		case INPROGRESS:
@@ -507,7 +543,7 @@ public class CallFragment extends BaseFragment {
 			break;
 		case CONNECTED:
 		case EARLY_MEDIA:
-			mIsVideoCall = mAVSession.getMediaType() == NgnMediaType.AudioVideo || mAVSession.getMediaType() == NgnMediaType.Video;
+			mIsVideoCall = mBaseActivity.mAVSession.getMediaType() == NgnMediaType.AudioVideo || mBaseActivity.mAVSession.getMediaType() == NgnMediaType.Video;
 			frameAnimation = (AnimationDrawable)mImgDialing.getBackground();
 			frameAnimation.stop();
 			
@@ -519,7 +555,7 @@ public class CallFragment extends BaseFragment {
 				changeStatus(CallActivityStatus.CAS_InCallAudio);
 			}
 			resetCallTimer();
-			mAVSession.setContext(this.getActivity());
+			mBaseActivity.mAVSession.setContext(this.getActivity());
 			loadInCallView();
 			new Thread(new Runnable() {
 
@@ -529,8 +565,8 @@ public class CallFragment extends BaseFragment {
 					time.setToNow();
 					mLastDurationSeconds = time.second;
 
-					while (mCurrentStatus == CallActivityStatus.CAS_InCallAudio ||
-							mCurrentStatus == CallActivityStatus.CAS_InCallVideo) {
+					while (mBaseActivity.mCurrentStatus == CallActivityStatus.CAS_InCallAudio ||
+							mBaseActivity.mCurrentStatus == CallActivityStatus.CAS_InCallVideo) {
 						time.setToNow();
 						long nowSeconds = time.second;
 
@@ -603,7 +639,7 @@ public class CallFragment extends BaseFragment {
 	
 	private void loadInCallVideoView(){
 		loadVideoPreview();
-		startStopVideo(mAVSession.isSendingVideo());
+		startStopVideo(mBaseActivity.mAVSession.isSendingVideo());
 	}
 
 	protected void clearVideoPreview()
@@ -621,7 +657,7 @@ public class CallFragment extends BaseFragment {
 
 	private void loadVideoPreview(){
 		mViewRemoteVideoPreview.removeAllViews();
-		final View remotePreview = mAVSession.startVideoConsumerPreview();
+		final View remotePreview = mBaseActivity.mAVSession.startVideoConsumerPreview();
 		if(remotePreview != null){
 			final ViewParent viewParent = remotePreview.getParent();
 			if(viewParent != null && viewParent instanceof ViewGroup){
@@ -636,12 +672,12 @@ public class CallFragment extends BaseFragment {
 			return;
 		}
 
-		mAVSession.setSendingVideo(bStart);
+		mBaseActivity.mAVSession.setSendingVideo(bStart);
 
 		if(mViewLocalVideoPreview != null){
 			mViewLocalVideoPreview.removeAllViews();
 			if(bStart){
-				final View localPreview = mAVSession.startVideoProducerPreview();
+				final View localPreview = mBaseActivity.mAVSession.startVideoProducerPreview();
 				if(localPreview != null){
 					final ViewParent viewParent = localPreview.getParent();
 					if(viewParent != null && viewParent instanceof ViewGroup){

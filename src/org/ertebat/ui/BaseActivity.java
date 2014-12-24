@@ -53,6 +53,7 @@ import org.doubango.ngn.services.INgnHistoryService;
 import org.doubango.ngn.services.INgnSipService;
 import org.doubango.ngn.sip.NgnAVSession;
 import org.doubango.ngn.sip.NgnMsrpSession;
+import org.doubango.ngn.utils.NgnConfigurationEntry;
 import org.doubango.ngn.utils.NgnDateTimeUtils;
 import org.doubango.ngn.utils.NgnStringUtils;
 import org.doubango.ngn.utils.NgnUriUtils;
@@ -73,6 +74,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -90,6 +92,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NotificationCompat;
@@ -105,6 +108,7 @@ import org.ertebat.schema.ProfileSchema;
 import org.ertebat.schema.RoomSchema;
 import org.ertebat.schema.SessionStore;
 import org.ertebat.schema.SettingSchema;
+import org.ertebat.transport.INGN;
 import org.ertebat.transport.ITransport;
 import org.ertebat.transport.websocket.IWebsocketServiceCallback;
 import org.ertebat.transport.websocket.IWebsocketService;
@@ -119,6 +123,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 
 
 	protected static List mTransportListeners = new ArrayList<ITransport>();
+	protected static List mNGNListeners = new ArrayList<INGN>();
 	protected BroadcastReceiver mSipBroadCastRecv;
 	protected NgnEngine mEngine;
 	protected INgnConfigurationService mConfigurationService;
@@ -265,6 +270,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 			}
 		}
 	};
+	protected static SharedPreferences mSharedPref;
 
 	protected static int mLastCommand = 0;
 	protected static ProfileSchema mCurrentUserProfile;
@@ -310,6 +316,10 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 		mHandler = new Handler();
 		This = this;
 		mTransportCallback = this;
+		
+		if (mSharedPref == null)
+			mSharedPref = PreferenceManager.getDefaultSharedPreferences(This);
+
 
 		int screenLayout = getResources().getConfiguration().screenLayout;
 		screenLayout &= Configuration.SCREENLAYOUT_SIZE_MASK;
@@ -394,12 +404,12 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 							if(NgnMediaType.isAudioVideoType(mediaType)){
 								if(mAVSession != null){			
 									mEngine.getSoundService().startRingTone();
-
+									OnIncommingCall(args);
 									// CHECK
-									//									Intent incomingIntent = new Intent(This, CallActivity.class);
-									//									incomingIntent.putExtra(NgnEventArgs.EXTRA_EMBEDDED, args);
-									//									startActivity(incomingIntent);
-									//									finish();
+//																		Intent incomingIntent = new Intent(This, CallActivity.class);
+//																		incomingIntent.putExtra(NgnEventArgs.EXTRA_EMBEDDED, args);
+//																		startActivity(incomingIntent);
+//																		finish();
 								}
 								else{
 								}
@@ -504,6 +514,79 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 		}
 	}
 
+
+
+	protected void signInNGN() {
+		// Set credentials
+		String logStrValue;
+		boolean logBoolValue = false;
+		int logIntValue;
+
+		mConfigurationService.putString(NgnConfigurationEntry.IDENTITY_IMPI,
+				logStrValue = mSharedPref.getString("pref_key_private_identity",""));		
+		Log.d("SignInNGN", logStrValue);
+
+		mConfigurationService.putString(NgnConfigurationEntry.IDENTITY_IMPU, 
+				logStrValue = mSharedPref.getString("pref_key_public_identity",""));
+		Log.d("SignInNGN", logStrValue);
+
+		mConfigurationService.putString(NgnConfigurationEntry.IDENTITY_PASSWORD,
+				logStrValue = mSharedPref.getString("pref_key_password",""));
+		Log.d("SignInNGN", logStrValue);
+
+		mConfigurationService.putString(NgnConfigurationEntry.NETWORK_PCSCF_HOST,
+				logStrValue = mSharedPref.getString("pref_key_CSCFHost",""));
+		Log.d("SignInNGN", logStrValue);
+
+		logStrValue = mSharedPref.getString("pref_key_port", "0");
+		mConfigurationService.putInt(NgnConfigurationEntry.NETWORK_PCSCF_PORT,
+				Integer.parseInt(logStrValue));
+		Log.d("SignInNGN", logStrValue);
+
+		mConfigurationService.putString(NgnConfigurationEntry.NETWORK_TRANSPORT, 
+				logStrValue = mSharedPref.getString("pref_key_network_protocol",""));
+		Log.d("SignInNGN", logStrValue);
+
+		mConfigurationService.putString(NgnConfigurationEntry.NETWORK_REALM,
+				logStrValue = mSharedPref.getString("pref_key_network_realm",""));
+		Log.d("SignInNGN", "Realm: " + logStrValue);
+
+		mConfigurationService.putBoolean(NgnConfigurationEntry.NETWORK_USE_WIFI, 
+				logBoolValue = mSharedPref.getBoolean("",true));
+		Log.d("SignInNGN", String.valueOf(logBoolValue));
+
+		mConfigurationService.putBoolean(NgnConfigurationEntry.NETWORK_USE_3G, 
+				logBoolValue = mSharedPref.getBoolean("",true));
+
+		mConfigurationService.putString(NgnConfigurationEntry.QOS_PREF_VIDEO_SIZE, 
+				logStrValue = mSharedPref.getString("pref_key_qos_video_size",""));
+		Log.d("SignInNGN", logStrValue);
+
+		//SMS Settings
+		//TODO: Change
+		mConfigurationService.putString(NgnConfigurationEntry.RCS_CONF_FACT, logStrValue = mSharedPref.getString("pref_key_RCS_CONF_FACT","sip:Conferense@doubango.org"));
+		mConfigurationService.putString(NgnConfigurationEntry.RCS_SMSC, logStrValue = mSharedPref.getString("pref_key_RCS_SMSC","sip:+331000000000@doubango.org"));
+		mConfigurationService.putBoolean(NgnConfigurationEntry.RCS_USE_BINARY_SMS, logBoolValue = mSharedPref.getBoolean("pref_key_",true));
+		mConfigurationService.putBoolean(NgnConfigurationEntry.RCS_USE_MSRP_SUCCESS, logBoolValue = mSharedPref.getBoolean("pref_key_",true));
+		mConfigurationService.putBoolean(NgnConfigurationEntry.RCS_USE_MSRP_FAILURE, logBoolValue = mSharedPref.getBoolean("pref_key_",true));
+		mConfigurationService.putBoolean(NgnConfigurationEntry.RCS_USE_OMAFDR, logBoolValue = mSharedPref.getBoolean("pref_key_",true));
+		mConfigurationService.putBoolean(NgnConfigurationEntry.RCS_USE_MWI, logBoolValue = mSharedPref.getBoolean("pref_key_",true));
+
+		// VERY IMPORTANT: Commit changes
+		mConfigurationService.commit();
+
+		// register (log in)
+		mSipService.register(This);
+	}
+
+	protected void signOutNGN() {
+		if (mSipService != null) {
+			if (mSipService.isRegistered())
+				mSipService.unRegister();
+		}		
+	}
+
+	
 	@Override
 	protected void onDestroy() {
 		//		if(mEngine.isStarted()){
@@ -532,10 +615,17 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 	}
 
 	protected void SetCallState(NgnInviteEventTypes callState) {
-		// TODO Auto-generated method stub
-
+		for(int i = 0 ; i < mNGNListeners.size() ; i++){
+			((INGN)mNGNListeners.get(i)).SetCallState(callState);
+		}
 	}
 
+	public void OnIncommingCall(NgnInviteEventArgs args){
+		for(int i = 0 ; i < mNGNListeners.size() ; i++){
+			((INGN)mNGNListeners.get(i)).OnIncommingCall(args);
+		}
+	}
+	
 	protected void loadInCallView(){
 
 	}
@@ -1133,6 +1223,14 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 
 	public void unRegisterFromTransportListeners(ITransport transport){
 		mTransportListeners.remove(transport);
+	}
+	
+	public void registerToNGNListeners(INGN ngn){
+		mNGNListeners.add(ngn);
+	}
+
+	public void unRegisterFromNGNListeners(INGN ngn){
+		mNGNListeners.remove(ngn);
 	}
 
 	@Override

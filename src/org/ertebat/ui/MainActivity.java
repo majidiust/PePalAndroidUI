@@ -2,6 +2,7 @@ package org.ertebat.ui;
 import org.doubango.ngn.NgnEngine;
 import org.doubango.ngn.events.NgnEventArgs;
 import org.doubango.ngn.events.NgnInviteEventArgs;
+import org.doubango.ngn.events.NgnInviteEventTypes;
 import org.doubango.ngn.events.NgnMessagingEventArgs;
 import org.doubango.ngn.events.NgnMsrpEventArgs;
 import org.doubango.ngn.events.NgnRegistrationEventArgs;
@@ -190,5 +191,4 @@ public class MainActivity extends BaseActivity {
 			}
 		}).start();
 	}
-
 }
