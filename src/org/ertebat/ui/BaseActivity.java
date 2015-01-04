@@ -697,7 +697,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 							if(mTransportCallback != null)
 								mTransportCallback.onUserProfile(firstName, lastName, id, userName, picUrl, email);
 						} else {
-							showAlert("سیستم قادر به دریافت اطلاعات کاربر نمی باشد.");
+							showAlert("ط³غŒط³طھظ… ظ‚ط§ط¯ط± ط¨ظ‡ ط¯ط±غŒط§ظپطھ ط§ط·ظ„ط§ط¹ط§طھ ع©ط§ط±ط¨ط± ظ†ظ…غŒ ط¨ط§ط´ط¯.");
 						}
 
 
@@ -789,7 +789,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 									mTransportCallback.onNewMessage(new MessageSchema(id, fromId, from, roomId, date, date, content));
 							}
 						} else {
-							showAlert("سیستم قادر به دریافت اطلاعات کاربر نمی باشد.");
+							showAlert("ط³غŒط³طھظ… ظ‚ط§ط¯ط± ط¨ظ‡ ط¯ط±غŒط§ظپطھ ط§ط·ظ„ط§ط¹ط§طھ ع©ط§ط±ط¨ط± ظ†ظ…غŒ ط¨ط§ط´ط¯.");
 						}
 					} catch (Exception ex) {
 						Log.d(TAG, ex.getMessage());
@@ -896,7 +896,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 								showAlert("i can get the friend list. internet connection is so low");
 							}
 						} else {
-							showAlert("ورود موفقیت آمیز نبود. لطفاً مجدداً تلاش نمائید");
+							showAlert("ظˆط±ظˆط¯ ظ…ظˆظپظ‚غŒطھ ط¢ظ…غŒط² ظ†ط¨ظˆط¯. ظ„ط·ظپط§ظ‹ ظ…ط¬ط¯ط¯ط§ظ‹ طھظ„ط§ط´ ظ†ظ…ط§ط¦غŒط¯");
 						}
 					} catch (Exception ex) {
 						Log.d(TAG, ex.getMessage());
@@ -910,7 +910,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 	}
 
 	protected void sendTextMessageToServer(final String roomId, final String publishType, final String publishDate, final String content){
-		showWaitingDialog("ارسال پیام", "در حال ارسال پیام به سرور. لطفا منتظر بمانید....");
+		showWaitingDialog("منتظر بمانید", "در حال ارسال اطلاعات به سرور ...");
 		try{
 			new Thread(new Runnable() {
 
@@ -929,10 +929,11 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 						post.setHeader("token", mCurrentUserProfile.m_token);
 						post.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
 						HttpResponse response = client.execute(post);
+						closeWaitingDialog();
 						if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-							showAlert("پیام شما با موفقیت ارسال شد.");
+							//showAlert("ظ¾غŒط§ظ… ط´ظ…ط§ ط¨ط§ ظ…ظˆظپظ‚غŒطھ ط§ط±ط³ط§ظ„ ط´ط¯.");
 						} else {
-							showAlert("ورود موفقیت آمیز نبود. لطفاً مجدداً تلاش نمائید");
+							showAlert("خطا در ارسال اطلاعات به سرور ...");
 						}
 					} catch (Exception ex) {
 						Log.d(TAG, ex.getMessage());
@@ -959,6 +960,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 
 	protected void uploadImageToTheServer(Uri selectedImage, String mRoomId){
 		try{
+			showWaitingDialog("منتظر بمانید", "در حال ارسال اطلاعات به سرور ...");
 			final String url = RestAPIAddress.getSendPictureMessage() + "/" + mRoomId + "/Now/Now";
 			final String path =  getPath(selectedImage);
 
@@ -989,6 +991,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 						httppost.setEntity(reqEntity);
 						HttpResponse response = httpclient.execute(httppost);
 						pictureFile.delete();
+						closeWaitingDialog();
 						Log.d("File", "Response: " + response.getStatusLine().getReasonPhrase());
 
 					} catch (Exception ex) {
@@ -1036,7 +1039,7 @@ public class BaseActivity extends FragmentActivity implements ITransport {
 						pictureFile.delete();
 						Log.d("File", "Response: " + response.getStatusLine().getReasonPhrase());
 						closeWaitingDialog();
-						showAlert("تصویر شما بروز رسانی گردید.");
+						showAlert("تصویر شما به تصویر خواسته شده تغییر داده شد.");
 
 					} catch (Exception ex) {
 						Log.d("File", ex.getMessage());

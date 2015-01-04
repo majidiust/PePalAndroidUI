@@ -116,6 +116,7 @@ public class ContactProfileActivity extends BaseActivity {
 
 	public void CreateIndividualRoom(final String otherParty){
 		try{
+			showWaitingDialog("توجه", "لطفا منتظر بمانید، درحال دریافت اطلاعات از سرور ...");
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -136,6 +137,8 @@ public class ContactProfileActivity extends BaseActivity {
 							while ((line = rd.readLine()) != null) {
 								jsonString += line;						
 							}
+							
+							closeWaitingDialog();
 
 							JSONObject json = new JSONObject(jsonString);
 							String code = "-1";

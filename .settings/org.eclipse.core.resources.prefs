@@ -1,5 +1,6 @@
 eclipse.preferences.version=1
 encoding//src/org/ertebat/transport/websocket/WebsocketService.java=UTF-8
+encoding//src/org/ertebat/ui/BaseActivity.java=UTF-8
 encoding//src/org/ertebat/ui/ChatActivity.java=UTF-8
 encoding//src/org/ertebat/ui/ChatLogFragment.java=UTF-8
 encoding//src/org/ertebat/ui/ContactListFragment.java=UTF-8

@@ -219,6 +219,10 @@ public class WebsocketService extends Service {
 								}
 							}
 							else if(code == 8){
+								Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+								Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+								r.play();
+								
 								JSONObject tmpObject = new JSONObject(jsonObject.getString("friend"));
 								String id ,userName, status;
 								id = tmpObject.getString("friendId");
@@ -238,6 +242,9 @@ public class WebsocketService extends Service {
 							}
 							else if(code == 103){
 								try{
+									Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+									Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+									r.play();
 									JSONObject tmpObject = new JSONObject(jsonObject.getString("value"));
 									String type = tmpObject.getString("type");
 									String roomId = tmpObject.getString("roomId");
@@ -276,9 +283,7 @@ public class WebsocketService extends Service {
 												showMessage.putExtra("fromId", fromId);
 												showMessage.putExtra("date", date);
 												showNotification("پیام از " + from, content, showMessage);
-												Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-												Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-												r.play();
+
 										//	}
 										////	else{
 										//		logCatDebug("exist in the list");
@@ -295,7 +300,11 @@ public class WebsocketService extends Service {
 								}
 							}
 							else if(code == 104){
+								
 								try{
+									Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+									Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+									r.play();
 									String invitedBy = (jsonObject.getString("invitedBy"));
 
 									int N = mCallbacks.beginBroadcast();
@@ -338,6 +347,9 @@ public class WebsocketService extends Service {
 							}
 							else if(code == 5){
 								try{
+									Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+									Ringtone r2 = RingtoneManager.getRingtone(getApplicationContext(), notification);
+									r2.play();
 									//debug(payload);
 									//{"message":"IndividualContacts","code":5,"rooms":[{"_id":"548efd505855476c1364b6a1","Type":"I","StartType":"Now","Creator":"548cd282a62cf7e43605052e","__v":0,"StartDate":"2014-12-15T13:35:20.000Z","CreateDate":"2014-12-15T13:35:20.000Z","Requests":[],"Invited":[],"Admins":["548cd282a62cf7e43605052e","548caa70d347180c181583b4"],"Members":["548cd282a62cf7e43605052e","548caa70d347180c181583b4"],"Entities":[]},{"_id":"548f00675855476c1364b6a6","Type":"I","StartType":"Now","Creator":"548caa70d347180c181583b4","__v":0,"StartDate":"2014-12-15T13:35:20.000Z","CreateDate":"2014-12-15T13:35:20.000Z","Requests":[],"Invited":[],"Admins":["548caa70d347180c181583b4","548ee113346798fc22d906d7"],"Members":["548caa70d347180c181583b4","548ee113346798fc22d906d7"],"Entities":[]}]}
 									JSONArray rooms = jsonObject.getJSONArray("rooms");

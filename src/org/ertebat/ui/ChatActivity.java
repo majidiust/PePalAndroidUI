@@ -157,6 +157,7 @@ public class ChatActivity extends BaseActivity {
 			public void onClick(View v) {
 				if (!mEditMessageContent.getText().toString().equals("")) {
 					sendTextMessageToServer(mRoomId, "Now", "..", mEditMessageContent.getText().toString());
+					mEditMessageContent.setText("");
 				}
 			}
 		});
