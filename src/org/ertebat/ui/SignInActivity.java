@@ -110,6 +110,7 @@ public class SignInActivity extends BaseActivity {
 									jsonString += line;						
 								}
 								
+								closeWaitingDialog();
 								showToast("REST : " + (mCount++));
 								
 								JSONObject json = new JSONObject(jsonString);
@@ -127,6 +128,7 @@ public class SignInActivity extends BaseActivity {
 								}		
 							} else {
 								showAlert("ورود موفقیت آمیز نبود. لطفاً مجدداً تلاش نمائید");
+								closeWaitingDialog();
 							}
 
 						} catch (Exception ex) {

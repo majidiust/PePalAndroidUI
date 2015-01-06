@@ -25,7 +25,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_margin="4dp"
-                android:layout_toLeftOf="@+id/btnCallBackspace"
                 android:background="@drawable/layout_border_red"
                 android:gravity="center"
                 android:maxLength="11"
@@ -409,7 +408,7 @@
                     android:textSize="18sp" />
             </LinearLayout>
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/layoutVideoCallPreviews"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -418,6 +417,7 @@
                 android:orientation="vertical" >
 
                 <FrameLayout
+                    android:id="@+id/frameRemoteVideo"
                     android:layout_width="match_parent"
                     android:layout_height="256dp"
                     android:layout_margin="4dp"
@@ -435,9 +435,10 @@
                 </FrameLayout>
 
                 <FrameLayout
-                    android:layout_width="128dp"
-                    android:layout_height="128dp"
-                    android:layout_gravity="center_horizontal"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:layout_alignBottom="@+id/frameRemoteVideo"
+                    android:layout_alignRight="@+id/frameRemoteVideo"
                     android:layout_margin="4dp"
                     android:background="@drawable/layout_video"
                     android:minHeight="90dp"
@@ -451,7 +452,7 @@
                         android:layout_gravity="center" >
                     </FrameLayout>
                 </FrameLayout>
-            </LinearLayout>
+            </RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/layoutVideoCallButtons"

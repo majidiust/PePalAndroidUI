@@ -62,6 +62,7 @@ public class CallFragment extends BaseFragment {
 	private RelativeLayout mLayoutInCallAudio;
 	private RelativeLayout mLayoutInCallVideo;
 	private RelativeLayout mLayoutIncoming;
+	private RelativeLayout mLayoutDialPad;
 
 	private FrameLayout mViewRemoteVideoPreview;
 	private FrameLayout mViewLocalVideoPreview;
@@ -83,6 +84,7 @@ public class CallFragment extends BaseFragment {
 		mLayoutInCallAudio = (RelativeLayout)rootView.findViewById(R.id.layoutAudioCallEstablished);
 		mLayoutInCallVideo = (RelativeLayout)rootView.findViewById(R.id.layoutVideoCallEstablished);
 		mLayoutIncoming = (RelativeLayout)rootView.findViewById(R.id.layoutCallIncoming);
+		mLayoutDialPad = (RelativeLayout)rootView.findViewById(R.id.layoutCallDialPad);
 
 		mTextNumber = (TextView)rootView.findViewById(R.id.txtCallNumber);
 		mTextAudioCallDuration = (TextView)rootView.findViewById(R.id.txtAudioCallTimer);
@@ -439,6 +441,7 @@ public class CallFragment extends BaseFragment {
 			mLayoutInCallAudio.setVisibility(View.INVISIBLE);
 			mLayoutInCallVideo.setVisibility(View.INVISIBLE);
 			mLayoutIncoming.setVisibility(View.INVISIBLE);
+			mLayoutDialPad.setVisibility(View.VISIBLE);
 			break;
 		case CAS_NumberEntry:
 			mLayoutNumberBar.setVisibility(View.VISIBLE);
@@ -447,6 +450,7 @@ public class CallFragment extends BaseFragment {
 			mLayoutInCallAudio.setVisibility(View.INVISIBLE);
 			mLayoutInCallVideo.setVisibility(View.INVISIBLE);
 			mLayoutIncoming.setVisibility(View.INVISIBLE);
+			mLayoutDialPad.setVisibility(View.VISIBLE);
 			break;
 		case CAS_Dialing:
 			mLayoutNumberBar.setVisibility(View.INVISIBLE);
@@ -455,6 +459,11 @@ public class CallFragment extends BaseFragment {
 			mLayoutInCallAudio.setVisibility(View.INVISIBLE);
 			mLayoutInCallVideo.setVisibility(View.INVISIBLE);
 			mLayoutIncoming.setVisibility(View.INVISIBLE);
+			if (BaseActivity.IsTablet) {
+				mLayoutDialPad.setVisibility(View.VISIBLE);
+			} else {
+				mLayoutDialPad.setVisibility(View.INVISIBLE);
+			}
 			break;
 		case CAS_InCallAudio:
 			mLayoutNumberBar.setVisibility(View.INVISIBLE);
@@ -463,6 +472,11 @@ public class CallFragment extends BaseFragment {
 			mLayoutInCallAudio.setVisibility(View.VISIBLE);
 			mLayoutInCallVideo.setVisibility(View.INVISIBLE);
 			mLayoutIncoming.setVisibility(View.INVISIBLE);
+			if (BaseActivity.IsTablet) {
+				mLayoutDialPad.setVisibility(View.VISIBLE);
+			} else {
+				mLayoutDialPad.setVisibility(View.INVISIBLE);
+			}
 			break;
 		case CAS_InCallVideo:
 			mLayoutNumberBar.setVisibility(View.INVISIBLE);
@@ -471,6 +485,11 @@ public class CallFragment extends BaseFragment {
 			mLayoutInCallAudio.setVisibility(View.INVISIBLE);
 			mLayoutInCallVideo.setVisibility(View.VISIBLE);
 			mLayoutIncoming.setVisibility(View.INVISIBLE);
+			if (BaseActivity.IsTablet) {
+				mLayoutDialPad.setVisibility(View.VISIBLE);
+			} else {
+				mLayoutDialPad.setVisibility(View.INVISIBLE);
+			}
 			break;
 		case CAS_Incoming:
 			mLayoutNumberBar.setVisibility(View.INVISIBLE);
@@ -479,6 +498,11 @@ public class CallFragment extends BaseFragment {
 			mLayoutInCallAudio.setVisibility(View.INVISIBLE);
 			mLayoutInCallVideo.setVisibility(View.INVISIBLE);
 			mLayoutIncoming.setVisibility(View.VISIBLE);
+			if (BaseActivity.IsTablet) {
+				mLayoutDialPad.setVisibility(View.VISIBLE);
+			} else {
+				mLayoutDialPad.setVisibility(View.INVISIBLE);
+			}
 			break;
 		default:
 			break;
