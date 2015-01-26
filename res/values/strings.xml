@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">PePal</string>
+    <string name="app_name">Ertebat</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="lbl_search">جستجو</string>
@@ -65,6 +65,9 @@
     <string name="lbl_udp">UDP</string>
     <string name="lbl_tcp">TCP</string>
     <string name="lbl_tls">TLS</string>
+    <string name="lbl_trial">توجه!\n\n
+        نسخه شماره 21125\n\n
+        این نسخه توسط شرکت رایان هیوا در حال توسعه بوده و ایرادات احتمالی آن بر عهده استفاده کننده می باشد</string>
     <string name="lbl_recorder_instruction_1">Select the graphs to print:</string>
     <string name="lbl_recorder_instruction_2">Print settings:</string>
     <string name="lbl_recorder_line1">Line 1</string>

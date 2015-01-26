@@ -94,8 +94,8 @@
     <dimen name="sign_in_edit_width">256dp</dimen>
     <dimen name="sign_in_edit_height">48dp</dimen>
     <dimen name="sign_in_vertical_margin">16dp</dimen>
-    <dimen name="splash_width">192dp</dimen>
-    <dimen name="splash_height">192dp</dimen>
+    <dimen name="splash_width">256dp</dimen>
+    <dimen name="splash_height">420dp</dimen>
     <dimen name="user_profile_item_margin_vertical">16dp</dimen>
     <dimen name="user_profile_thumbnail_margin">32dp</dimen>
     <dimen name="user_profile_thumbnail_size">160dp</dimen>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="android" name="Android">
+      <configuration />
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/gen" isTestSource="false" generated="true" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="android-support-v4" level="project" />
+    <orderEntry type="module" module-name="android-ngn-stack" />
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://D:/Projects/AutobahnAndroid/TestAutobahn/libs/autobahn-android-0.5.2-SNAPSHOT.jar!/" />
+          <root url="jar://D:/Projects/AutobahnAndroid/TestAutobahn/libs/jackson-core-asl-1.9.7.jar!/" />
+          <root url="jar://D:/Projects/AutobahnAndroid/TestAutobahn/libs/jackson-mapper-asl-1.9.7.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://D:/Projects/AutobahnAndroid/TestAutobahn/libs/autobahn-android-0.5.2-SNAPSHOT-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://D:/Projects/AutobahnAndroid/TestAutobahn/libs/autobahn-android-0.5.2-SNAPSHOT-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+  </component>
+</module>

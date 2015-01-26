@@ -95,7 +95,7 @@
     <dimen name="sign_in_edit_height">96dp</dimen>
     <dimen name="sign_in_vertical_margin">32dp</dimen>
     <dimen name="splash_width">312dp</dimen>
-    <dimen name="splash_height">312dp</dimen>
+    <dimen name="splash_height">512dp</dimen>
     <dimen name="user_profile_item_margin_vertical">32dp</dimen>
     <dimen name="user_profile_thumbnail_margin">64dp</dimen>
     <dimen name="user_profile_thumbnail_size">320dp</dimen>
